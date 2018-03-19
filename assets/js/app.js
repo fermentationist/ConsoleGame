@@ -103,24 +103,47 @@ const initCommands = (commandsArray) => {
 	});
 }
 
+// This function creates a new, one-word command in the interpreter. 
+// It takes in the function that will be invoked (with the command as its 
+// argument) when the command is entered, and a comma-separated string of 
+// command aliases (synonyms). 
+// The command will be named after the first name in the string of aliases, 
+// converted to lowercase.
 const addCommandToInterpret = (interpreterFunction, commandAliases) => {
-	const logger = logCommand;
 	const aliasArray = commandAliases.split(",");
 	const commandName = aliasArray[0].toLowerCase();
 	const interpretCmd = interpreterFunction.bind(null, commandName);
 	aliasArray.map(alias => {
-		Object.defineProperty(window, alias.trim(), {get: logger.bind(null, commandName, interpretCmd)});
+		Object.defineProperty(window, alias.trim(), {get: interpretCmd});
 	});
 }
 
 const commands = [
-	[_move, "North,north,NORTH,n,N"],
-	[_move, "South,south,SOUTH,s,S"],
-	[_move, "East,east,EAST,e,E"],
-	[_move, "West,west,WEST,w,W"],
-	[_move, "Up,up,UP,u,U"],
-	[_move, "Down,down,DOWN,d,D"]
+	[_move, "north,North,NORTH,n,N"],
+	[_move, "south,South,SOUTH,s,S"],
+	[_move, "east,East,EAST,e,E"],
+	[_move, "west,West,WEST,w,W"],
+	[_move, "up,Up,UP,u,U"],
+	[_move, "down,Down,DOWN,d,D"]
 ];
 
+// console.warning("initializing commands...\n\n");
+// console.table(commands);
 initCommands(commands);
-console.error(`%c${greeting}`, "font-size:125%;color:green;font-weight:bold;font-family:Monaco");
+
+// const customLog = (message, size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", logType = "log") => {
+// 	console[logType](`%c${message}`, `font-size:${size};color:${color};font-weight:${weight};font-family:${font}`);
+// }
+
+// const logH1 = (message) => {
+// 	return customLog(message, "200%", "pink", "bold", "normal", "arial", "info");
+// }
+
+// const logNote = (message) => {
+// 	return customLog(message, "75%", "gray", "inherit" , "italic", "Lucida Console", "info");
+// }
+
+
+console.h1(greeting);
+
+console.note("p.s. this, also...");
