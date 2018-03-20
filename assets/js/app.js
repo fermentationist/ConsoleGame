@@ -1,5 +1,5 @@
 console.clear();
-const greeting = "\n\nWelcome, thanks for finding us. Type a command to play.\n\n"
+const greeting = "\n\nWelcome, thanks for finding us.\n\n"
 
 let queryMode = false;
 let history = [];
@@ -55,6 +55,7 @@ const _move = (direction) => {
 			position.z = position.z - 1;
 			break;
 	}
+	console.p(`moving ${direction}...`);
 	return position;
 }
 // Object.defineProperty(window, "e", {get: east});
@@ -143,7 +144,10 @@ initCommands(commands);
 // 	return customLog(message, "75%", "gray", "inherit" , "italic", "Lucida Console", "info");
 // }
 
+setTimeout(() => {
+	console.h1(greeting);
+	console.note("Type a command to play.");
+	}, 500);
 
-console.h1(greeting);
-
-console.note("p.s. this, also...");
+// console.h1(greeting);
+// console.note("Type a command to play.");
