@@ -1,86 +1,145 @@
 console.clear();
-const greeting = "\n\nWelcome, thanks for finding us.\n\n"
+const greeting = "\n\nWelcome, thanks for playing along...\n\n"
 
-let queryMode = false;
-let history = [];
-let position = {
-	x: 0,
-	y: 0,
-	z: 0
-}
-const logCommand = (commandName, interpretCmd) => {
-	history.push(commandName);
-	return interpretCmd.apply();
-}
-
-const run = () => {
-	queryMode = true;
-	console.info(`How fast to move? [slow, fast]`);
+const gameState = {
+	objectMode : false,
+	inventory : [],
+	history : [],
+	position : {
+		x: 0,
+		y: 0,
+		z: 0
+	},
+	turn : 0
 }
 
-const _north = (speed = "quickly") => {
-	if (queryMode){
-		return "Command not understood. Enter a different term to complete query, or type [exit] to exit query."
+// To be called at successful completion of command
+const addToHistory = (commandName) => {
+	if (gameState.objectMode){
+		gameState.history.push(`${gameState.history.pop()} commandName`);
+		gameState.objectMode = false;
+	} else {
+		gameState.history.push(commandName);
+		turn ++;
 	}
-	console.info(`moving North, ${speed}`);
-	return true;
 }
 
-const _south = (speed = "quickly") => console.log(`moving South, ${speed}`);
+const rooms = {
+	"3,3,3": {
+		env: []
+	}
+}
 
-const _east = (speed = "quickly") => console.log(`moving East, ${speed}`);
 
-const _west = (speed = "quickly") => console.log(`moving West, ${speed}`);
 
-const _up = (speed = "quickly") => console.log(`moving Up, ${speed}`);
+// ===========//Items//===========
+let grueRepellant = {
+	name : "grue repellant",
+	used : false,
+	defective : Math.random() < 0.03,
+	weight : 3,
+	description: "A 12oz can of premium grue repellant. This is the good stuff. Grues genuinely find it to be off-putting."
+}
+
+let key = {
+	name : "key",
+	used : false,
+	weight : 1,
+	description: "It is an old-timey key that appears to be made of tarnished brass"
+}
+
+let note = {
+	name : "note",
+	used : false,
+	weight : 1,
+	text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Frünch Connexion...",
+	description: "A filthy note you picked up from the floor of a restroom. It is slightly damp."
+}
+
+gameState.inventory.push(grueRepellant);
+gameState.inventory.push(key);
+gameState.inventory.push(note);
+rooms["3,3,3"].env.push(key);
+
+const _repellant = (command) => {
+	console.log("_repellant() called");
+}
+
+
+
+// ===============================
+
+
 
 const _move = (direction) => {
 	switch (direction){
 		case "north":
-			position.x = position.x + 1;
+			gameState.position.x = gameState.position.x + 1;
 			break;
 		case "south":
-			position.x = position.x - 1;
+			gameState.position.x = gameState.position.x - 1;
 			break;
 		case "east":
-			position.y = position.y + 1;
+			gameState.position.y = gameState.position.y + 1;
 			break;
 		case "west":
-			position.y = position.y - 1;
+			gameState.position.y = gameState.position.y - 1;
 			break;
 		case "up":
-			position.z = position.z + 1;
+			gameState.position.z = gameState.position.z + 1;
 			break;
 		case "down":
-			position.z = position.z - 1;
+			gameState.position.z = gameState.position.z - 1;
 			break;
 	}
 	console.p(`moving ${direction}...`);
-	return position;
-}
-// Object.defineProperty(window, "e", {get: east});
-
-const X = () => {
-	console.info("X() called.");
-	$("body").css("background-color", "black");
-	return true;
+	return gameState.position;
 }
 
-function poof (){
-	return (function(){
-		$("body").empty().css("background-color", "black");
-		return ">poof<";});
+const _look = (command) => console.p(`Description of anything ${command}able in the vicinity...`);
+
+const _use = (command) => {
+	console.p(`What would you like to use?`);
+	gameState.objectMode = true;
 }
 
-const oops = () => {
+const _take = (command) => {
+	console.p(`What is it that you'd like to ${command}?`);
+	gameState.objectMode = true;
+}
+
+const _inventory = (command) => console.note(gameState.inventory.map((item) => `\n${item.name}`));
+
+const _inventoryTable = (command) => console.table(gameState.inventory);
+
+const _objects = (command) => {
+	if (!gameState.objectMode){
+		return console.warning("Invalid command");
+	}
+	console.p(`_objects(${command}) called.`)
+	if (!isAvailable(command)){
+		return console.warning("That object is unavailable. Try again.");
+	}
+	const action = gameState.history[gameState.history.length - 1];
+
+	return console.note(`Now we need to invoke ${action} on ${command}`)
+}
+
+const _poof = () => {
+	$("body").empty().css("background-color", "black");
+	return console.papyracy(">poof<");
+}
+
+const _oops = () => {
 	location.reload();
 	return "reloading...";
 }
 
-const interpret = (command) => {
-	const cmdFuncPrefix = "_"
-	// console.log("interpreting:", command);
-	return eval(`${cmdFuncPrefix}${command}`)();
+const isAvailable = (objectName) => {
+	const loc = `${gameState.position.x},${gameState.position.y},${gameState.position.z}`
+	const inv = (gameState.inventory.map((item) => item.name)).includes(objectName);
+	const env = (rooms[loc].env).includes(objectName);
+	return inv || env;
 }
 
 //this function causes 
@@ -98,11 +157,13 @@ const initCompoundAliases = (command, aliases) => {
 
 const initCommands = (commandsArray) => {
 	let interpreterFunction, aliases;
-	commandsArray.map((commandInfo) => {
-		[interpreterFunction, aliases] = commandInfo;
+	commandsArray.map((commandlog) => {
+		[interpreterFunction, aliases] = commandlog;
 		addCommandToInterpret(interpreterFunction, aliases);
 	});
 }
+
+
 
 // This function creates a new, one-word command in the interpreter. 
 // It takes in the function that will be invoked (with the command as its 
@@ -119,35 +180,55 @@ const addCommandToInterpret = (interpreterFunction, commandAliases) => {
 	});
 }
 
+
+
+
+// console.warning("initializing commands...\n\n");
+// console.table(commands);
+
 const commands = [
+	// Move
 	[_move, "north,North,NORTH,n,N"],
 	[_move, "south,South,SOUTH,s,S"],
 	[_move, "east,East,EAST,e,E"],
 	[_move, "west,West,WEST,w,W"],
 	[_move, "up,Up,UP,u,U"],
-	[_move, "down,Down,DOWN,d,D"]
+	[_move, "down,Down,DOWN,d,D"],
+
+	// Actions
+	[_look, "look,Look,LOOK,l,L"],
+	[_inventory, "inventory,Inventory,INVENTORY,i,I"],
+	[_use, "use,Use,USE"],
+	[_take, "take,Take,TAKE,t,T"],
+
+	// Objects
+	[_objects, "repellant,Repellant,REPELLANT,grue_repellant,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
+	[_objects, "key,Key,KEY"],
+	[_objects, "note,Note,NOTE"],
+
+
+	// Misc
+	[_inventoryTable, "inventoryTable,invTable"],
+	[_poof, "poof,Poof,POOF"],
+	[_oops, "oops,Oops,OOPS"]
 ];
 
-// console.warning("initializing commands...\n\n");
-// console.table(commands);
+const commandList = commands.map((command) => {
+	let aliasArray = command[1].split(",")
+	let name = aliasArray.shift().trim().toLowerCase();
+	return {
+		name,
+		aliases: aliasArray.join(", ")
+	}
+});
+
+
 initCommands(commands);
 
-// const customLog = (message, size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", logType = "log") => {
-// 	console[logType](`%c${message}`, `font-size:${size};color:${color};font-weight:${weight};font-family:${font}`);
-// }
-
-// const logH1 = (message) => {
-// 	return customLog(message, "200%", "pink", "bold", "normal", "arial", "info");
-// }
-
-// const logNote = (message) => {
-// 	return customLog(message, "75%", "gray", "inherit" , "italic", "Lucida Console", "info");
-// }
-
 setTimeout(() => {
+	console.clear();
 	console.h1(greeting);
 	console.note("Type a command to play.");
 	}, 500);
 
-// console.h1(greeting);
-// console.note("Type a command to play.");
+console.log('grueRepellant.defective', grueRepellant.defective);

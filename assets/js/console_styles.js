@@ -6,11 +6,11 @@ const customConsole = (() => {
 	}
 
 	console.h1 = (message) => {
-		return customLog(message, "info", "200%", "pink", "bold", "normal", primaryFont);
+		return customLog(message, "log", "200%", "pink", "bold", "normal", primaryFont);
 	}
 
 	console.note = (message) => {
-		return customLog(message, "info", "100%", "gray", "inherit" , "italic", primaryFont);
+		return customLog(message, "log", "100%", "gray", "inherit" , "italic", primaryFont);
 	}
 
 	console.warning = (message) => {
