@@ -10,7 +10,8 @@ const gameState = {
 		y: 0,
 		z: 0
 	},
-	turn : 0
+	turn : 0,
+	pendingAction : null
 }
 
 // To be called at successful completion of command
@@ -108,13 +109,29 @@ const _take = (command) => {
 	gameState.objectMode = true;
 }
 
+const _READ = (object) => {
+	if (Object.keys(object).includes("text")){
+		console.p(`The text on ${object.name} says: ${object.text}.`);
+	} else {
+		console.p(`There is no text to read on the ${object.name}`)
+	}
+	gameState.objectMode = false;
+	gameState.pendingAction = null;
+}
+
+const _read = (command) => {
+	console.p(`What is it that you'd like to ${command}?`);
+	gameState.objectMode = true;
+	gameState.pendingAction = _READ;
+}
+
 const _inventory = (command) => console.note(gameState.inventory.map((item) => `\n${item.name}`));
 
 const _inventoryTable = (command) => console.table(gameState.inventory);
 
 const _objects = (command) => {
 	if (!gameState.objectMode){
-		return console.warning("Invalid command");
+		return console.p("Invalid command");
 	}
 	console.p(`_objects(${command}) called.`)
 	if (!isAvailable(command)){
@@ -200,6 +217,7 @@ const commands = [
 	[_inventory, "inventory,Inventory,INVENTORY,i,I"],
 	[_use, "use,Use,USE"],
 	[_take, "take,Take,TAKE,t,T"],
+	[_read, "read,Read,READ"],
 
 	// Objects
 	[_objects, "repellant,Repellant,REPELLANT,grue_repellant,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
@@ -231,4 +249,4 @@ setTimeout(() => {
 	console.note("Type a command to play.");
 	}, 500);
 
-console.log('grueRepellant.defective', grueRepellant.defective);
+// console.log('grueRepellant.defective', grueRepellant.defective);
