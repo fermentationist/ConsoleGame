@@ -1,3 +1,5 @@
+import "./commands";
+
 console.clear();
 const greeting = "\n\nWelcome, thanks for playing along...\n\n"
 
@@ -11,7 +13,8 @@ const gameState = {
 		z: 0
 	},
 	turn : 0,
-	pendingAction : null
+	pendingAction : null,
+	env: []
 }
 
 // To be called at successful completion of command
@@ -49,17 +52,22 @@ let key = {
 	description: "It is an old-timey key that appears to be made of tarnished brass"
 }
 
-let note = {
+let _note = {
 	name : "note",
 	used : false,
 	weight : 1,
 	text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Frünch Connexion...",
-	description: "A filthy note you picked up from the floor of a restroom. It is slightly damp."
+	description: "A filthy note you picked up from the floor of a restroom. It is slightly damp.",
+	read: () => {
+		console.p(`The note reads: ${this.text}`);
+		gameState.objectMode = false;
+		addToHistory("read note");
+	}
 }
 
 gameState.inventory.push(grueRepellant);
 gameState.inventory.push(key);
-gameState.inventory.push(note);
+gameState.inventory.push(_note);
 rooms["3,3,3"].env.push(key);
 
 const _repellant = (command) => {
@@ -120,9 +128,12 @@ const _READ = (object) => {
 }
 
 const _read = (command) => {
+	if (gameState.objectMode){
+		return console.p("Invalid command. Please try again.")
+	}
 	console.p(`What is it that you'd like to ${command}?`);
 	gameState.objectMode = true;
-	gameState.pendingAction = _READ;
+	gameState.pendingAction = "read";
 }
 
 const _inventory = (command) => console.note(gameState.inventory.map((item) => `\n${item.name}`));
@@ -133,13 +144,14 @@ const _objects = (command) => {
 	if (!gameState.objectMode){
 		return console.p("Invalid command");
 	}
-	console.p(`_objects(${command}) called.`)
+	// console.p(`_objects(${command}) called.`)
 	if (!isAvailable(command)){
 		return console.warning("That object is unavailable. Try again.");
 	}
-	const action = gameState.history[gameState.history.length - 1];
+	const action = gameState.pendingAction;
+	return eval(`_${command}.${action}()`);
 
-	return console.note(`Now we need to invoke ${action} on ${command}`)
+	//return console.note(`Now we need to invoke ${action} on ${command}`)
 }
 
 const _poof = () => {
@@ -155,8 +167,10 @@ const _oops = () => {
 const isAvailable = (objectName) => {
 	const loc = `${gameState.position.x},${gameState.position.y},${gameState.position.z}`
 	const inv = (gameState.inventory.map((item) => item.name)).includes(objectName);
-	const env = (rooms[loc].env).includes(objectName);
+	const env = (gameState.env).includes(objectName);
+	console.log('inv || env', inv || env);
 	return inv || env;
+	
 }
 
 //this function causes 
@@ -176,7 +190,7 @@ const initCommands = (commandsArray) => {
 	let interpreterFunction, aliases;
 	commandsArray.map((commandlog) => {
 		[interpreterFunction, aliases] = commandlog;
-		addCommandToInterpret(interpreterFunction, aliases);
+		bindCommandToFunction(interpreterFunction, aliases);
 	});
 }
 
@@ -188,7 +202,7 @@ const initCommands = (commandsArray) => {
 // command aliases (synonyms). 
 // The command will be named after the first name in the string of aliases, 
 // converted to lowercase.
-const addCommandToInterpret = (interpreterFunction, commandAliases) => {
+const bindCommandToFunction = (interpreterFunction, commandAliases) => {
 	const aliasArray = commandAliases.split(",");
 	const commandName = aliasArray[0].toLowerCase();
 	const interpretCmd = interpreterFunction.bind(null, commandName);
@@ -203,33 +217,33 @@ const addCommandToInterpret = (interpreterFunction, commandAliases) => {
 // console.warning("initializing commands...\n\n");
 // console.table(commands);
 
-const commands = [
-	// Move
-	[_move, "north,North,NORTH,n,N"],
-	[_move, "south,South,SOUTH,s,S"],
-	[_move, "east,East,EAST,e,E"],
-	[_move, "west,West,WEST,w,W"],
-	[_move, "up,Up,UP,u,U"],
-	[_move, "down,Down,DOWN,d,D"],
+// const commands = [
+// 	// Move
+// 	[_move, "north,North,NORTH,n,N"],
+// 	[_move, "south,South,SOUTH,s,S"],
+// 	[_move, "east,East,EAST,e,E"],
+// 	[_move, "west,West,WEST,w,W"],
+// 	[_move, "up,Up,UP,u,U"],
+// 	[_move, "down,Down,DOWN,d,D"],
 
-	// Actions
-	[_look, "look,Look,LOOK,l,L"],
-	[_inventory, "inventory,Inventory,INVENTORY,i,I"],
-	[_use, "use,Use,USE"],
-	[_take, "take,Take,TAKE,t,T"],
-	[_read, "read,Read,READ"],
+// 	// Actions
+// 	[_look, "look,Look,LOOK,l,L"],
+// 	[_inventory, "inventory,Inventory,INVENTORY,i,I"],
+// 	[_use, "use,Use,USE"],
+// 	[_take, "take,Take,TAKE,t,T"],
+// 	[_read, "read,Read,READ"],
 
-	// Objects
-	[_objects, "repellant,Repellant,REPELLANT,grue_repellant,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
-	[_objects, "key,Key,KEY"],
-	[_objects, "note,Note,NOTE"],
+// 	// Objects
+// 	[_objects, "repellant,Repellant,REPELLANT,grue_repellant,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
+// 	[_objects, "key,Key,KEY"],
+// 	[_objects, "note,Note,NOTE"],
 
 
-	// Misc
-	[_inventoryTable, "inventoryTable,invTable"],
-	[_poof, "poof,Poof,POOF"],
-	[_oops, "oops,Oops,OOPS"]
-];
+// 	// Misc
+// 	[_inventoryTable, "inventoryTable,invTable"],
+// 	[_poof, "poof,Poof,POOF"],
+// 	[_oops, "oops,Oops,OOPS"]
+// ];
 
 const commandList = commands.map((command) => {
 	let aliasArray = command[1].split(",")
