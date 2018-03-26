@@ -1,4 +1,4 @@
-import "./commands";
+import $ from "jquery";
 
 console.clear();
 const greeting = "\n\nWelcome, thanks for playing along...\n\n"
@@ -37,15 +37,15 @@ const rooms = {
 
 
 // ===========//Items//===========
-let grueRepellant = {
+let _grueRepellant = {
 	name : "grue repellant",
 	used : false,
 	defective : Math.random() < 0.03,
 	weight : 3,
-	description: "A 12oz can of premium grue repellant. This is the good stuff. Grues genuinely find it to be off-putting."
+	description: "A 12oz can of premium grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting."
 }
 
-let key = {
+let _key = {
 	name : "key",
 	used : false,
 	weight : 1,
@@ -56,8 +56,8 @@ let _note = {
 	name : "note",
 	used : false,
 	weight : 1,
-	text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Frünch Connexion...",
-	description: "A filthy note you picked up from the floor of a restroom. It is slightly damp.",
+	text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...",
+	description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp.",
 	read: () => {
 		console.p(`The note reads: ${this.text}`);
 		gameState.objectMode = false;
@@ -65,10 +65,10 @@ let _note = {
 	}
 }
 
-gameState.inventory.push(grueRepellant);
-gameState.inventory.push(key);
+gameState.inventory.push(_grueRepellant);
+gameState.inventory.push(_key);
 gameState.inventory.push(_note);
-rooms["3,3,3"].env.push(key);
+rooms["3,3,3"].env.push(_key);
 
 const _repellant = (command) => {
 	console.log("_repellant() called");
@@ -263,4 +263,4 @@ setTimeout(() => {
 	console.note("Type a command to play.");
 	}, 500);
 
-// console.log('grueRepellant.defective', grueRepellant.defective);
+// console.log('_grueRepellant.defective', _grueRepellant.defective);
