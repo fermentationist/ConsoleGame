@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 console.clear();
 const greeting = "\n\nWelcome, thanks for playing along...\n\n"
 
@@ -14,155 +12,26 @@ const gameState = {
 	},
 	turn : 0,
 	pendingAction : null,
-	env: []
-}
+	env: [],
 
-// To be called at successful completion of command
-const addToHistory = (commandName) => {
-	if (gameState.objectMode){
-		gameState.history.push(`${gameState.history.pop()} commandName`);
-		gameState.objectMode = false;
-	} else {
-		gameState.history.push(commandName);
-		turn ++;
+	addToHistory: function (commandName){
+		if (this.objectMode){
+			this.history.push(`${this.history.pop()} commandName`);
+			this.objectMode = false;
+		} else {
+			this.history.push(commandName);
+			this.turn ++;
+		}
+	},
+
+	addToInventory: function (itemArray){
+		itemArray.map((item) => {
+			this.inventory.push(item);
+		});
 	}
+
 }
 
-const rooms = {
-	"3,3,3": {
-		env: []
-	}
-}
-
-
-
-// ===========//Items//===========
-let _grueRepellant = {
-	name : "grue repellant",
-	used : false,
-	defective : Math.random() < 0.03,
-	weight : 3,
-	description: "A 12oz can of premium grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting."
-}
-
-let _key = {
-	name : "key",
-	used : false,
-	weight : 1,
-	description: "It is an old-timey key that appears to be made of tarnished brass"
-}
-
-let _note = {
-	name : "note",
-	used : false,
-	weight : 1,
-	text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...",
-	description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp.",
-	read: () => {
-		console.p(`The note reads: ${this.text}`);
-		gameState.objectMode = false;
-		addToHistory("read note");
-	}
-}
-
-gameState.inventory.push(_grueRepellant);
-gameState.inventory.push(_key);
-gameState.inventory.push(_note);
-rooms["3,3,3"].env.push(_key);
-
-const _repellant = (command) => {
-	console.log("_repellant() called");
-}
-
-
-
-// ===============================
-
-
-
-const _move = (direction) => {
-	switch (direction){
-		case "north":
-			gameState.position.x = gameState.position.x + 1;
-			break;
-		case "south":
-			gameState.position.x = gameState.position.x - 1;
-			break;
-		case "east":
-			gameState.position.y = gameState.position.y + 1;
-			break;
-		case "west":
-			gameState.position.y = gameState.position.y - 1;
-			break;
-		case "up":
-			gameState.position.z = gameState.position.z + 1;
-			break;
-		case "down":
-			gameState.position.z = gameState.position.z - 1;
-			break;
-	}
-	console.p(`moving ${direction}...`);
-	return gameState.position;
-}
-
-const _look = (command) => console.p(`Description of anything ${command}able in the vicinity...`);
-
-const _use = (command) => {
-	console.p(`What would you like to use?`);
-	gameState.objectMode = true;
-}
-
-const _take = (command) => {
-	console.p(`What is it that you'd like to ${command}?`);
-	gameState.objectMode = true;
-}
-
-const _READ = (object) => {
-	if (Object.keys(object).includes("text")){
-		console.p(`The text on ${object.name} says: ${object.text}.`);
-	} else {
-		console.p(`There is no text to read on the ${object.name}`)
-	}
-	gameState.objectMode = false;
-	gameState.pendingAction = null;
-}
-
-const _read = (command) => {
-	if (gameState.objectMode){
-		return console.p("Invalid command. Please try again.")
-	}
-	console.p(`What is it that you'd like to ${command}?`);
-	gameState.objectMode = true;
-	gameState.pendingAction = "read";
-}
-
-const _inventory = (command) => console.note(gameState.inventory.map((item) => `\n${item.name}`));
-
-const _inventoryTable = (command) => console.table(gameState.inventory);
-
-const _objects = (command) => {
-	if (!gameState.objectMode){
-		return console.p("Invalid command");
-	}
-	// console.p(`_objects(${command}) called.`)
-	if (!isAvailable(command)){
-		return console.warning("That object is unavailable. Try again.");
-	}
-	const action = gameState.pendingAction;
-	return eval(`_${command}.${action}()`);
-
-	//return console.note(`Now we need to invoke ${action} on ${command}`)
-}
-
-const _poof = () => {
-	$("body").empty().css("background-color", "black");
-	return console.papyracy(">poof<");
-}
-
-const _oops = () => {
-	location.reload();
-	return "reloading...";
-}
 
 const isAvailable = (objectName) => {
 	const loc = `${gameState.position.x},${gameState.position.y},${gameState.position.z}`
@@ -180,11 +49,6 @@ const createCommandAliases = (command, aliases) => {
 	});
 }
 
-const initCompoundAliases = (command, aliases) => {
-	aliases.split(",").map(alias => {
-		Object.defineProperty(window, `/^${alias.trim()}\s.*/`, {get: command});
-	})
-}
 
 const initCommands = (commandsArray) => {
 	let interpreterFunction, aliases;
