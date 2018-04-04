@@ -99,7 +99,6 @@ const commands = (() => {
 		
 	}
 
-
 	// Command aliases
 	const aliases = [
 		// Move
@@ -128,11 +127,10 @@ const commands = (() => {
 		// Misc
 		[_inventoryTable, "inventoryTable,invTable"],
 		[_poof, "poof,Poof,POOF"],
-		[_oops, "oops,Oops,OOPS"],
+		[_exit, "oops,Oops,OOPS"],
 		[_exit, "exit,EXIT,Exit,x,X"],
 		[_exit, "restart,RESTART,Restart"]
 	];
 
 	return aliases;
 })();
-
