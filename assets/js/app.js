@@ -1,14 +1,14 @@
 console.clear();
-const greeting = "\n\nWelcome, thanks for playing along...\n\n"
+const greeting = "\n\nWelcome, thanks for playing!\n\n"
 
 const gameState = {
 	objectMode : false,
 	inventory : [],
 	history : [],
 	position : {
-		x: 0,
-		y: 0,
-		z: 0
+		x: 6,
+		y: 6,
+		z: 3
 	},
 	turn : 0,
 	pendingAction : null,
@@ -28,10 +28,40 @@ const gameState = {
 		itemArray.map((item) => {
 			this.inventory.push(item);
 		});
-	}
+	},
 
 }
 
+const formatList = (itemArray, disjunction = false) => {
+	const length = itemArray.length;
+	const conjunction = disjunction ? "or" : "and";
+	if (length === 1) {
+		return itemArray[0];
+	} 
+	if (length === 2) {
+		return `${itemArray[0]} ${conjunction} ${itemArray[1]}`
+	}
+	return `${itemArray[0]}, ${formatList(itemArray.slice(1), disjunction)}`
+}
+
+const possibleMoves = (z, y, x) => {
+	const n = ["north", maps[z][y - 1][x] !== "*"];
+	const s = ["south", maps[z][y + 1][x] !== "*"];
+	const e = ["east", maps[z][y][x + 1] !== "*"];
+	const w = ["west", maps[z][y][x - 1] !== "*"];
+	const u = ["up", maps[z + 1][y][x] !== "*"];
+	const d = ["down", maps[z - 1][y][x] !== "*"];
+	let options = [n, s, e, w, u, d];
+	let result = [];
+	options.map((direction) => {
+		direction[1] ? result.push(direction[0]):null;
+	});
+	return result;
+}
+
+const movementOptions = () => {
+	return formatList(possibleMoves(gameState.position.z, gameState.position.y, gameState.position.x), true);
+}
 
 const isAvailable = (objectName) => {
 	const loc = `${gameState.position.x},${gameState.position.y},${gameState.position.z}`
@@ -76,39 +106,6 @@ const bindCommandToFunction = (interpreterFunction, commandAliases) => {
 }
 
 
-
-
-// console.warning("initializing commands...\n\n");
-// console.table(commands);
-
-// const commands = [
-// 	// Move
-// 	[_move, "north,North,NORTH,n,N"],
-// 	[_move, "south,South,SOUTH,s,S"],
-// 	[_move, "east,East,EAST,e,E"],
-// 	[_move, "west,West,WEST,w,W"],
-// 	[_move, "up,Up,UP,u,U"],
-// 	[_move, "down,Down,DOWN,d,D"],
-
-// 	// Actions
-// 	[_look, "look,Look,LOOK,l,L"],
-// 	[_inventory, "inventory,Inventory,INVENTORY,i,I"],
-// 	[_use, "use,Use,USE"],
-// 	[_take, "take,Take,TAKE,t,T"],
-// 	[_read, "read,Read,READ"],
-
-// 	// Objects
-// 	[_objects, "repellant,Repellant,REPELLANT,grue_repellant,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
-// 	[_objects, "key,Key,KEY"],
-// 	[_objects, "note,Note,NOTE"],
-
-
-// 	// Misc
-// 	[_inventoryTable, "inventoryTable,invTable"],
-// 	[_poof, "poof,Poof,POOF"],
-// 	[_oops, "oops,Oops,OOPS"]
-// ];
-
 const commandList = commands.map((command) => {
 	let aliasArray = command[1].split(",")
 	let name = aliasArray.shift().trim().toLowerCase();
@@ -127,4 +124,3 @@ setTimeout(() => {
 	console.note("Type a command to play.");
 	}, 500);
 
-// console.log('_grueRepellant.defective', _grueRepellant.defective);
