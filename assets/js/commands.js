@@ -1,9 +1,14 @@
+// IIFE returns commands and related aliases, with the functions they will be bound to
 const commands = (() => {
 	// Command functions
+
+	// Reload window (and game)
 	const _exit = () => {
-		_oops();
+		location.reload();
+		return "reloading...";
 	}
 
+	// Change player's location on the map, given a direction
 	const _move = (direction) => {
 		let newPosition = {
 			x: gameState.position.x,
@@ -30,10 +35,11 @@ const commands = (() => {
 				newPosition.z = newPosition.z - 1;
 				break;
 		}
-		console.log(newPosition);
+		// Exit function if movement in given direction is not possible
 		if (maps[newPosition.z][newPosition.y][newPosition.x] === "*"){
 			return console.p("You can't go that direction");
 		}
+		// If movement in direction is possible, update player position
 		console.p(`You walk ${direction}...`);
 		gameState.position = {
 			x: newPosition.x,
@@ -44,30 +50,38 @@ const commands = (() => {
 		return maps[gameState.position.z][gameState.position.y][gameState.position.x];
 	}
 
+	// Describe environment and movement options in current location
 	const _look = (command) => {
 		console.p(`You can go ${movementOptions()}`);
 		return maps[gameState.position.z][gameState.position.y][gameState.position.x];
 	}
 
+	// Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.
 	const _act_upon = (command) => {
 		console.p(`What is it you would like to ${command}?`);
 		gameState.objectMode = true;
 		gameState.pendingAction = command;
 	}
 
+	// Displays items in the player's inventory.
 	const _inventory = (command) => console.note(gameState.inventory.map((item) => `\n${item.name}`));
 
+	// Displays inventory as a table.
 	const _inventoryTable = (command) => console.table(gameState.inventory);
 
-	const _objects = (command) => {
+	// Handles commands that are object names.
+	const _objects = (object) => {
+		// Exit function with error message if previous command does not require an object
 		if (!gameState.objectMode){
 			return console.p("Invalid command");
 		}
+		// Exit function with error message if object is not available in player inventory or current location.
 		if (!isAvailable(command)){
 			return console.warning("That object is unavailable. Try again.");
 		}
 		const action = gameState.pendingAction;
-		return eval(`_${command}.${action}()`);
+		// invoke the object's method that corresponds to the selected action
+		return eval(`_${object}.${action}()`);
 	}
 
 	const _poof = () => {
@@ -75,11 +89,7 @@ const commands = (() => {
 		return console.papyracy(">poof<");
 	}
 
-	const _oops = () => {
-		location.reload();
-		return "reloading...";
-	}
-
+	// Checks if object is available to be acted on, (i.e. if it is present in player's inventory or current location) and returns boolean.
 	const isAvailable = (objectName) => {
 		const loc = `${gameState.position.x},${gameState.position.y},${gameState.position.z}`
 		const inv = (gameState.inventory.map((item) => item.name)).includes(objectName);
