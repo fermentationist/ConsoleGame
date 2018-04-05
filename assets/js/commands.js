@@ -76,27 +76,17 @@ const commands = (() => {
 			return console.p("Invalid command");
 		}
 		// Exit function with error message if object is not available in player inventory or current location.
-		if (!isAvailable(command)){
+		if (!isAvailable(object)){
 			return console.warning("That object is unavailable. Try again.");
 		}
 		const action = gameState.pendingAction;
 		// invoke the object's method that corresponds to the selected action
-		return eval(`_${object}.${action}()`);
+		return eval(`Items._${object}.${action}()`);
 	}
 
 	const _poof = () => {
 		$("body").empty().css("background-color", "black");
 		return console.papyracy(">poof<");
-	}
-
-	// Checks if object is available to be acted on, (i.e. if it is present in player's inventory or current location) and returns boolean.
-	const isAvailable = (objectName) => {
-		const loc = `${gameState.position.x},${gameState.position.y},${gameState.position.z}`
-		const inv = (gameState.inventory.map((item) => item.name)).includes(objectName);
-		const env = (gameState.env).includes(objectName);
-		console.log('inv || env', inv || env);
-		return inv || env;
-		
 	}
 
 	// Command aliases
@@ -117,12 +107,15 @@ const commands = (() => {
 		[_act_upon, "read,Read,READ"],
 		[_act_upon, "examine,Examine,EXAMINE"],
 		[_act_upon, "drink,Drink,DRINK"],
+		[_act_upon, "drop,Drop,DROP"],
 
 		// Objects
 		[_objects, "repellant,Repellant,REPELLANT,grue_repellant,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
 		[_objects, "key,Key,KEY"],
 		[_objects, "note,Note,NOTE"],
 		[_objects, "tea,Tea,TEA,no_tea,No_tea,No_Tea,NO_TEA"],
+
+
 
 		// Misc
 		[_inventoryTable, "inventoryTable,invTable"],

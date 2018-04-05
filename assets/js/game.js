@@ -4,8 +4,8 @@ const gameState = {
 	inventory : [],
 	history : [],
 	position : {
-		x: 6,
-		y: 6,
+		x: 4,
+		y: 2,
 		z: 3
 	},
 	turn : 0,
@@ -28,6 +28,10 @@ const gameState = {
 		itemArray.map((item) => {
 			this.inventory.push(item);
 		});
+	},
+
+	removeFromInventory: function (item){
+		this.inventory.splice(this.inventory.indexOf(item), 1);
 	}
 
 }
@@ -84,8 +88,9 @@ const initCommands = (commandsArray) => {
 	});
 }
 
-// This function is what makes this console game possible. It creates a global variable with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the variable. This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
-// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The command will be named after the first name in the string of aliases, converted to lowercase.
+// This function is what makes this console game possible. It creates a global variable with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the variable(s). This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
+// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his or her console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
+// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases, converted to lowercase.
 const bindCommandToFunction = (interpreterFunction, commandAliases) => {
 	const aliasArray = commandAliases.split(",");
 	const commandName = aliasArray[0].toLowerCase();
@@ -94,7 +99,6 @@ const bindCommandToFunction = (interpreterFunction, commandAliases) => {
 		Object.defineProperty(window, alias.trim(), {get: interpretCmd});
 	});
 }
-
 
 
 // Creating commands from array returned by commands.js...
