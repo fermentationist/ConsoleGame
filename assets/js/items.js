@@ -8,6 +8,7 @@ const Items = (function (){
 		description: `There is nothing particularly interesting about this ${this.name}.`,
 		takeable: true,
 		take: function (){
+			gameState.objectMode = false;
 			if(this.takeable){
 				gameState.addToInventory([this]);
 				return console.p(`You pick up the ${this.name}`);
@@ -16,6 +17,7 @@ const Items = (function (){
 			}
 		},
 		drop: function (){
+			gameState.objectMode = false;
 			if (gameState.inventory.includes(this)){
 				gameState.removeFromInventory(this);
 				const location = maps[gameState.position.z][gameState.position.y][gameState.position.x];
@@ -24,6 +26,10 @@ const Items = (function (){
 			} else {
 				return console.p("You don't have that.");
 			}
+		},
+		examine: function (){
+				console.p(this.description);
+				gameState.objectMode = false;
 		}
 	}
 
@@ -31,16 +37,13 @@ const Items = (function (){
 
 		_grueRepellant: {
 			name : "grue repellant",
-			used : false,
 			defective : Math.random() < 0.03,
 			weight : 3,
-			description: "A 12oz can of premium grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.",
-			takeable: true
+			description: "A 12oz can of premium grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting."
 		},
 
 		_chain: {
 			name : "chain",
-			used : false,
 			weight : 0,
 			description: "It is an old-timey key that appears to be made of tarnished brass",
 			takeable: false
@@ -48,29 +51,21 @@ const Items = (function (){
 
 		_key: {
 			name : "key",
-			used : false,
-			weight : 1,
-			description: "It is an old-timey key that appears to be made of tarnished brass",
-			takeable: true
+			description: "It is an old-timey key that appears to be made of tarnished brass"
 		},
 
 		_glove: {
 			name : "glove",
-			used : false,
-			weight : 1,
 			description: "The glove is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.",
 			take: function (){
 				console.p("When you pick up the glove, a small key falls out, onto the closet floor.");
 				mapKey["$"].env2.push(_key);
 				gameState.addToInventory(this);
-			},
-			takeable: true
+			}
 		},
 
 		_note: {
 			name : "note",
-			used : false,
-			weight : 1,
 			text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...",
 			description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp.",
 			read: function (){
@@ -87,7 +82,6 @@ const Items = (function (){
 
 		_tea: {
 			name: "no tea",
-			used: false,
 			weight: 0,
 			description: "You do not have any tea.",
 			drink: function (){
