@@ -99,6 +99,10 @@ const inInventory = (itemName) => {
 	return objectFromEnvironment;
 }
 
+const itemsInEnvironment = () => {
+	return formatList(gameState.env.map((item) => `${item.article} ${item.name}`));
+}
+
 // Applies bindCommandToFunction() to an array of all of the commands to be created.
 const initCommands = (commandsArray) => {
 	let interpreterFunction, aliases;

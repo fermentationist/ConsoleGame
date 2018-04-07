@@ -21,7 +21,7 @@ const Items = (function (){
 		},
 		drop: function (){
 			gameState.objectMode = false;
-			if (gameState.inventory.includes(this)){
+			if (inInventory(this.name)){
 				gameState.removeFromInventory(this);
 				mapKey[gameState.currentCell].env.push(this);
 				return console.p(`${this.name} dropped.`);
