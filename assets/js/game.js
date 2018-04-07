@@ -76,23 +76,23 @@ const movementOptions = () => {
 }
 
 // 
-const isAvailable = (itemName) => {
-	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);
-	const objectFromInventory = invIndex !== -1 && gameState.inventory[invIndex];
-	const environment = mapKey[gameState.currentCell].env;
-	const envIndex = environment.map((item) => item.name).indexOf(itemName);
-	const objectFromEnvironment = envIndex !== -1 && mapKey[`${gameState.currentCell}`].env[envIndex];
-	console.log('objectFromEnvironment || objectFromInventory', objectFromEnvironment, "||", objectFromInventory)
-	return objectFromEnvironment || objectFromInventory;
-}
+// const isAvailable = (itemName) => {
+// 	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);
+// 	const objectFromInventory = invIndex !== -1 && gameState.inventory[invIndex];
+// 	const environment = mapKey[gameState.currentCell].env;
+// 	const envIndex = environment.map((item) => item.name).indexOf(itemName);
+// 	const objectFromEnvironment = envIndex !== -1 && mapKey[`${gameState.currentCell}`].env[envIndex];
+// 	console.log('objectFromEnvironment || objectFromInventory', objectFromEnvironment, "||", objectFromInventory)
+// 	return objectFromEnvironment || objectFromInventory;
+// }
 
-const inEnvironment = (itemName) => {
+const inInventory = (itemName) => {
 	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);
 	const objectFromInventory = invIndex !== -1 && gameState.inventory[invIndex];
 	return objectFromInventory;
 }
 
-const inInventory = (itemName) => {
+const inEnvironment = (itemName) => {
 	const environment = mapKey[gameState.currentCell].env;
 	const envIndex = environment.map((item) => item.name).indexOf(itemName);
 	const objectFromEnvironment = envIndex !== -1 && mapKey[`${gameState.currentCell}`].env[envIndex];
@@ -100,7 +100,7 @@ const inInventory = (itemName) => {
 }
 
 const itemsInEnvironment = () => {
-	return formatList(gameState.env.map((item) => `${item.article} ${item.name}`));
+	return gameState.env.length && formatList(gameState.env.map((item) => `${item.article} ${item.name}`));
 }
 
 // Applies bindCommandToFunction() to an array of all of the commands to be created.
