@@ -8,9 +8,14 @@ const gameState = {
 		y: 2,
 		z: 3
 	},
+	get currentCell (){ 
+		return maps[this.position.z][this.position.y][this.position.x]
+	},
 	turn : 0,
 	pendingAction : null,
-	env: [],
+	get env (){
+		return mapKey[this.currentCell].env;
+	},
 
 	// Method adds executed command to history and increments turn counter.
 	addToHistory: function (commandName){
@@ -70,13 +75,28 @@ const movementOptions = () => {
 	return formatList(possibleMoves(gameState.position.z, gameState.position.y, gameState.position.x), true);
 }
 
-// Checks if object is available to be acted on, (i.e. if it is present in player's inventory or current location) and returns boolean.
-const isAvailable = (objectName) => {
-	const loc = `${gameState.position.x},${gameState.position.y},${gameState.position.z}`
-	const inv = (gameState.inventory.map((item) => item.name)).includes(objectName);
-	const env = (gameState.env).includes(objectName);
-	console.log('inv || env', inv || env);
-	return inv || env;
+// 
+const isAvailable = (itemName) => {
+	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);
+	const objectFromInventory = invIndex !== -1 && gameState.inventory[invIndex];
+	const environment = mapKey[gameState.currentCell].env;
+	const envIndex = environment.map((item) => item.name).indexOf(itemName);
+	const objectFromEnvironment = envIndex !== -1 && mapKey[`${gameState.currentCell}`].env[envIndex];
+	console.log('objectFromEnvironment || objectFromInventory', objectFromEnvironment, "||", objectFromInventory)
+	return objectFromEnvironment || objectFromInventory;
+}
+
+const inEnvironment = (itemName) => {
+	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);
+	const objectFromInventory = invIndex !== -1 && gameState.inventory[invIndex];
+	return objectFromInventory;
+}
+
+const inInventory = (itemName) => {
+	const environment = mapKey[gameState.currentCell].env;
+	const envIndex = environment.map((item) => item.name).indexOf(itemName);
+	const objectFromEnvironment = envIndex !== -1 && mapKey[`${gameState.currentCell}`].env[envIndex];
+	return objectFromEnvironment;
 }
 
 // Applies bindCommandToFunction() to an array of all of the commands to be created.
