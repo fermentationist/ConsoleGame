@@ -88,7 +88,7 @@ const Items = (function (){
 
 		_glove: {
 			name : "glove",
-			description: "The glove is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.",
+			description: "It is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.",
 			contents:[],
 			examine: function (){
 				gameState.objectMode = false;
@@ -104,7 +104,7 @@ const Items = (function (){
 		_note: {
 			name : "note",
 			text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...",
-			description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp.",
+			description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible.",
 			examine: function (){
 				console.p(this.description);
 				gameState.objectMode = false;

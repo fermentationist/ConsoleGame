@@ -85,7 +85,6 @@ const Commands = (() => {
 			return console.p(`${itemName} is not available`);
 		}
 		const action = gameState.pendingAction;
-		console.log('item', item);
 		// invoke the item's method that corresponds to the selected action
 		return item[action]();
 	}

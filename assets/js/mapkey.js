@@ -28,6 +28,10 @@ const mapKey = (function (){
 	}
 
 	const mapkey = {
+		"0": {
+
+		},
+		
 		"#": {
 			description: "You are on a worn oak staircase connecting the first and second floors of the old abandoned house.",
 			visibleEnv: ["key", "note"]
@@ -39,13 +43,18 @@ const mapKey = (function (){
 
 		"$": {
 			hideSecrets: true,
-			des1: "The small closet is dark, although you can see a small chain hanging in front of you.",
-			des2 : "The inside of this small broom closet is devoid of brooms, or anything else, for that matter, with the exception of a single, orphaned work glove which occupies a dusty corner.",
-			get description(){
-				return this.hideSecrets ? this.des1 : this.des2;
-			},
 			hiddenEnv: ["glove"],
-			visibleEnv: ["chain"]
+			visibleEnv: ["chain"],
+			des1: "The small closet is dark, although you can see a small chain hanging in front of you.",
+			get des2 (){
+				const hidden = this.hiddenEnv;
+				const text = "The inside of this small broom closet is devoid of brooms, or anything else, for that matter";
+				const plural = hidden.length > 1 ? "y" : "ies";
+				return text + (hidden.length ? `, with the exception of ${formatList(hidden.map(item => `${item.article} ${item.name}`))} which occup${plural} a dusty corner.`: ".");
+			},
+			get description (){
+				return this.hideSecrets ? this.des1 : this.des2;
+			}
 		}
 	}
 
