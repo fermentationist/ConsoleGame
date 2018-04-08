@@ -117,7 +117,7 @@ const Items = (function (){
 
 	const stockDungeon = () => {
 		Object.keys(mapKey).map((key) => {
-			let roomEnv = mapKey[key].hiddenEnv;
+			let roomEnv = mapKey[key].darkEnv;
 			let newEnv = [];
 			if (roomEnv.length){
 				roomEnv.map((item) => {
@@ -133,5 +133,5 @@ const Items = (function (){
 
 Items.stockDungeon();
 
-gameState.addToInventory([Items._grue_repellant, Items._key, Items._note, Items._no_tea]);
+// gameState.addToInventory([Items._grue_repellant, Items._key, Items._note, Items._no_tea]);
 

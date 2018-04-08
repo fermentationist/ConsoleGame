@@ -1,10 +1,13 @@
 const mapKey = (function (){
 	const MapCell = {
-		description: "You find yourself in a non-descript, liminal, non-place– a locational limbo. That, or it is so boring that you have already forgotten what it looks like. Either way, nothing of interest is likely to ever happen here. ",
+		dark: false,
+		description: "You find yourself in a non-descript, liminal, non-place– a locational limbo. That, or it is so boring that you have already forgotten what it looks like. Either way, nothing of interest is likely to ever happen here.",
 		hiddenEnv: [],
+		darkEnv: ["no_tea"],
 		get env (){
 			if (this.dark){
-				return [];
+				console.log("this.dark = true");
+				return this.darkEnv;
 			}
 			return this.hiddenEnv;
 		},
@@ -29,7 +32,7 @@ const mapKey = (function (){
 		},
 
 		"@": {
-			description: "You are standing on a stone staircase leading to the basement. A faint cold draft greets you from below."
+			description: "You are standing on a stone staircase leading to the basement. A faint cold draft greets you from below.",
 		},
 
 		"$": {
@@ -40,12 +43,7 @@ const mapKey = (function (){
 				return this.dark ? this.des1 : this.des2;
 			},
 			hiddenEnv: ["chain", "glove"],
-			get env (){
-				if (this.dark){
-					return ["chain"];
-				}
-				return this.hiddenEnv;
-			}
+			darkEnv: ["chain"]
 		}
 	}
 
