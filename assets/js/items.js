@@ -1,7 +1,6 @@
 
 // ===========//Items//===========
 const Items = (function (){
-
 	const Item = {
 		name : "Item",
 		used : false,
@@ -32,13 +31,20 @@ const Items = (function (){
 		examine: function (){
 				console.p(this.description);
 				gameState.objectMode = false;
+		},
+		read: function (){
+			gameState.objectMode = false;
+			if (this.text){
+				return console.p(`The text on the ${this.name} reads: \n${this.text}`);
+			}
+			return console.p(`There is nothing to read.`);
 		}
 	}
 
 	const items = {
-		stockDungeon: function (){
+		stockDungeon: function (subEnvName){
 			Object.keys(mapKey).map((key) => {
-				let roomEnv = mapKey[key].env;
+				let roomEnv = mapKey[key][subEnvName];
 				let newEnv = [];
 				if (roomEnv.length){
 					roomEnv.map((item) => {
@@ -46,7 +52,7 @@ const Items = (function (){
 						itemObj ? newEnv.push(itemObj) : console.log(`Cannot stock ${item}. No such item.`);;
 					});
 				}
-				mapKey[key].env = newEnv;
+				mapKey[key][subEnvName] = newEnv;
 			});
 		},
 
@@ -66,7 +72,13 @@ const Items = (function (){
 			name : "chain",
 			weight : 0,
 			description: "The chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \"pull\" it...",
-			takeable: false
+			takeable: false,
+			pull: function (){
+				let dark = mapKey[gameState.currentCell].hideSecrets;
+				dark ? console.p("An overhead lightbulb flickers on, faintly illuminating the room.") : console.p("The lightbulb is extinguished.");
+				mapKey[gameState.currentCell].hideSecrets = !dark;
+				return describeSurroundings();
+			}
 		},
 
 		_key: {
@@ -77,10 +89,15 @@ const Items = (function (){
 		_glove: {
 			name : "glove",
 			description: "The glove is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.",
-			take: function (){
-				console.p("When you pick up the glove, a small key falls out, onto the closet floor.");
-				mapKey["$"].env2.push(_key);
-				gameState.addToInventory(this);
+			contents:[],
+			examine: function (){
+				gameState.objectMode = false;
+				if (this.contents.length){
+					const hiddenItem = this.contents.pop();
+					console.p(`As you examine the glove, a ${hiddenItem.name} falls out, onto the closet floor.`);
+					return mapKey[gameState.currentCell].addToEnv(hiddenItem.name);
+				} 
+				return this.description;
 			}
 		},
 
@@ -88,11 +105,6 @@ const Items = (function (){
 			name : "note",
 			text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...",
 			description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp.",
-			read: function (){
-				console.p(`The note reads: ${this.text}`);
-				gameState.objectMode = false;
-				gameState.addToHistory("read note");
-			},
 			examine: function (){
 				console.p(this.description);
 				gameState.objectMode = false;
@@ -115,23 +127,14 @@ const Items = (function (){
 		Object.setPrototypeOf(items[itemInstance], Item);
 	});
 
-	const stockDungeon = () => {
-		Object.keys(mapKey).map((key) => {
-			let roomEnv = mapKey[key].darkEnv;
-			let newEnv = [];
-			if (roomEnv.length){
-				roomEnv.map((item) => {
-					let itemObj = typeof item === "string" ? items[`_${item}`] : item;
-					itemObj ? newEnv.push(itemObj) : console.log(`Cannot stock ${item}. No such item.`);;
-				});
-			}
-			mapKey[key].env = newEnv;
-		});
-	}
 	return items;
+
 })();
 
-Items.stockDungeon();
+Items.stockDungeon("hiddenEnv");
+Items.stockDungeon("visibleEnv");
 
-// gameState.addToInventory([Items._grue_repellant, Items._key, Items._note, Items._no_tea]);
+Items._glove.contents.push(Items._key);
+
+gameState.addToInventory([Items._grue_repellant, Items._no_tea]);
 

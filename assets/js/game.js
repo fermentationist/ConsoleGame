@@ -75,6 +75,12 @@ const movementOptions = () => {
 	return formatList(possibleMoves(gameState.position.z, gameState.position.y, gameState.position.x), true);
 }
 
+const describeSurroundings = () => {
+		const description = mapKey[gameState.currentCell].description;
+		const items = itemsInEnvironment() ? `You see ${itemsInEnvironment()} here.` : "";
+		const moveOptions = `You can go ${movementOptions()}.`;
+		return console.p(description + "\n" + moveOptions + "\n" + items);
+}	
 // 
 // const isAvailable = (itemName) => {
 // 	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);
@@ -95,7 +101,7 @@ const inInventory = (itemName) => {
 const inEnvironment = (itemName) => {
 	const environment = mapKey[gameState.currentCell].env;
 	const envIndex = environment.map((item) => item.name).indexOf(itemName);
-	const objectFromEnvironment = envIndex !== -1 && mapKey[`${gameState.currentCell}`].env[envIndex];
+	const objectFromEnvironment = (envIndex !== -1) && mapKey[`${gameState.currentCell}`].env[envIndex];
 	return objectFromEnvironment;
 }
 
@@ -126,15 +132,16 @@ const bindCommandToFunction = (interpreterFunction, commandAliases) => {
 
 
 // Creating commands from array returned by commands.js...
-initCommands(commands);
+initCommands(Commands);
 
 // Greeting to be displayed at the beginning of the game
 const greeting = "\n\nWelcome, thanks for playing!\n\n"
 
 // Wait for page to load, and display greeting.
 setTimeout(() => {
-	console.clear();
+	// console.clear();
 	console.h1(greeting);
 	console.note("Type a command to play.");
+	describeSurroundings();
 	}, 500);
 

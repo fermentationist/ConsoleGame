@@ -1,5 +1,5 @@
 // IIFE returns commands and related aliases, with the functions they will be bound to
-const commands = (() => {
+const Commands = (() => {
 	// Command functions
 
 	// Reload window (and game)
@@ -114,6 +114,7 @@ const commands = (() => {
 		[_act_upon, "examine,Examine,EXAMINE"],
 		[_act_upon, "drink,Drink,DRINK"],
 		[_act_upon, "drop,Drop,DROP"],
+		[_act_upon, "pull,Pull,PULL"],
 
 		// Objects
 		[_items, "grue_repellant,repellant,Repellant,REPELLANT,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
@@ -121,6 +122,8 @@ const commands = (() => {
 		[_items, "note,Note,NOTE"],
 		[_items, "no_tea,No_Tea,NO_TEA"],
 		[_items, "slug,Slug,SLUG"],
+		[_items, "chain,Chain,CHAIN"],
+		[_items, "glove,Glove,GLOVE"],
 
 
 
