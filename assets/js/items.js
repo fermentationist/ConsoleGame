@@ -58,10 +58,26 @@ const Items = (function (){
 
 		_grue_repellant: {
 			name : "grue_repellant",
-			defective : Math.random() < 0.03,
+			defective : 1,//Math.random() < 0.03,
 			weight : 3,
 			article: "some",
-			description: "A 12oz can of premium grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting."
+			description: "A 12oz can of premium aerosol grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.",
+			use: function () {
+				if (!inInventory(this.name)){
+					return inEnvironment(this.name) ? console.p("You will need to pick it up first.") : console.p("You don't see that here.");
+				} else if (this.used){
+					return console.p("Sorry, but it has already been used.");
+				} else if (this.defective) {
+					this.used = true;
+					return console.p("Nothing happens. This must be one of the Math.random() < 0.03 of grue_repellant cans that were programmed to be, I mean, that were accidentally manufactured defectively. Repeated attempts to coax repellant from the aerosol canister prove equally fruitless.");
+				} else {
+					this.used = true;
+					return console.p("A cloud of repellant hisses from the canister, temporarily obscuring your surroundings. By the time it clears, your head begins to throb, and you feel a dull, leaden taste coating your tongue. The edges of your eyes and nostrils feel sunburnt, and you there is also a burning sensation to accompany an unsteady buzzing in your ears. Although you are not a grue, you find it to be more than somewhat off-putting.");
+				}
+			},
+			spray: function () {
+				return this.use();
+			}
 		},
 
 		_slug: {

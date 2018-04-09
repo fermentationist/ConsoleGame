@@ -114,6 +114,7 @@ const Commands = (() => {
 		[_act_upon, "drink,Drink,DRINK"],
 		[_act_upon, "drop,Drop,DROP"],
 		[_act_upon, "pull,Pull,PULL"],
+		[_act_upon, "spray,Spray,SPRAY"],
 
 		// Objects
 		[_items, "grue_repellant,repellant,Repellant,REPELLANT,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
