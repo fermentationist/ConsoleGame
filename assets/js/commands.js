@@ -46,8 +46,7 @@ const Commands = (() => {
 			y: newPosition.y,
 			z: newPosition.z,
 		}
-		_look();
-		return maps[gameState.position.z][gameState.position.y][gameState.position.x];
+		return _look();
 	}
 
 	// Describe environment and movement options in current location

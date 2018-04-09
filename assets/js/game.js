@@ -81,16 +81,6 @@ const describeSurroundings = () => {
 		const moveOptions = `You can go ${movementOptions()}.`;
 		return console.p(description + "\n" + moveOptions + "\n" + items);
 }	
-// 
-// const isAvailable = (itemName) => {
-// 	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);
-// 	const objectFromInventory = invIndex !== -1 && gameState.inventory[invIndex];
-// 	const environment = mapKey[gameState.currentCell].env;
-// 	const envIndex = environment.map((item) => item.name).indexOf(itemName);
-// 	const objectFromEnvironment = envIndex !== -1 && mapKey[`${gameState.currentCell}`].env[envIndex];
-// 	console.log('objectFromEnvironment || objectFromInventory', objectFromEnvironment, "||", objectFromInventory)
-// 	return objectFromEnvironment || objectFromInventory;
-// }
 
 const inInventory = (itemName) => {
 	const invIndex = gameState.inventory.map((item) => item.name).indexOf(itemName);

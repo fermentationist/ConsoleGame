@@ -57,7 +57,7 @@ const Items = (function (){
 						itemObj ? newEnv.push(itemObj) : console.log(`Cannot stock ${item}. No such item.`);;
 					});
 				}
-				mapKey[key][subEnvName] = newEnv;
+				return mapKey[key][subEnvName] = newEnv;
 			});
 		},
 
