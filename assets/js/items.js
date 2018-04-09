@@ -29,8 +29,9 @@ const Items = (function (){
 			}
 		},
 		examine: function (){
-				console.p(this.description);
-				gameState.objectMode = false;
+			gameState.objectMode = false;
+			return console.p(this.description);
+				
 		},
 		read: function (){
 			gameState.objectMode = false;
@@ -38,6 +39,10 @@ const Items = (function (){
 				return console.p(`The text on the ${this.name} reads: \n${this.text}`);
 			}
 			return console.p(`There is nothing to read.`);
+		},
+		use: function (){
+			gameState.objectMode = false;
+			return console.p(`Try as you might, you cannot manage to use the ${this.name}`);
 		}
 	}
 
@@ -56,6 +61,13 @@ const Items = (function (){
 			});
 		},
 
+		_book: {
+			name: "book",
+			weight: 2,
+			article: "a",
+			description: "This dusty, leatherbound tome"
+		},
+
 		_grue_repellant: {
 			name : "grue_repellant",
 			defective : 1,//Math.random() < 0.03,
@@ -63,6 +75,7 @@ const Items = (function (){
 			article: "some",
 			description: "A 12oz can of premium aerosol grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.",
 			use: function () {
+				gameState.objectMode = false;
 				if (!inInventory(this.name)){
 					return inEnvironment(this.name) ? console.p("You will need to pick it up first.") : console.p("You don't see that here.");
 				} else if (this.used){
