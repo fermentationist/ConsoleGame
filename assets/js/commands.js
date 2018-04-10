@@ -51,9 +51,11 @@ const Commands = (() => {
 
 	// Describe environment and movement options in current location
 	const _look = (command) => {
+		const name = mapKey[gameState.currentCell].name;
 		const description = mapKey[gameState.currentCell].description;
 		const items = itemsInEnvironment() ? `You see ${itemsInEnvironment()} here.` : "";
 		const moveOptions = `You can go ${movementOptions()}.`;
+		console.title(name);
 		return console.p(description + "\n" + moveOptions + "\n" + items);
 	}
 
@@ -88,6 +90,21 @@ const Commands = (() => {
 		return item[action]();
 	}
 
+	// const _items = (itemName) => {
+	// 	// Exit function with error message if previous command does not require an object
+	// 	if (!gameState.objectMode){
+	// 		return console.p("Invalid command");
+	// 	}
+	// 	// Exit function with error message if item is not available in player inventory or current location.
+	// 	const item = inEnvironment(itemName) || inInventory(itemName);
+	// 	if (!item){
+	// 		return console.p(`${itemName} is not available`);
+	// 	}
+	// 	const action = gameState.pendingAction;
+	// 	// invoke the item's method that corresponds to the selected action
+	// 	return item[action]();
+	// }
+
 	const _poof = () => {
 		$("body").empty().css("background-color", "black");
 		return console.papyracy(">poof<");
@@ -114,6 +131,7 @@ const Commands = (() => {
 		[_act_upon, "drop,Drop,DROP"],
 		[_act_upon, "pull,Pull,PULL"],
 		[_act_upon, "spray,Spray,SPRAY"],
+		[_act_upon, "contemplate,Contemplate,CONTEMPLATE,ponder,Ponder,PONDER"],
 
 		// Objects
 		[_items, "grue_repellant,repellant,Repellant,REPELLANT,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
@@ -128,6 +146,7 @@ const Commands = (() => {
 
 		// Misc
 		[_inventoryTable, "inventoryTable,invTable"],
+		// [_all, "all,All,ALL"],
 		[_poof, "poof,Poof,POOF"],
 		[_exit, "oops,Oops,OOPS"],
 		[_exit, "exit,EXIT,Exit,x,X"],

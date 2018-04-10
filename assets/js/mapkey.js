@@ -1,5 +1,6 @@
 const mapKey = (function (){
 	const MapCell = {
+		name: "Nowhere",
 		hideSecrets: false,
 		description: "You find yourself in a non-descript, liminal, non-place– a locational limbo. That, or it is so boring that you have already forgotten what it looks like. Either way, nothing of interest is likely to ever happen here.",
 		hiddenEnv: [],
@@ -31,17 +32,20 @@ const mapKey = (function (){
 		"0": {
 
 		},
-		
+
 		"#": {
+			name: "Oak Staircase",
 			description: "You are on a worn oak staircase connecting the first and second floors of the old abandoned house.",
 			visibleEnv: ["key", "note"]
 		},
 
 		"@": {
+			name: "Stone Staircase",
 			description: "You are standing on a stone staircase leading to the basement. A faint cold draft greets you from below.",
 		},
 
 		"$": {
+			name: "Broom Closet",
 			hideSecrets: true,
 			hiddenEnv: ["glove"],
 			visibleEnv: ["chain"],

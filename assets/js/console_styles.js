@@ -6,7 +6,7 @@ const customConsole = (() => {
 	}
 
 	console.h1 = (message) => {
-		return customLog(message, "log", "200%", "pink", "bold", "normal", primaryFont);
+		return customLog(message, "log", "150%", "pink", "bold", "normal", primaryFont);
 	}
 
 	console.note = (message) => {
@@ -25,9 +25,17 @@ const customConsole = (() => {
 		return customLog(message, "log", "120%", "#32cd32", "normal", "normal", primaryFont);
 	}
 
+	console.title = (message) => {
+		return customLog(message, "log", "125%", "#32cd32", "bold", "normal", primaryFont);
+	}
+
 	console.groupTitle = (title) => {
 		return customLog(title, "group", "125%", "#75EA5B", "normal", "normal", primaryFont);
 	}
+
+	// console.strikethrough = function (message, logType = "log", size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", lineHeight = "1rem") {
+	// 	return console[logType](`%c${message}`, `font-size:${size};color:"red";text-decoration:"underline";font-family:"inherit";`);
+	// }
 
 })();
 

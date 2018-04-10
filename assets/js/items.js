@@ -103,10 +103,14 @@ const Items = (function (){
 			description: "The chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \"pull\" it...",
 			takeable: false,
 			pull: function (){
+				gameState.objectMode = false;
 				let dark = mapKey[gameState.currentCell].hideSecrets;
 				dark ? console.p("An overhead lightbulb flickers on, faintly illuminating the room.") : console.p("The lightbulb is extinguished.");
 				mapKey[gameState.currentCell].hideSecrets = !dark;
 				return describeSurroundings();
+			},
+			use: function (){
+				return this.pull();
 			}
 		},
 
@@ -123,7 +127,7 @@ const Items = (function (){
 				gameState.objectMode = false;
 				if (this.contents.length){
 					const hiddenItem = this.contents.pop();
-					console.p(`As you examine the glove, a ${hiddenItem.name} falls out, onto the closet floor.`);
+					console.p(`As you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);
 					return mapKey[gameState.currentCell].addToEnv(hiddenItem.name);
 				} 
 				return this.description;
@@ -133,20 +137,35 @@ const Items = (function (){
 		_note: {
 			name : "note",
 			text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...",
-			description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible.",
-			examine: function (){
-				console.p(this.description);
-				gameState.objectMode = false;
-				gameState.addToHistory("examine note");
-			}
+			description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
 
 		_no_tea: {
 			name: "no_tea",
 			weight: 0,
 			description: "You do not have any tea.",
+			methodCallcount: 0,
+			no_teaMethod: function (message){
+					this.methodCallcount ++;
+					gameState.objectMode = false;
+					return console.p(`${message} ${this.methodCallcount > 3 ? "Perhaps you should contemplate that for a moment..." : ""}`);
+			},
 			drink: function (){
-				console.p("You cannot very well drink no tea, can you?");
+				return this.no_teaMethod("How do you intend to drink no tea?");
+			},
+			drop: function (){
+				return this.no_teaMethod("You can't very well drop tea that you don't have.");
+			},
+			take: function (){
+				return this.no_teaMethod("No tea isn't the sort of thing you can take.");
+			},
+			examine: function (){
+				return this.no_teaMethod(this.description);
+			},
+			contemplate: function (){
+				if (this.methodCallcount > 3){
+					return console.h1("You fucking win, you winner, you!");
+				}
 			},
 			takeable: false
 		}

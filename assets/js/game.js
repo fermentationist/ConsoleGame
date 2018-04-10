@@ -76,9 +76,11 @@ const movementOptions = () => {
 }
 
 const describeSurroundings = () => {
+		const name = mapKey[gameState.currentCell].name;
 		const description = mapKey[gameState.currentCell].description;
 		const items = itemsInEnvironment() ? `You see ${itemsInEnvironment()} here.` : "";
 		const moveOptions = `You can go ${movementOptions()}.`;
+		console.title(name);
 		return console.p(description + "\n" + moveOptions + "\n" + items);
 }	
 
