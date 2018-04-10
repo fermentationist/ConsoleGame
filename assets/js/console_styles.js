@@ -2,8 +2,16 @@ const customConsole = (() => {
 	const primaryFont = "courier";
 
 	const customLog = function (message, logType = "log", size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", lineHeight = "1rem") {
-		return console[logType](`%c${message}`, `font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};`);
+		return console[logType](`%c${message}`, `font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};font-style:${style}`);
 	}
+
+	const inlineStyle = (styleProperty, styleValue, before, styled, after, logType = "log", size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", lineHeight = "1rem") => {
+	return console.log(
+		`%c${before}%c${styled}%c${after}`,
+		`font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};font-style:${style};`,
+		`font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};font-style:${style};${styleProperty}:${styleValue};`,
+		`font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};font-style:${style};`);
+}
 
 	console.h1 = (message) => {
 		return customLog(message, "log", "150%", "pink", "bold", "normal", primaryFont);
@@ -23,6 +31,10 @@ const customConsole = (() => {
 
 	console.p = (message) => {
 		return customLog(message, "log", "120%", "#32cd32", "normal", "normal", primaryFont);
+	}
+
+	console.italic = (before, italicized, after) => {
+		return inlineStyle("font-style", "italic", before, italicized, after, "log", "120%", "#32cd32", "normal", "normal", primaryFont);
 	}
 
 	console.title = (message) => {

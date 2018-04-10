@@ -147,8 +147,12 @@ const Items = (function (){
 			methodCallcount: 0,
 			no_teaMethod: function (message){
 					this.methodCallcount ++;
+					console.log('this.methodCallcount', this.methodCallcount);
 					gameState.objectMode = false;
-					return console.p(`${message} ${this.methodCallcount > 3 ? "Perhaps you should contemplate that for a moment..." : ""}`);
+					// return console.p(`${message} ${this.methodCallcount > 1 ? "Perhaps you should contemplate that for a moment..." : ""}`);
+					if (this.methodCallcount > 1){
+						console.italic("Perhaps you should take a moment to ", "contemplate", " that.")	
+					}
 			},
 			drink: function (){
 				return this.no_teaMethod("How do you intend to drink no tea?");
@@ -162,10 +166,15 @@ const Items = (function (){
 			examine: function (){
 				return this.no_teaMethod(this.description);
 			},
+			use: function (){
+				return this.no_teaMethod("Unsurprisingly, using the no tea has no effect.");
+			},
 			contemplate: function (){
-				if (this.methodCallcount > 3){
+				if (this.methodCallcount > 2){
+					console.p("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
 					return console.h1("You fucking win, you winner, you!");
 				}
+				return console.p("Let's not resort to that just yet!");
 			},
 			takeable: false
 		}
