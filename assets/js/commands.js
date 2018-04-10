@@ -59,9 +59,9 @@ const Commands = (() => {
 
 	// Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.
 	const _act_upon = (command) => {
-		console.p(`What is it you would like to ${command}?`);
 		gameState.objectMode = true;
 		gameState.pendingAction = command;
+		return console.p(`What is it you would like to ${command}?`);
 	}
 
 	// Displays items in the player's inventory.
