@@ -17,6 +17,10 @@ const customConsole = (() => {
 		return customLog(message, "log", "150%", "pink", "bold", "normal", primaryFont);
 	}
 
+	console.gameTitle = (message) => {
+		return customLog(message, "log", "50%", "pink", "bold", "normal", primaryFont, lineHeight=".5rem");
+	}
+
 	console.note = (message) => {
 		return customLog(message, "log", "100%", "gray", "inherit" , "italic", primaryFont);
 	}
@@ -35,6 +39,14 @@ const customConsole = (() => {
 
 	console.italic = (before, italicized, after) => {
 		return inlineStyle("font-style", "italic", before, italicized, after, "log", "120%", "#32cd32", "normal", "normal", primaryFont);
+	}
+
+	console.bold = (before, italicized, after) => {
+		return inlineStyle("font-weight", "bold", before, italicized, after, "log", "120%", "#32cd32", "normal", "normal", primaryFont);
+	}
+
+	console.color = (colorValue, before, italicized, after) => {
+		return inlineStyle("color", colorValue, before, italicized, after, "log", "120%", "#32cd32", "normal", "normal", primaryFont);
 	}
 
 	console.title = (message) => {

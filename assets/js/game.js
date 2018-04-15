@@ -1,37 +1,64 @@
 // gameState object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
-const gameState = {
+let gameState = {
 	objectMode : false,
+	saveMode: false,
 	inventory : [],
 	history : [],
+	turn : 0,
+	pendingAction : null,
 	position : {
 		x: 4,
 		y: 2,
 		z: 3
 	},
+
 	get currentCell (){ 
 		return maps[this.position.z][this.position.y][this.position.x]
 	},
-	turn : 0,
-	pendingAction : null,
+	
 	get env (){
 		return mapKey[this.currentCell].env;
 	},
 
 	// Method adds executed command to history and increments turn counter.
 	addToHistory: function (commandName){
-		if (this.objectMode){
-			this.history.push(`${this.history.pop()} commandName`);
-			this.objectMode = false;
+		if (false){//this.objectMode){
+			this.history.push(`${this.history.pop()} ${commandName}`);
 		} else {
 			this.history.push(commandName);
-			this.turn ++;
 		}
+	},
+
+	replayHistory: function (){
+		console.groupCollapsed("Game loaded.");
+		this.history.map((command) =>{
+			return eval(command);
+		});
+		return console.groupEnd();
+	},
+
+	resetGame: function (){
+		this.objectMode = false;
+		this.saveMode = false,
+		this.inventory = [],
+		this.history = [],
+		this.turn = 0,
+		this.pendingAction = null,
+		this.position = {
+				x: 4,
+				y: 2,
+				z: 3
+			}
+		return console.p("Resetting gameState...");
 	},
 
 	// Method adds item to player inventory
 	addToInventory: function (itemArray){
 		itemArray.map((item) => {
-			this.inventory.push(item);
+			if (item instanceof String){
+				return this.inventory.push(Items[`_${item}`]);
+			}
+			return this.inventory.push(item);
 		});
 	},
 
@@ -101,6 +128,32 @@ const itemsInEnvironment = () => {
 	return gameState.env.length && formatList(gameState.env.map((item) => `${item.article} ${item.name}`));
 }
 
+const saveGame = (saveSlotName) => {
+	console.p("Saving...");
+	gameState.saveMode = false;
+	const saveName = `slot${saveSlotName.slice(4)}`;
+	localStorage.setItem(`ConsoleGame.${saveName}`, gameState.history);
+}
+
+const loadGame = (loadSlotName) => {
+	const loadedHistory = null;
+}
+
+const turnDemon = (commandName, interpreterFunction) => {
+	if (gameState.saveMode){
+		return saveGame(commandName);
+	}
+	gameState.addToHistory(commandName);
+	gameState.turn ++;
+	console.p(`Turn: ${gameState.turn}`);
+	try {
+		return interpreterFunction(commandName);
+	}
+	catch (err){
+		return console.p("Invalid command. Please try again.");
+	}
+}
+
 // Applies bindCommandToFunction() to an array of all of the commands to be created.
 const initCommands = (commandsArray) => {
 	let interpreterFunction, aliases;
@@ -116,9 +169,11 @@ const initCommands = (commandsArray) => {
 const bindCommandToFunction = (interpreterFunction, commandAliases) => {
 	const aliasArray = commandAliases.split(",");
 	const commandName = aliasArray[0].toLowerCase();
-	const interpretCmd = interpreterFunction.bind(null, commandName);
+	const interpretCommand = turnDemon.bind(null, commandName, interpreterFunction);
+	// const interpretCmd = interpreterFunction.bind(null, interpreterDemon);
+	// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
 	aliasArray.map(alias => {
-		Object.defineProperty(window, alias.trim(), {get: interpretCmd});
+		Object.defineProperty(window, alias.trim(), {get: interpretCommand});
 	});
 }
 
@@ -131,7 +186,7 @@ const greeting = "\n\nWelcome, thanks for playing!\n\n"
 
 // Wait for page to load, and display greeting.
 setTimeout(() => {
-	// console.clear();
+	console.clear();
 	console.h1(greeting);
 	console.note("Type a command to play.");
 	describeSurroundings();

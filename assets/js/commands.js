@@ -90,6 +90,19 @@ const Commands = (() => {
 		return item[action]();
 	}
 
+	const _save = () => {
+		gameState.saveMode = true;
+		return console.p("To save your game, please type \"save\", immediately followed by a number, 0 through 9. For example: \"save8\", or \"save3\"...");
+	}
+
+	const _load = () => {
+		console.log(Object.keys(localStorage));
+	}
+
+	const _save_slot = (slotNumber) => {
+		return gameState.saveMode ? console.p(`Game saved to slot ${slotNumber}`) : saveGame(slotNumber);
+	}
+
 	// const _items = (itemName) => {
 	// 	// Exit function with error message if previous command does not require an object
 	// 	if (!gameState.objectMode){
@@ -124,7 +137,7 @@ const Commands = (() => {
 		[_look, "look,Look,LOOK,l,L"],
 		[_inventory, "inventory,Inventory,INVENTORY,i,I"],
 		[_act_upon, "use,Use,USE"],
-		[_act_upon, "take,Take,TAKE,t,T"],
+		[_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
 		[_act_upon, "read,Read,READ"],
 		[_act_upon, "examine,Examine,EXAMINE"],
 		[_act_upon, "drink,Drink,DRINK"],
@@ -147,6 +160,18 @@ const Commands = (() => {
 		// Misc
 		[_inventoryTable, "inventoryTable,invTable"],
 		// [_all, "all,All,ALL"],
+		[_save, "save","Save","SAVE"],
+		[_save_slot, "save0,Save0,SAVE0"],
+		[_save_slot, "save1,Save1,SAVE1"],
+		[_save_slot, "save2,Save2,SAVE2"],
+		[_save_slot, "save3,Save3,SAVE3"],
+		[_save_slot, "save4,Save4,SAVE4"],
+		[_save_slot, "save5,Save5,SAVE5"],
+		[_save_slot, "save6,Save6,SAVE6"],
+		[_save_slot, "save7,Save7,SAVE7"],
+		[_save_slot, "save8,Save8,SAVE8"],
+		[_save_slot, "save9,Save9,SAVE9"],
+		[_load, "load","Load","LOAD"],
 		[_poof, "poof,Poof,POOF"],
 		[_exit, "oops,Oops,OOPS"],
 		[_exit, "exit,EXIT,Exit,x,X"],
