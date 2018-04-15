@@ -3,4 +3,5 @@ ConsoleGame.sublime-project
 ConsoleGame.sublime-workspace
 assets/.DS_Store
 assets/js/.DS_Store
+assets/js/asciiChars.js
 
