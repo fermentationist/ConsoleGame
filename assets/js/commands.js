@@ -1,5 +1,5 @@
 // IIFE returns commands and related aliases, with the functions they will be bound to
-const Commands = (() => {
+const Commands = (game) => {
 	// Command functions
 
 	// Reload window (and game)
@@ -11,9 +11,9 @@ const Commands = (() => {
 	// Change player's location on the map, given a direction
 	const _move = (direction) => {
 		let newPosition = {
-			x: gameState.position.x,
-			y: gameState.position.y,
-			z: gameState.position.z
+			x: game.state.position.x,
+			y: game.state.position.y,
+			z: game.state.position.z
 		}
 		switch (direction){
 			case "north":
@@ -41,57 +41,77 @@ const Commands = (() => {
 		}
 		// If movement in direction is possible, update player position
 		console.p(`You walk ${direction}...`);
-		gameState.position = {
+		game.state.position = {
 			x: newPosition.x,
 			y: newPosition.y,
 			z: newPosition.z,
 		}
-		return _look();
+		return game.describeSurroundings();
 	}
 
 	// Describe environment and movement options in current location
 	const _look = (command) => {
-		const name = mapKey[gameState.currentCell].name;
-		const description = mapKey[gameState.currentCell].description;
-		const items = itemsInEnvironment() ? `You see ${itemsInEnvironment()} here.` : "";
-		const moveOptions = `You can go ${movementOptions()}.`;
-		console.title(name);
-		return console.p(description + "\n" + moveOptions + "\n" + items);
+		// const name = mapKey[game.state.currentCell].name;
+		// const description = mapKey[game.state.currentCell].description;
+		// const items = game.itemsInEnvironment() ? `You see ${game.itemsInEnvironment()} here.` : "";
+		// const moveOptions = `You can go ${game.movementOptions()}.`;
+		// console.title(name);
+		// return console.p(description + "\n" + moveOptions + "\n" + items);
+		return game.describeSurroundings();
 	}
 
 	// Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.
 	const _act_upon = (command) => {
-		gameState.objectMode = true;
-		gameState.pendingAction = command;
+		game.state.objectMode = true;
+		game.state.pendingAction = command;
 		return console.p(`What is it you would like to ${command}?`);
 	}
 
 	// Displays items in the player's inventory.
 	const _inventory = (command) => {
-		return console.note(gameState.inventory.map((item) => `\n${item.name}`));
+		let items = [];
+		game.state.inventory.map((item) => {
+			const arr = item.article ? [item.article, item.name] : ["", item.name]
+			console.log('arr', arr);
+			items.push(arr);
+			// return item.article ? `${item.article} ${item.name}` : `${item.name}`;
+		});
+		console.log('items', items);
+		// console.log(game.formatList(items).split(" "));
+		// console.p("You are carrying:");
+		// return game.state.inventory.map((item) => {
+		// 	console.color("cyan", `${item.article}`, ` ${item.name}`, ",")
+		// })
+		const segments = game.formatList(items);
+		console.log('segments', segments);
+		// console.log(["You are carrying"].concat(segments));
+		return console.inline(["You are carrying"].concat(segments), ["color:inherit", "color:inherit", "color:cyan", "color:inherit", "color:cyan"]);
 	}
 
 	// Displays inventory as a table.
-	const _inventoryTable = (command) => console.table(gameState.inventory);
+	const _inventoryTable = (command) => {
+		const [name, description]= game.state.inventory;
+		return console.table([name, description]);
+}
 
 	// Handles commands that are item names.
 	const _items = (itemName) => {
 		// Exit function with error message if previous command does not require an object
-		if (!gameState.objectMode){
+		if (!game.state.objectMode){
 			return console.p("Invalid command");
 		}
 		// Exit function with error message if item is not available in player inventory or current location.
-		const item = inEnvironment(itemName) || inInventory(itemName);
+		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
 		if (!item){
 			return console.p(`${itemName} is not available`);
 		}
-		const action = gameState.pendingAction;
+		const action = game.state.pendingAction;
 		// invoke the item's method that corresponds to the selected action
 		return item[action]();
 	}
 
 	const _save = () => {
-		gameState.saveMode = true;
+		game.state.saveMode = true;
 		return console.p("To save your game, please type \"save\", immediately followed by a number, 0 through 9. For example: \"save8\", or \"save3\"...");
 	}
 
@@ -100,23 +120,8 @@ const Commands = (() => {
 	}
 
 	const _save_slot = (slotNumber) => {
-		return gameState.saveMode ? console.p(`Game saved to slot ${slotNumber}`) : saveGame(slotNumber);
+		return game.state.saveMode ? console.p(`Game saved to slot ${slotNumber}`) : saveGame(slotNumber);
 	}
-
-	// const _items = (itemName) => {
-	// 	// Exit function with error message if previous command does not require an object
-	// 	if (!gameState.objectMode){
-	// 		return console.p("Invalid command");
-	// 	}
-	// 	// Exit function with error message if item is not available in player inventory or current location.
-	// 	const item = inEnvironment(itemName) || inInventory(itemName);
-	// 	if (!item){
-	// 		return console.p(`${itemName} is not available`);
-	// 	}
-	// 	const action = gameState.pendingAction;
-	// 	// invoke the item's method that corresponds to the selected action
-	// 	return item[action]();
-	// }
 
 	const _poof = () => {
 		$("body").empty().css("background-color", "black");
@@ -134,7 +139,7 @@ const Commands = (() => {
 		[_move, "down,Down,DOWN,d,D"],
 
 		// Actions
-		[_look, "look,Look,LOOK,l,L"],
+		[game.describeSurroundings, "look,Look,LOOK,l,L"],
 		[_inventory, "inventory,Inventory,INVENTORY,i,I"],
 		[_act_upon, "use,Use,USE"],
 		[_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
@@ -179,4 +184,4 @@ const Commands = (() => {
 	];
 
 	return aliases;
-})();
+};//)();

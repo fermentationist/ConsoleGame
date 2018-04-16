@@ -54,7 +54,7 @@ const mapKey = (function (){
 				const hidden = this.hiddenEnv;
 				const text = "The inside of this small broom closet is devoid of brooms, or anything else, for that matter";
 				const plural = hidden.length > 1 ? "y" : "ies";
-				return text + (hidden.length ? `, with the exception of ${formatList(hidden.map(item => `${item.article} ${item.name}`))} which occup${plural} a dusty corner.`: ".");
+				return text + (hidden.length ? `, with the exception of ${consoleGame.formatList(hidden.map(item => `${item.article} ${item.name}`))} which occup${plural} a dusty corner.`: ".");
 			},
 			get description (){
 				return this.hideSecrets ? this.des1 : this.des2;
