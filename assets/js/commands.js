@@ -3,7 +3,7 @@ const Commands = (game) => {
 	// Command functions
 
 	// Reload window (and game)
-	const _exit = () => {
+	const _quit = () => {
 		location.reload();
 		return "reloading...";
 	}
@@ -51,20 +51,28 @@ const Commands = (game) => {
 
 	// Describe environment and movement options in current location
 	const _look = (command) => {
-		// const name = mapKey[game.state.currentCell].name;
-		// const description = mapKey[game.state.currentCell].description;
-		// const items = game.itemsInEnvironment() ? `You see ${game.itemsInEnvironment()} here.` : "";
-		// const moveOptions = `You can go ${game.movementOptions()}.`;
-		// console.title(name);
-		// return console.p(description + "\n" + moveOptions + "\n" + items);
 		return game.describeSurroundings();
 	}
-
-	// Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.
+ 
+	// Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.                               
 	const _act_upon = (command) => {
 		game.state.objectMode = true;
 		game.state.pendingAction = command;
 		return console.p(`What is it you would like to ${command}?`);
+	}
+
+	const _pref = (whichPref) => {
+		game.state.prefMode = true;
+		game.state.pendingAction = whichPref;
+
+		const pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont}`;
+		const italic = `font-size:120%;color:#32cd32;font-style:italic;font-family:${primaryFont}`;
+		const bold = `font-size:120%;color:#32cd32;font-style:bold;font-family:${primaryFont}`;
+		const example = `font-size:120%;color:#7BF65E;font-weight:bold;font-family:${primaryFont}`;
+		const exampleItalic = `font-size:120%;color:#7BF65E;font-style:italic;font-weight:bold;font-family:${primaryFont}`;
+		console.p(`Enter value for ${whichPref}.`);
+		console.inline([`Value must be entered`,` within parentheses (and quotes, if the value is a string), and immediately preceded by an underscore.`],[pStyle, italic]);
+		return console.inline([`Like this:  `, `_(`, `"value"`, `)`], [bold, example, exampleItalic, example]);
 	}
 
 	// Displays items in the player's inventory.
@@ -82,10 +90,14 @@ const Commands = (game) => {
 		// return game.state.inventory.map((item) => {
 		// 	console.color("cyan", `${item.article}`, ` ${item.name}`, ",")
 		// })
-		const segments = game.formatList(items);
-		console.log('segments', segments);
+		// const segments = ["You are carrying"].concat(items)//game.formatList(items);
+		// console.log('segments', segments);
 		// console.log(["You are carrying"].concat(segments));
-		return console.inline(["You are carrying"].concat(segments), ["color:inherit", "color:inherit", "color:cyan", "color:inherit", "color:cyan"]);
+		const pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont}`;
+		const itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont}`;
+		console.inline(["test"],["color:cyan;"]);
+		const segments = ["You are carrying a ", "key, ", "some ", "grue_repellant, ", "and ", "no_tea."];
+		return console.inline(segments, [pStyle, itemStyle, pStyle, itemStyle, pStyle, itemStyle]);
 	}
 
 	// Displays inventory as a table.
@@ -139,7 +151,7 @@ const Commands = (game) => {
 		[_move, "down,Down,DOWN,d,D"],
 
 		// Actions
-		[game.describeSurroundings, "look,Look,LOOK,l,L"],
+		[_look, "look,Look,LOOK,l,L"],
 		[_inventory, "inventory,Inventory,INVENTORY,i,I"],
 		[_act_upon, "use,Use,USE"],
 		[_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
@@ -177,10 +189,11 @@ const Commands = (game) => {
 		[_save_slot, "save8,Save8,SAVE8"],
 		[_save_slot, "save9,Save9,SAVE9"],
 		[_load, "load","Load","LOAD"],
+		[_pref, "font","Font","FONT"],
 		[_poof, "poof,Poof,POOF"],
-		[_exit, "oops,Oops,OOPS"],
-		[_exit, "exit,EXIT,Exit,x,X"],
-		[_exit, "restart,RESTART,Restart"]
+		[_quit, "oops,Oops,OOPS"],
+		[_quit, "exit,EXIT,Exit,x,X"],
+		[_quit, "restart,RESTART,Restart"]
 	];
 
 	return aliases;

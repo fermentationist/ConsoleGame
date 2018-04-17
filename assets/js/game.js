@@ -4,6 +4,8 @@ let consoleGame = {
 	state: {
 		objectMode : false,
 		saveMode: false,
+		prefMode: false,
+		prefToSet: null,
 		inventory : [],
 		history : [],
 		turn : 0,
@@ -18,6 +20,26 @@ let consoleGame = {
 		},
 		get env (){
 			return mapKey[this.currentCell].env;
+		}
+	},
+
+		 //===========================================\\
+	// This function runs at the start of each turn\\
+	turnDemon: function (commandName, interpreterFunction) {
+		try {
+			interpreterFunction(commandName);
+			if (this.state.saveMode){
+				return this.saveGame(commandName);
+			}
+			if (!this.state.prefMode){
+				this.addToHistory(commandName);
+				this.state.turn ++;		
+				return; //console.header(this.currentHeader());
+			}
+			return;
+		}
+		catch (err){
+			return console.invalid(`${err}. Please try again.`);
 		}
 	},
 
@@ -69,14 +91,12 @@ let consoleGame = {
 
 	// Utility function formats a given list of terms (directions) as a string, separating them with commas, and a conjunction ("and"), or a disjunction ("or"), before the final term.
 	formatList: function (itemArray, disjunction = false){
-		console.log('itemArray', itemArray)
 		const length = itemArray.length;
 		const conjunction = disjunction ? "or" : "and";
 		if (length === 1) {
 			return itemArray[0];
 		} 
 		if (length === 2) {
-			console.italic("", " length === 2 !", "");
 			return `${itemArray[0]} ${conjunction} ${itemArray[1]}`;
 			// return itemArray[0] + conjunction + itemArray[1];
 		}
@@ -110,8 +130,17 @@ let consoleGame = {
 		const description = mapKey[this.state.currentCell].description;
 		const items = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
 		const moveOptions = `You can go ${this.movementOptions()}.`;
-		console.descriptionTitle(name, turn);
+		console.clear();
+		console.header(this.currentHeader());
 		return console.p(description + "\n" + moveOptions + "\n" + items);
+	},
+
+	currentHeader: function (columnWidth = 80){
+		const roomName = mapKey[this.state.currentCell].name;
+		const turn = `Turn : ${this.state.turn}`;
+		const gapSize = columnWidth - roomName.length - turn.length;
+		const gap = " ".repeat(gapSize);
+		return `${roomName}${gap}${turn}`;
 	},
 
 	inInventory: function (itemName){
@@ -143,22 +172,6 @@ let consoleGame = {
 		return loadedHistory;
 	},
 
-	turnDemon: function (commandName, interpreterFunction) {
-		try {
-			if (this.state.saveMode){
-				return this.saveGame(commandName);
-			}
-			this.addToHistory(commandName);
-			this.state.turn ++;
-			console.p(`Turn: ${this.state.turn}`);
-			
-			return interpreterFunction(commandName);
-		}
-		catch (err){
-			return console.invalid(`${err}. <q></q>Please try again.`);
-		}
-	},
-
 	// Applies bindCommandToFunction() to an array of all of the commands to be created.
 	initCommands: function (commandsArray){
 		let interpreterFunction, aliases;
@@ -180,8 +193,38 @@ let consoleGame = {
 		aliasArray.map(alias => {
 			Object.defineProperty(window, alias.trim(), {get: interpretCommand});
 		});
+	},
+
+	setPreference: function (pref, value){
+		return localStorage.setItem(`ConsoleGame.prefs.${pref}`, value);
+	},
+
+// preferences are forced to reload by removing and reinserting original script tag for prefs.js
+	reloadConsoleSettings: function (){
+		const body = document.getElementsByTagName("body")[0];
+		const tags = Array.from(document.getElementsByTagName("script"));
+		tags.forEach((tag) => {
+			let index = tag.src.indexOf("prefs.js");
+			if(index !== -1){
+				tag.remove();
+			}
+		});
+		const scriptTag = document.createElement("script");
+		scriptTag.src = "assets/js/prefs.js";
+		scriptTag.type = "text/javascript";
+		body.prepend(scriptTag);
+		return setTimeout(() => consoleGame.describeSurroundings(), 500);	
 	}
 }
+
+const _ = (value) => {
+	console.note(`value for ${consoleGame.state.pendingAction} will be set to ${value}`);
+	consoleGame.state.prefMode = false;
+	consoleGame.setPreference(`${consoleGame.state.pendingAction}`, value);
+	return consoleGame.reloadConsoleSettings();
+}
+
+
 
 // Commands(consoleGame);
 // Creating commands from array returned by commands.js...
@@ -192,7 +235,6 @@ const greeting = "\n\nWelcome, thanks for playing!\n\n"
 
 // Wait for page to load, and display greeting.
 setTimeout(() => {
-	// console.clear();
 	console.h1(greeting);
 	console.note("Type a command to play.\n\n");
 	consoleGame.describeSurroundings();
