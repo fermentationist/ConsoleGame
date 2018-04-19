@@ -190,10 +190,9 @@ const Commands = (game) => {
 	  return cases;
 	}
 
-	const aliasString = (word, thesaurus, addOn) => {
-		let string = `${cases(word).join(",")}${addOn}`;
-		
-
+	const aliasString = (word, addOn) => {
+		// thesaurus will be added to params
+		return `${cases(word).join(",")},${addOn}`;
 	}
 
 	// Command aliases
@@ -208,7 +207,7 @@ const Commands = (game) => {
 
 		// Actions
 		[_look, "look,Look,LOOK,l,L"],
-		[_inventory, `${cases("inventory").join(",")},i,I`],
+		[_inventory, `${aliasString("inventory","i,I")}`],
 		[_act_upon, "use,Use,USE"],
 		[_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
 		[_act_upon, "read,Read,READ"],
