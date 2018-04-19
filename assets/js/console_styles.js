@@ -13,7 +13,7 @@ const customConsole = (() => {
 }
 
 	console.h1 = (message) => {
-		return customLog(message, "log", "150%", "pink", "bold", "normal", primaryFont);
+		return customLog(message, "log", "150%", "pink", "normal", "normal", primaryFont);
 	}
 
 	console.gameTitle = (message) => {
@@ -21,7 +21,7 @@ const customConsole = (() => {
 	}
 
 	console.note = (message) => {
-		return customLog(message, "info", "120%", "gray", "inherit" , "italic", primaryFont);
+		return console.log(`%c${message}`, "font-size:110%;font-family:courier new;font-weight:bold;color:#75715E;background-color:white");
 	}
 
 	console.warning = (message) => {
@@ -34,6 +34,14 @@ const customConsole = (() => {
 
 	console.p = (message) => {
 		return customLog(message, "log", "120%", textColor, "normal", "normal", primaryFont);
+	}
+
+	console.tiny = (message) => {
+		return customLog(message, "log", "60%", "#75715E", "normal", "normal", primaryFont);
+	}
+
+	console.info = (message) => {
+		return customLog(message, "log", "100%", "#75715E", "normal", "normal", primaryFont);
 	}
 
 	console.italic = (message) => {
@@ -65,7 +73,7 @@ const customConsole = (() => {
 	}
 
 	console.header = (currentHeader) => {
-		return customLog(currentHeader, "log", "125%", "#7BF65E", "bold", "normal", primaryFont);
+		return customLog(currentHeader, "log", "125%", textColor, "bold", "normal", primaryFont);
 	}
 
 	console.groupTitle = (title) => {

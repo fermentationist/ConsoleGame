@@ -1,14 +1,15 @@
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
 
-let consoleGame = {
+const consoleGame = {
 	state: {
 		objectMode : false,
 		saveMode: false,
+		restoreMode: false,
 		prefMode: false,
-		prefToSet: null,
+		confirmMode: false,
 		inventory : [],
 		history : [],
-		turn : 0,
+		turn : 1,
 		pendingAction : null,
 		position : {
 			x: 4,
@@ -27,14 +28,22 @@ let consoleGame = {
 	// This function runs at the start of each turn\\
 	turnDemon: function (commandName, interpreterFunction) {
 		try {
-			interpreterFunction(commandName);
 			if (this.state.saveMode){
+				console.info(`Saving game to slot ${commandName}`);
 				return this.saveGame(commandName);
 			}
-			if (!this.state.prefMode){
+			if (this.state.restoreMode){
+				console.info(`Restoring game from slot ${commandName}`);
+				return this.restoreGame(commandName);
+			}
+
+			interpreterFunction(commandName);
+
+			let dontCountTurn = this.state.saveMode || this.state.restoreMode || this.state.prefMode;
+			if (!dontCountTurn) {
 				this.addToHistory(commandName);
-				this.state.turn ++;		
-				return; //console.header(this.currentHeader());
+				console.tiny(this.state.history);
+				!this.state.objectMode ? this.state.turn ++ : null;
 			}
 			return;
 		}
@@ -45,17 +54,17 @@ let consoleGame = {
 
 	// Method adds executed command to history and increments turn counter.
 	addToHistory: function (commandName){
-		if (false){//this.objectMode){
-			this.state.history.push(`${this.state.history.pop()} ${commandName}`);
+		if (false){
+			// something
 		} else {
 			this.state.history.push(commandName);
 		}
 	},
 
-	replayHistory: function (){
+	replayHistory: function (commandList){
 		console.groupCollapsed("Game loaded.");
-		this.state.history.map((command) =>{
-			return eval(command);
+		commandList.split(",").map((command) =>{
+			return eval(`${command}`);
 		});
 		return console.groupEnd();
 	},
@@ -71,22 +80,25 @@ let consoleGame = {
 	},
 
 	removeFromInventory: function (item){
-		this.state.inventory.splice(this.inventory.indexOf(item), 1);
+		this.state.inventory.splice(this.state.inventory.indexOf(item), 1);
 	},
 
 	resetGame: function (){
 		this.state.objectMode = false;
-		this.state.saveMode = false,
-		this.state.inventory = [],
-		this.state.history = [],
-		this.state.turn = 0,
-		this.state.pendingAction = null,
+		this.state.saveMode = false;
+		this.state.restoreMode = false;
+		this.state.prefMode = false;
+		this.confirmMode = false;
+		this.state.inventory = [];
+		this.state.history = [];
+		this.state.turn = 1;
+		this.state.pendingAction = null;
 		this.state.position = {
 				x: 4,
 				y: 2,
 				z: 3
 			}
-		return console.p("Resetting consoleGame.state...");
+		return console.info("Resetting consoleGame.state...");
 	},
 
 	// Utility function formats a given list of terms (directions) as a string, separating them with commas, and a conjunction ("and"), or a disjunction ("or"), before the final term.
@@ -160,16 +172,25 @@ let consoleGame = {
 		return this.state.env.length && this.formatList(this.state.env.map((item) => `${item.article} ${item.name}`));
 	},
 
-	saveGame: function (saveSlotName){
-		console.p("Saving...");
-		this.state.saveMode = false;
-		const saveName = `slot${saveSlotName.slice(4)}`;
-		localStorage.setItem(`ConsoleGame.${saveName}`, this.state.history);
+	saveGame: function (slot){
+		const slotName = `ConsoleGame.save.${slot}`;
+		if (localStorage.getItem(slotName)){
+			this.state.confirmMode = true;
+			return console.invalid("That save slot is already in use. Type \"yes\" to overwrite it or enter a different save slot.")
+		} 
+		if (!localStorage.getItem(slotName)){
+			this.state.saveMode = false;
+			return localStorage.setItem(slotName, this.state.history);
+		} 
+
 	},
 
-	loadGame: function (loadSlotName){
-		const loadedHistory = null;
-		return loadedHistory;
+	restoreGame: function (slotName){
+		this.state.restoreMode = false;
+		let saveData = localStorage.getItem(`ConsoleGame.save.${slotName}`);
+		this.resetGame();
+		this.replayHistory(saveData);
+		return this.describeSurroundings();
 	},
 
 	// Applies bindCommandToFunction() to an array of all of the commands to be created.
@@ -200,17 +221,17 @@ let consoleGame = {
 	},
 
 // preferences are forced to reload by removing and reinserting original script tag for prefs.js
-	reloadConsoleSettings: function (){
+	reloadScript: function (filename){
 		const body = document.getElementsByTagName("body")[0];
 		const tags = Array.from(document.getElementsByTagName("script"));
 		tags.forEach((tag) => {
-			let index = tag.src.indexOf("prefs.js");
+			let index = tag.src.indexOf(filename);
 			if(index !== -1){
 				tag.remove();
 			}
 		});
 		const scriptTag = document.createElement("script");
-		scriptTag.src = "assets/js/prefs.js";
+		scriptTag.src = `assets/js/${filename}`;
 		scriptTag.type = "text/javascript";
 		body.prepend(scriptTag);
 		return setTimeout(() => consoleGame.describeSurroundings(), 500);	
@@ -218,10 +239,10 @@ let consoleGame = {
 }
 
 const _ = (value) => {
-	console.note(`value for ${consoleGame.state.pendingAction} will be set to ${value}`);
+	console.info(`value for ${consoleGame.state.pendingAction} will be set to ${value}`);
 	consoleGame.state.prefMode = false;
 	consoleGame.setPreference(`${consoleGame.state.pendingAction}`, value);
-	return consoleGame.reloadConsoleSettings();
+	return consoleGame.reloadScript("prefs.js");
 }
 
 
@@ -231,12 +252,12 @@ const _ = (value) => {
 consoleGame.initCommands(Commands(consoleGame));
 
 // Greeting to be displayed at the beginning of the game
-const greeting = "\n\nWelcome, thanks for playing!\n\n"
+const greeting = "\nWelcome\n"
 
 // Wait for page to load, and display greeting.
 setTimeout(() => {
 	console.h1(greeting);
-	console.note("Type a command to play.\n\n");
+	console.info("Type a command to play.\n\n");
 	consoleGame.describeSurroundings();
 	}, 500);
 

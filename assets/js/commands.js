@@ -61,6 +61,7 @@ const Commands = (game) => {
 		return console.p(`What is it you would like to ${command}?`);
 	}
 
+	// change to console.info
 	const _pref = (whichPref) => {
 		game.state.prefMode = true;
 		game.state.pendingAction = whichPref;
@@ -77,14 +78,23 @@ const Commands = (game) => {
 
 	// Displays items in the player's inventory.
 	const _inventory = (command) => {
+		// let output = `You are carrying `;
+		// game.state.inventory.map((item) => {
+		// 	let itemWithArticle = item.article ? `${item.article} ${item.name}`;
+		// 	output += itemWithArticle;
+		// });
+		// let formatted = this.formatList()
+
+
 		let items = [];
 		game.state.inventory.map((item) => {
-			const arr = item.article ? [item.article, item.name] : ["", item.name]
-			console.log('arr', arr);
-			items.push(arr);
+			const itemWithArticle = item.article ? `${item.article} ${item.name}` :  item.name;
+			console.log('itemWithArticle', itemWithArticle);
+			items.push(itemWithArticle);
 			// return item.article ? `${item.article} ${item.name}` : `${item.name}`;
 		});
-		console.log('items', items);
+		let formatted =  `You are carrying ${game.formatList(items)}`.split(" ");
+		console.log('formatted', formatted);
 		// console.log(game.formatList(items).split(" "));
 		// console.p("You are carrying:");
 		// return game.state.inventory.map((item) => {
@@ -96,7 +106,9 @@ const Commands = (game) => {
 		const pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont}`;
 		const itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont}`;
 		console.inline(["test"],["color:cyan;"]);
-		const segments = ["You are carrying a ", "key, ", "some ", "grue_repellant, ", "and ", "no_tea."];
+		const segments = ["You are carrying"].concat(items);
+		console.log('segments', segments);
+
 		return console.inline(segments, [pStyle, itemStyle, pStyle, itemStyle, pStyle, itemStyle]);
 	}
 
@@ -122,22 +134,66 @@ const Commands = (game) => {
 		return item[action]();
 	}
 
-	const _save = () => {
+	const _save = (command) => {
 		game.state.saveMode = true;
-		return console.p("To save your game, please type \"save\", immediately followed by a number, 0 through 9. For example: \"save8\", or \"save3\"...");
+		game.state.restoreMode = false;
+		game.state.pendingAction = command;
+		console.log('game.state.pendingAction', game.state.pendingAction)
+		const infoStyle = `font-size:100%;color:#75715E;font-family:${primaryFont};`;
+		const boldInfo = infoStyle + `font-weight:bold;color:white`;
+		console.info("Please choose a slot number (0 – 9) to save your game. To save to the selected slot, type an underscore, immediately followed by the slot number.");
+		console.inline([`For example, type `, `_3`, ` to select slot 3.`],[infoStyle, boldInfo, infoStyle]);
 	}
 
-	const _load = () => {
-		console.log(Object.keys(localStorage));
+	const _restore = (command) => {
+		let keys = Object.keys(localStorage);
+		let saves = keys.filter((key) => {
+			return key.indexOf("ConsoleGame.save") !== -1;
+		});
+		if (saves.length > 0) {
+			let slotList = saves.map((save) => {
+				let x = save.substring(save.length - 2);
+				return x;
+			})
+			console.info(`saved games:\n${slotList}`);
+			game.state.restoreMode = true;
+			game.state.saveMode = false;
+			game.state.pendingAction = command;
+			const infoStyle = `font-size:100%;color:#75715E;font-family:${primaryFont};`;
+			const boldInfo = infoStyle + `font-weight:bold;color:white`;
+			console.info("Please choose which slot number (0 – 9) to restore from. To restore, type an underscore, immediately followed by the slot number.");
+			return console.inline([`For example, type `, `_3`, ` to select slot 3.`],[infoStyle, boldInfo, infoStyle]);
+		}
+		return console.info("No saved games found.");
 	}
 
 	const _save_slot = (slotNumber) => {
-		return game.state.saveMode ? console.p(`Game saved to slot ${slotNumber}`) : saveGame(slotNumber);
+		if (game.state.saveMode){
+			console.invalid(`Save to slot ${slotNumber} failed.`);
+			return game.state.saveMode = false;
+		} else if (game.state.restoreMode){
+			console.invalid(`Restore from slot ${slotNumber} failed.`);
+			return game.state.restoreMode = false;
+		}
+		return console.p(`Game saved to slot ${slotNumber}`);
 	}
 
 	const _poof = () => {
 		$("body").empty().css("background-color", "black");
 		return console.papyracy(">poof<");
+	}
+
+
+	const cases = (word) => {
+	  let lc = word.toLowerCase();
+	  let cases = [lc, `${lc.charAt(0).toUpperCase()}${lc.slice(1)}`, lc.toUpperCase()];
+	  return cases;
+	}
+
+	const aliasString = (word, thesaurus, addOn) => {
+		let string = `${cases(word).join(",")}${addOn}`;
+		
+
 	}
 
 	// Command aliases
@@ -152,11 +208,11 @@ const Commands = (game) => {
 
 		// Actions
 		[_look, "look,Look,LOOK,l,L"],
-		[_inventory, "inventory,Inventory,INVENTORY,i,I"],
+		[_inventory, `${cases("inventory").join(",")},i,I`],
 		[_act_upon, "use,Use,USE"],
 		[_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
 		[_act_upon, "read,Read,READ"],
-		[_act_upon, "examine,Examine,EXAMINE"],
+		[_act_upon, "examine,Examine,EXAMINE,inspect,Inspect,INSPECT"],
 		[_act_upon, "drink,Drink,DRINK"],
 		[_act_upon, "drop,Drop,DROP"],
 		[_act_upon, "pull,Pull,PULL"],
@@ -178,22 +234,21 @@ const Commands = (game) => {
 		[_inventoryTable, "inventoryTable,invTable"],
 		// [_all, "all,All,ALL"],
 		[_save, "save","Save","SAVE"],
-		[_save_slot, "save0,Save0,SAVE0"],
-		[_save_slot, "save1,Save1,SAVE1"],
-		[_save_slot, "save2,Save2,SAVE2"],
-		[_save_slot, "save3,Save3,SAVE3"],
-		[_save_slot, "save4,Save4,SAVE4"],
-		[_save_slot, "save5,Save5,SAVE5"],
-		[_save_slot, "save6,Save6,SAVE6"],
-		[_save_slot, "save7,Save7,SAVE7"],
-		[_save_slot, "save8,Save8,SAVE8"],
-		[_save_slot, "save9,Save9,SAVE9"],
-		[_load, "load","Load","LOAD"],
+		[_save_slot, "_0,save0,Save0,SAVE0"],
+		[_save_slot, "_1,save1,Save1,SAVE1"],
+		[_save_slot, "_2,save2,Save2,SAVE2"],
+		[_save_slot, "_3,save3,Save3,SAVE3"],
+		[_save_slot, "_4,save4,Save4,SAVE4"],
+		[_save_slot, "_5,save5,Save5,SAVE5"],
+		[_save_slot, "_6,save6,Save6,SAVE6"],
+		[_save_slot, "_7,save7,Save7,SAVE7"],
+		[_save_slot, "_8,save8,Save8,SAVE8"],
+		[_save_slot, "_9,save9,Save9,SAVE9"],
+		[_restore, "restore,Restore,RESTORE,load","Load","LOAD"],
 		[_pref, "font","Font","FONT"],
+		[_pref, "color","Color","COLOR"],
 		[_poof, "poof,Poof,POOF"],
-		[_quit, "oops,Oops,OOPS"],
-		[_quit, "exit,EXIT,Exit,x,X"],
-		[_quit, "restart,RESTART,Restart"]
+		[_quit, "quit,Quit,QUIT,oops,Oops,OOPS,restart,RESTART,Restart"]
 	];
 
 	return aliases;

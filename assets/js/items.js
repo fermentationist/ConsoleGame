@@ -35,11 +35,16 @@ const Items = (function (game){
 		},
 		read: function (){
 			game.state.objectMode = false;
-			if (this.text){
-				return console.p(`The text on the ${this.name} reads: \n${this.text}`);
+			if (!this.text){
+				return console.p("There is nothing to read.");
 			}
-			return console.p(`There is nothing to read.`);
+			if (!game.inInventory(this.name)){
+				return console.p(`You'll need to pick up the ${this.name} first.`);
+			}
+			console.p(`The text on the ${this.name} reads: \n`);
+			return console.note(this.text);
 		},
+		
 		use: function (){
 			game.state.objectMode = false;
 			return console.p(`Try as you might, you cannot manage to use the ${this.name}`);
@@ -134,7 +139,7 @@ const Items = (function (game){
 
 		_note: {
 			name : "note",
-			text: "Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...",
+			text: "\n\n\n\n\n    Dear John,\n   It's not you, it's the incredibly low, low prices at Apple Cabin...    \n\n\n\n",
 			description: "A filthy note you picked up from the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
 
