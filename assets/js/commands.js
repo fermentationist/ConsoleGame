@@ -190,10 +190,20 @@ const Commands = (game) => {
 	  return cases;
 	}
 
-	const aliasString = (word, addOn) => {
+	const aliasString = (word, dict, addOn = "") => {
 		// thesaurus will be added to params
-		return `${cases(word).join(",")},${addOn}`;
+		const synonyms = dict[word];
+		console.log('synonyms', synonyms);
+		let variations = synonyms.filter((synonym) => {
+			if (synonym.indexOf(" ") === -1){
+				return `${cases(synonym).join(",")}`;
+			}
+		});
+		console.log('variations', variations);
+		return `${cases(word)},${variations.join()},${addOn}`;
 	}
+
+	console.log(aliasString("take", thesaurus));
 
 	// Command aliases
 	const aliases = [
@@ -207,11 +217,12 @@ const Commands = (game) => {
 
 		// Actions
 		[_look, "look,Look,LOOK,l,L"],
-		[_inventory, `${aliasString("inventory","i,I")}`],
+		[_inventory, "inventory,Inventory,INVENTORY,I,i"],
 		[_act_upon, "use,Use,USE"],
-		[_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
+		// [_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
+		[_act_upon, aliasString("take", thesaurus)],
 		[_act_upon, "read,Read,READ"],
-		[_act_upon, "examine,Examine,EXAMINE,inspect,Inspect,INSPECT"],
+		[_act_upon, "examine,Examine,EXAMINE,inspect,Inspect,INSPECT,x,X"],
 		[_act_upon, "drink,Drink,DRINK"],
 		[_act_upon, "drop,Drop,DROP"],
 		[_act_upon, "pull,Pull,PULL"],

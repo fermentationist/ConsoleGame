@@ -211,9 +211,13 @@ const consoleGame = {
 		const interpretCommand = this.turnDemon.bind(this, commandName, interpreterFunction);
 		// const interpretCmd = interpreterFunction.bind(null, interpreterDemon);
 		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
-		aliasArray.map(alias => {
-			Object.defineProperty(window, alias.trim(), {get: interpretCommand});
-		});
+		try {
+			aliasArray.map(alias => {
+				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
+			});
+		} catch (err) {
+			console.log(err);
+		}
 	},
 
 	setPreference: function (pref, value){
