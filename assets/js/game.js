@@ -209,7 +209,7 @@ const consoleGame = {
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
 		console.tiny('commandName', commandName);
-		if (commandName in Object.keys(window)){
+		if (commandName in window){
 			return console.invalid(`${commandName} already defined.`);
 		}
 		const interpretCommand = this.turnDemon.bind(this, commandName, interpreterFunction);
