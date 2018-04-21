@@ -1,4 +1,4 @@
-const thesaurus = require("thesaurus-com");
+const thesaurus = require("moby");
 const fs = require("fs");
 let word = "take";
 // var updated_thesaurus = thesaurus.load("./th_en_US_new.dat");
@@ -23,7 +23,7 @@ let word = "take";
 
 (async () => {
 	const consultThesaurus = (word) => {
-		return thesaurus.search(word).synonyms
+		return thesaurus.search(word);
 	}
 	let parsed = await consultThesaurus(word);
 	console.log('parsed', parsed);

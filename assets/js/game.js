@@ -196,18 +196,22 @@ const consoleGame = {
 	// Applies bindCommandToFunction() to an array of all of the commands to be created.
 	initCommands: function (commandsArray){
 		let interpreterFunction, aliases;
-		commandsArray.map((commandlog) => {
-			[interpreterFunction, aliases] = commandlog;
+		commandsArray.map((commandLog) => {
+			[interpreterFunction, aliases] = commandLog;
 			this.bindCommandToFunction(interpreterFunction, aliases);
 		});
 	},
 
 	// This function is what makes this console game possible. It creates a global variable with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the variable(s). This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
 	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his or her console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
-	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases, converted to lowercase.
+	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases.
 	bindCommandToFunction: function (interpreterFunction, commandAliases){
 		const aliasArray = commandAliases.split(",");
-		const commandName = aliasArray[0].toLowerCase();
+		const commandName = aliasArray[0];
+		console.tiny('commandName', commandName);
+		if (commandName in Object.keys(window)){
+			return console.invalid(`${commandName} already defined.`);
+		}
 		const interpretCommand = this.turnDemon.bind(this, commandName, interpreterFunction);
 		// const interpretCmd = interpreterFunction.bind(null, interpreterDemon);
 		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
@@ -216,7 +220,7 @@ const consoleGame = {
 				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
 			});
 		} catch (err) {
-			console.log(err);
+			console.invalid(err);
 		}
 	},
 

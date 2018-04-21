@@ -1,4 +1,5 @@
 // IIFE returns commands and related aliases, with the functions they will be bound to
+var ALIASES;
 const Commands = (game) => {
 	// Command functions
 
@@ -183,16 +184,19 @@ const Commands = (game) => {
 		return console.papyracy(">poof<");
 	}
 
-
-	const cases = (word) => {
-	  let lc = word.toLowerCase();
-	  let cases = [lc, `${lc.charAt(0).toUpperCase()}${lc.slice(1)}`, lc.toUpperCase()];
-	  return cases;
+	const cases = (...wordArgs) => {
+		let lc, cases;
+		const casesArray = wordArgs.map((word) =>{
+			lc = word.toLowerCase();
+			cases = [lc, `${lc.charAt(0).toUpperCase()}${lc.slice(1)}`, lc.toUpperCase()];
+			return cases;
+		});
+		return casesArray.join(",");
 	}
 
-	const aliasString = (word, dict, addOn = "") => {
+	const aliasString0 = (word, thesaurus, optional = "") => {
 		// thesaurus will be added to params
-		const synonyms = dict[word];
+		const synonyms = thesaurus[word];
 		console.log('synonyms', synonyms);
 		let variations = synonyms.filter((synonym) => {
 			if (synonym.indexOf(" ") === -1){
@@ -200,50 +204,73 @@ const Commands = (game) => {
 			}
 		});
 		console.log('variations', variations);
-		return `${cases(word)},${variations.join()},${addOn}`;
+		return `${cases(word)},${variations.join()},${optional}`;
 	}
 
-	console.log(aliasString("take", thesaurus));
+	const aliasString = (word, thesaurus = null, optionalString = "") => {
+		// thesaurus will be added to params
+		let variations = [];
+		console.log("WORD:", word);
+		if (thesaurus){
+			console.log("-WORD:", word);
+			const synonyms = thesaurus[word] || [];
+			variations = synonyms.filter((synonym) => {
+				console.tiny("synonym=", synonym);
+				if (synonym.indexOf(" ") === -1){
+					return cases(synonym);
+				}
+			});
+			console.log('variations', variations);
+		}
+		return `${cases(word)},${variations.join()},${optionalString}`;
+	}
+
+
+
+	// console.log(aliasString("take", thesaurus));
 
 	// Command aliases
 	const aliases = [
 		// Move
-		[_move, "north,North,NORTH,n,N"],
-		[_move, "south,South,SOUTH,s,S"],
-		[_move, "east,East,EAST,e,E"],
-		[_move, "west,West,WEST,w,W"],
-		[_move, "up,Up,UP,u,U"],
-		[_move, "down,Down,DOWN,d,D"],
+		[_move, cases("north") + "n,N"],
+		[_move, cases("south") + "s,S"],
+		[_move, cases("east") + "e,E"],
+		[_move, cases("west") + "w,W"],
+		[_move, cases("up") + "i,U"],
+		[_move, cases("down") + "d,D"],
 
 		// Actions
-		[_look, "look,Look,LOOK,l,L"],
-		[_inventory, "inventory,Inventory,INVENTORY,I,i"],
-		[_act_upon, "use,Use,USE"],
-		// [_act_upon, "take,Take,TAKE,t,T,get,Get,GET"],
+		[_look, cases("look") + "l,L"],
+		// [_go, cases("go", thesaurus],
+		// [_go, cases("move", thesaurus],
+		[_inventory, cases("inventory") + "i,I"],
+		[_act_upon, aliasString("use"), thesaurus],
+		// [_act_upon, aliasString("take,Take,TAKE,t,T,get,Get,GET")],
 		[_act_upon, aliasString("take", thesaurus)],
-		[_act_upon, "read,Read,READ"],
-		[_act_upon, "examine,Examine,EXAMINE,inspect,Inspect,INSPECT,x,X"],
-		[_act_upon, "drink,Drink,DRINK"],
-		[_act_upon, "drop,Drop,DROP"],
-		[_act_upon, "pull,Pull,PULL"],
-		[_act_upon, "spray,Spray,SPRAY"],
-		[_act_upon, "contemplate,Contemplate,CONTEMPLATE,ponder,Ponder,PONDER"],
+		[_act_upon, aliasString("read", thesaurus)],
+		[_act_upon, aliasString("examine", thesaurus, "x,X")],
+		[_act_upon, aliasString("drink", thesaurus)],
+		[_act_upon, aliasString("drop", thesaurus)],
+		[_act_upon, aliasString("pull", thesaurus)],
+		[_act_upon, aliasString("spray", thesaurus)],
+		[_act_upon, aliasString("contemplate", thesaurus)],
+		[_act_upon, aliasString("ponder")],
 
 		// Objects
-		[_items, "grue_repellant,repellant,Repellant,REPELLANT,Grue_repellant,Grue_Repellant,GRUE_REPELLANT"],
-		[_items, "key,Key,KEY"],
-		[_items, "note,Note,NOTE"],
-		[_items, "no_tea,No_Tea,NO_TEA"],
-		[_items, "slug,Slug,SLUG"],
-		[_items, "chain,Chain,CHAIN"],
-		[_items, "glove,Glove,GLOVE"],
+		[_items, cases("grue_repellant", "repellant")],
+		[_items, cases("key")],
+		[_items, aliasString("note", thesaurus)],
+		[_items, cases("no_tea")],
+		[_items, cases("slug")],
+		[_items, cases("chain")],
+		[_items, aliasString("glove")],
 
 
 
 		// Misc
-		[_inventoryTable, "inventoryTable,invTable"],
-		// [_all, "all,All,ALL"],
-		[_save, "save","Save","SAVE"],
+		[_inventoryTable, cases("inventoryTable", "invTable")],
+		// [_all, cases("all")],
+		[_save, cases("save")],
 		[_save_slot, "_0,save0,Save0,SAVE0"],
 		[_save_slot, "_1,save1,Save1,SAVE1"],
 		[_save_slot, "_2,save2,Save2,SAVE2"],
@@ -254,12 +281,14 @@ const Commands = (game) => {
 		[_save_slot, "_7,save7,Save7,SAVE7"],
 		[_save_slot, "_8,save8,Save8,SAVE8"],
 		[_save_slot, "_9,save9,Save9,SAVE9"],
-		[_restore, "restore,Restore,RESTORE,load","Load","LOAD"],
-		[_pref, "font","Font","FONT"],
-		[_pref, "color","Color","COLOR"],
-		[_poof, "poof,Poof,POOF"],
-		[_quit, "quit,Quit,QUIT,oops,Oops,OOPS,restart,RESTART,Restart"]
+		[_restore, cases("restore", "load")],
+		[_pref, cases("font")],
+		[_pref, cases("color")],
+		[_poof, cases("poof")],
+		[_quit, cases("quit")],
+		[_quit, cases("restart")]
 	];
-
+	console.log("ALIASES", aliases)//.map((x) => x[1]));
+	ALIASES = aliases;
 	return aliases;
 };//)();
