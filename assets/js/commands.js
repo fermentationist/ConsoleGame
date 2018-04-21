@@ -232,19 +232,19 @@ const Commands = (game) => {
 	// Command aliases
 	const aliases = [
 		// Move
-		[_move, cases("north") + "n,N"],
-		[_move, cases("south") + "s,S"],
-		[_move, cases("east") + "e,E"],
-		[_move, cases("west") + "w,W"],
-		[_move, cases("up") + "i,U"],
-		[_move, cases("down") + "d,D"],
+		[_move, cases("north") + ",n,N"],
+		[_move, cases("south") + ",s,S"],
+		[_move, cases("east") + ",e,E"],
+		[_move, cases("west") + ",w,W"],
+		[_move, cases("up") + ",i,U"],
+		[_move, cases("down") + ",d,D"],
 
 		// Actions
 		[_look, cases("look") + "l,L"],
 		// [_go, cases("go", thesaurus],
 		// [_go, cases("move", thesaurus],
-		[_inventory, cases("inventory") + "i,I"],
-		[_act_upon, aliasString("use"), thesaurus],
+		[_inventory, cases("inventory") + ",i,I"],
+		[_act_upon, aliasString("use", thesaurus)],
 		// [_act_upon, aliasString("take,Take,TAKE,t,T,get,Get,GET")],
 		[_act_upon, aliasString("take", thesaurus)],
 		[_act_upon, aliasString("read", thesaurus)],
