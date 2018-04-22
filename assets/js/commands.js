@@ -236,7 +236,7 @@ const Commands = (game) => {
 		[_move, cases("south") + ",s,S"],
 		[_move, cases("east") + ",e,E"],
 		[_move, cases("west") + ",w,W"],
-		[_move, cases("up") + ",i,U"],
+		[_move, cases("up") + ",u,U"],
 		[_move, cases("down") + ",d,D"],
 
 		// Actions

@@ -220,7 +220,8 @@ const consoleGame = {
 				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
 			});
 		} catch (err) {
-			console.invalid(err);
+			console.trace(err);
+			debugger;
 		}
 	},
 
