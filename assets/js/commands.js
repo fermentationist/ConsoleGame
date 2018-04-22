@@ -189,22 +189,9 @@ const Commands = (game) => {
 		const casesArray = wordArgs.map((word) =>{
 			lc = word.toLowerCase();
 			cases = [lc, `${lc.charAt(0).toUpperCase()}${lc.slice(1)}`, lc.toUpperCase()];
-			return cases;
+			return word.length ? cases: "";
 		});
 		return casesArray.join(",");
-	}
-
-	const aliasString0 = (word, thesaurus, optional = "") => {
-		// thesaurus will be added to params
-		const synonyms = thesaurus[word];
-		console.log('synonyms', synonyms);
-		let variations = synonyms.filter((synonym) => {
-			if (synonym.indexOf(" ") === -1){
-				return `${cases(synonym).join(",")}`;
-			}
-		});
-		console.log('variations', variations);
-		return `${cases(word)},${variations.join()},${optional}`;
 	}
 
 	const aliasString = (word, thesaurus = null, optionalString = "") => {
@@ -222,7 +209,7 @@ const Commands = (game) => {
 			});
 			console.log('variations', variations);
 		}
-		return `${cases(word)},${variations.join()},${optionalString}`;
+		return `${cases(word)},${variations.join()}${optionalString ? "," +optionalString : ""}`;
 	}
 
 
@@ -241,11 +228,8 @@ const Commands = (game) => {
 
 		// Actions
 		[_look, cases("look") + "l,L"],
-		// [_go, cases("go", thesaurus],
-		// [_go, cases("move", thesaurus],
 		[_inventory, cases("inventory") + ",i,I"],
 		[_act_upon, aliasString("use", thesaurus)],
-		// [_act_upon, aliasString("take,Take,TAKE,t,T,get,Get,GET")],
 		[_act_upon, aliasString("take", thesaurus)],
 		[_act_upon, aliasString("read", thesaurus)],
 		[_act_upon, aliasString("examine", thesaurus, "x,X")],
@@ -254,14 +238,12 @@ const Commands = (game) => {
 		[_act_upon, aliasString("pull", thesaurus)],
 		[_act_upon, aliasString("spray", thesaurus)],
 		[_act_upon, aliasString("contemplate", thesaurus)],
-		[_act_upon, aliasString("ponder")],
 
 		// Objects
 		[_items, cases("grue_repellant", "repellant")],
 		[_items, cases("key")],
 		[_items, aliasString("note", thesaurus)],
 		[_items, cases("no_tea")],
-		[_items, cases("slug")],
 		[_items, cases("chain")],
 		[_items, aliasString("glove")],
 

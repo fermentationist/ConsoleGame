@@ -217,11 +217,11 @@ const consoleGame = {
 		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
 		try {
 			aliasArray.map(alias => {
+				console.log('alias', alias)
 				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
 			});
 		} catch (err) {
 			console.trace(err);
-			debugger;
 		}
 	},
 
