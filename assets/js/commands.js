@@ -197,17 +197,13 @@ const Commands = (game) => {
 	const aliasString = (word, thesaurus = null, optionalString = "") => {
 		// thesaurus will be added to params
 		let variations = [];
-		console.log("WORD:", word);
 		if (thesaurus){
-			console.log("-WORD:", word);
 			const synonyms = thesaurus[word] || [];
 			variations = synonyms.filter((synonym) => {
-				console.tiny("synonym=", synonym);
 				if (synonym.indexOf(" ") === -1){
 					return cases(synonym);
 				}
 			});
-			console.log('variations', variations);
 		}
 		return `${cases(word)},${variations.join()}${optionalString ? "," +optionalString : ""}`;
 	}
@@ -227,7 +223,7 @@ const Commands = (game) => {
 		[_move, cases("down") + ",d,D"],
 
 		// Actions
-		[_look, cases("look") + "l,L"],
+		[_look, cases("look", "see", "observe") + ",l,L"],
 		[_inventory, cases("inventory") + ",i,I"],
 		[_act_upon, aliasString("use", thesaurus)],
 		[_act_upon, aliasString("take", thesaurus)],
@@ -245,7 +241,7 @@ const Commands = (game) => {
 		[_items, aliasString("note", thesaurus)],
 		[_items, cases("no_tea")],
 		[_items, cases("chain")],
-		[_items, aliasString("glove")],
+		[_items, aliasString("glove", thesaurus)],
 
 
 
@@ -270,7 +266,6 @@ const Commands = (game) => {
 		[_quit, cases("quit")],
 		[_quit, cases("restart")]
 	];
-	console.log("ALIASES", aliases)//.map((x) => x[1]));
 	ALIASES = aliases;
 	return aliases;
 };//)();

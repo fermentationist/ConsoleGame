@@ -42,7 +42,7 @@ const consoleGame = {
 			let dontCountTurn = this.state.saveMode || this.state.restoreMode || this.state.prefMode;
 			if (!dontCountTurn) {
 				this.addToHistory(commandName);
-				console.tiny(this.state.history);
+				// console.tiny(this.state.history);
 				!this.state.objectMode ? this.state.turn ++ : null;
 			}
 			return;
@@ -142,9 +142,9 @@ const consoleGame = {
 		const description = mapKey[this.state.currentCell].description;
 		const items = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
 		const moveOptions = `You can go ${this.movementOptions()}.`;
-		console.clear();
+		console.p("\n\n");// console.clear();
 		console.header(this.currentHeader());
-		return console.p(description + "\n" + moveOptions + "\n" + items);
+		return console.p(description + "\n" + moveOptions + "\n" + items + "\n");
 	},
 
 	currentHeader: function (columnWidth = 80){
@@ -208,7 +208,6 @@ const consoleGame = {
 	bindCommandToFunction: function (interpreterFunction, commandAliases){
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
-		console.tiny('commandName', commandName);
 		if (commandName in window){
 			return console.invalid(`${commandName} already defined.`);
 		}
@@ -217,7 +216,6 @@ const consoleGame = {
 		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
 		try {
 			aliasArray.map(alias => {
-				console.log('alias', alias)
 				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
 			});
 		} catch (err) {
