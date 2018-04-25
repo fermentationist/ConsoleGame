@@ -79,38 +79,31 @@ const Commands = (game) => {
 
 	// Displays items in the player's inventory.
 	const _inventory = (command) => {
-		// let output = `You are carrying `;
-		// game.state.inventory.map((item) => {
-		// 	let itemWithArticle = item.article ? `${item.article} ${item.name}`;
-		// 	output += itemWithArticle;
-		// });
-		// let formatted = this.formatList()
 
+		let items = [], itemsPlusArticles = [];
 
-		let items = [];
 		game.state.inventory.map((item) => {
+			items.push(item.name)
 			const itemWithArticle = item.article ? `${item.article} ${item.name}` :  item.name;
 			console.log('itemWithArticle', itemWithArticle);
-			items.push(itemWithArticle);
+			itemsPlusArticles.push(itemWithArticle);
 			// return item.article ? `${item.article} ${item.name}` : `${item.name}`;
 		});
-		let formatted =  `You are carrying ${game.formatList(items)}`.split(" ");
-		console.log('formatted', formatted);
-		// console.log(game.formatList(items).split(" "));
-		// console.p("You are carrying:");
-		// return game.state.inventory.map((item) => {
-		// 	console.color("cyan", `${item.article}`, ` ${item.name}`, ",")
-		// })
-		// const segments = ["You are carrying"].concat(items)//game.formatList(items);
-		// console.log('segments', segments);
-		// console.log(["You are carrying"].concat(segments));
-		const pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont}`;
-		const itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont}`;
-		console.inline(["test"],["color:cyan;"]);
-		const segments = ["You are carrying"].concat(items);
+
+		console.log(`Items* ${items}\n`);
+		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ").map((word, i) => {
+			`${word} `
+		});
 		console.log('segments', segments);
 
-		return console.inline(segments, [pStyle, itemStyle, pStyle, itemStyle, pStyle, itemStyle]);
+		let pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont}`;
+		let itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont}`;
+
+		let styles = segments.map((word) => {
+			return items.includes(word) ? itemStyle : pStyle;
+		});
+		console.log('styles', styles);
+		return console.inline(segments, styles);
 	}
 
 	// Displays inventory as a table.
