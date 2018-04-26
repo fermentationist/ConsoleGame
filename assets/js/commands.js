@@ -85,25 +85,26 @@ const Commands = (game) => {
 		game.state.inventory.map((item) => {
 			items.push(item.name)
 			const itemWithArticle = item.article ? `${item.article} ${item.name}` :  item.name;
-			console.log('itemWithArticle', itemWithArticle);
 			itemsPlusArticles.push(itemWithArticle);
-			// return item.article ? `${item.article} ${item.name}` : `${item.name}`;
 		});
 
-		console.log(`Items* ${items}\n`);
 		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ");
+		let pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont};`;
+		let itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont};`;
+
+		let styles = segments.map((word) => {
+			console.log('word', word);
+			let style = pStyle;
+			items.map((thing) => {
+				if (word.includes(thing)){
+					style = itemStyle;
+				}
+			});
+			return style;
+		});
 
 		segments = segments.map((word, i) => {
 			return i === segments.length - 1 ? `${word}.` : `${word} `;
-		});
-		console.log('segments', segments);
-
-		let pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont};`;
-		let itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont};`;
-		console.log("segments", segments);
-		console.log("items", items);
-		let styles = segments.map((word) => {
-			return items.includes(word) ? itemStyle : pStyle;
 		});
 		console.log('styles', styles);
 		return console.inline(segments, styles);
@@ -111,8 +112,8 @@ const Commands = (game) => {
 
 	// Displays inventory as a table.
 	const _inventoryTable = (command) => {
-		const [name, description]= game.state.inventory;
-		return console.table([name, description]);
+		const [name, description] = game.state.inventory;
+		return console.table([name, description], ["name", "description"]);
 }
 
 	// Handles commands that are item names.
@@ -242,7 +243,7 @@ const Commands = (game) => {
 
 
 		// Misc
-		[_inventoryTable, cases("inventoryTable", "invTable")],
+		[_inventoryTable, cases("inventoryTable", "invTable", "invt")],
 		// [_all, cases("all")],
 		[_save, cases("save")],
 		[_save_slot, "_0,save0,Save0,SAVE0"],
