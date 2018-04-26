@@ -93,7 +93,6 @@ const Commands = (game) => {
 		let itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont};`;
 
 		let styles = segments.map((word) => {
-			console.log('word', word);
 			let style = pStyle;
 			items.map((thing) => {
 				if (word.includes(thing)){
@@ -106,7 +105,6 @@ const Commands = (game) => {
 		segments = segments.map((word, i) => {
 			return i === segments.length - 1 ? `${word}.` : `${word} `;
 		});
-		console.log('styles', styles);
 		return console.inline(segments, styles);
 	}
 
