@@ -91,14 +91,17 @@ const Commands = (game) => {
 		});
 
 		console.log(`Items* ${items}\n`);
-		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ").map((word, i) => {
-			`${word} `
+		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ");
+
+		segments = segments.map((word, i) => {
+			return i === segments.length - 1 ? `${word}.` : `${word} `;
 		});
 		console.log('segments', segments);
 
-		let pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont}`;
-		let itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont}`;
-
+		let pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont};`;
+		let itemStyle = `font-size:120%;color:cyan;font-style:italic;font-family:${primaryFont};`;
+		console.log("segments", segments);
+		console.log("items", items);
 		let styles = segments.map((word) => {
 			return items.includes(word) ? itemStyle : pStyle;
 		});
