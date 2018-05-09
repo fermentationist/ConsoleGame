@@ -73,6 +73,12 @@ const Items = (function (game){
 			description: "This dusty, leatherbound tome"
 		},
 
+		_catalogue: {
+			name: "catalogue",
+			article: "a",
+			description: "This booklet appears to be the exhibition catalogue for some fancy art show. "
+		},
+
 		_chain: {
 			name : "chain",
 			weight : 0,

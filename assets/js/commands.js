@@ -77,6 +77,10 @@ const Commands = (game) => {
 		return console.inline([`Like this:  `, `_(`, `"value"`, `)`], [bold, example, exampleItalic, example]);
 	}
 
+	const _wait = () => {
+		return console.p("Time passes...");
+	}
+
 	// Displays items in the player's inventory.
 	const _inventory = (command) => {
 
@@ -218,6 +222,7 @@ const Commands = (game) => {
 		[_move, cases("down") + ",d,D"],
 
 		// Actions
+		[_wait, cases("wait") + ",z,Z"],
 		[_look, cases("look", "see", "observe") + ",l,L"],
 		[_inventory, cases("inventory") + ",i,I"],
 		[_act_upon, aliasString("use", thesaurus)],
