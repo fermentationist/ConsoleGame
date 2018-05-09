@@ -172,6 +172,20 @@ const consoleGame = {
 		return this.state.env.length && this.formatList(this.state.env.map((item) => `${item.article} ${item.name}`));
 	},
 
+	displayItem: function (filename, type, width, height) {
+		let contentDiv = document.getElementById("content");
+		if (! filename){
+			return contentDiv.innerHTML = "";
+		}
+		let objElement = document.createElement("object");
+		objElement.setAttribute("data", filename);
+		objElement.setAttribute("type", type);
+		objElement.setAttribute("width", width || "600px");
+		objElement.setAttribute("height", height || "300px");
+		contentDiv.innerHTML = ""
+		return contentDiv.append(objElement);
+	},
+
 	saveGame: function (slot){
 		const slotName = `ConsoleGame.save.${slot}`;
 		if (localStorage.getItem(slotName)){

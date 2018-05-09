@@ -36,7 +36,7 @@ const mapKey = (function (){
 		"#": {
 			name: "Oak Staircase",
 			description: "You are on a worn oak staircase connecting the first and second floors of the old abandoned house.",
-			visibleEnv: ["key", "note"]
+			visibleEnv: ["key", "note", "catalogue"]
 		},
 
 		"@": {

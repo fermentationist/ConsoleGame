@@ -234,6 +234,7 @@ const Commands = (game) => {
 		[_act_upon, aliasString("pull", thesaurus)],
 		[_act_upon, aliasString("spray", thesaurus)],
 		[_act_upon, aliasString("contemplate", thesaurus)],
+		[_act_upon, cases("hide")],
 
 		// Objects
 		[_items, cases("grue_repellant", "repellant")],
@@ -242,6 +243,7 @@ const Commands = (game) => {
 		[_items, cases("no_tea")],
 		[_items, cases("chain")],
 		[_items, aliasString("glove", thesaurus)],
+		[_items, cases("catalogue", "catalog")],
 
 
 

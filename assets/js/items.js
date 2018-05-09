@@ -45,6 +45,10 @@ const Items = (function (game){
 			return console.note(this.text);
 		},
 
+		hide: function (){
+			return game.displayItem();
+		},
+
 		use: function (){
 			game.state.objectMode = false;
 			return console.p(`Try as you might, you cannot manage to use the ${this.name}`);
@@ -76,7 +80,10 @@ const Items = (function (game){
 		_catalogue: {
 			name: "catalogue",
 			article: "a",
-			description: "This booklet appears to be the exhibition catalogue for some fancy art show. "
+			description: "This booklet appears to be the exhibition catalogue for some fancy art show. ",
+			read: function (){
+				return game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
+			}
 		},
 
 		_chain: {
