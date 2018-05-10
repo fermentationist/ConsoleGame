@@ -152,7 +152,7 @@ const Items = (function (game){
 
 		_note: {
 			name : "note",
-			text: "\n\n\n\n\n    Dear John,\n\n    I'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner).\n\n    It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here to see why I prefer their produce for its quality and respectability.    \n\n\n\n",
+			text: `\n\n\n\n\n    Dear John,\n\n    I'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner).\n\n    It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> ${href="http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2"} to see why I prefer their produce for its quality and respectability.    \n\n\n\n`,
 			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
 
