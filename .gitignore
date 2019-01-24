@@ -4,5 +4,5 @@ ConsoleGame.sublime-workspace
 assets/.DS_Store
 assets/js/.DS_Store
 assets/js/asciiChars.js
-node_modules
+node_modules/
 
