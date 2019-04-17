@@ -273,12 +273,25 @@ const _ = (value) => {
 consoleGame.initCommands(Commands(consoleGame));
 
 // Greeting to be displayed at the beginning of the game
-const greeting = "\nWelcome\n"
+const intro1 = "\nWelcome!\nAs a huge fan of Infocom-style text adventures, and as someone who has spent almost twenty years interacting with the command line on a daily basis, I wanted to see if I could make a text-based game to run in the JavaScript console of a web browser's developers' tools. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below. \n\nDue to the limitations of the medium (as far as I am aware of them), the commands you may enter can be only one-word long, with no spaces. Two-word commands may be constructed on two separate lines, separated by a carriage return, or on the same the same line, separated by only a semicolon. For example:"// \nexamine;glove \nor \nexamine \nglove \nwould be acceptable, but \nexamine glove \nwill not work.";
 
+const intro2 = [
+	"examine;glove \n",
+	"or \n",
+	"examine \nglove \n",
+	"will work, but \n",
+	"examine glove \n",
+	"will produce an error."
+];
+
+const style1 = "font-family:helvetica;color:thistle;font-size:125%;font-style:normal;";
+const style2 = "font-family:courier;color:#32cd32;font-style:italic;font-size:125%;";
+const note = "\nPlease type a command to play, or \"help\" to see a list of existing commands.\n";
 // Wait for page to load, and display greeting.
+
 setTimeout(() => {
-	console.h1(greeting);
-	console.info("Type a command to play.\n\n");
+	console.inline([intro1, ...intro2],[style1, style2, style1, style2, style1, style2, style1]);
+	console.info(note);
 	consoleGame.describeSurroundings();
 	}, 500);
 

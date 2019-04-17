@@ -94,8 +94,6 @@ const Items = (function (game){
 			pull: function (){
 				game.state.objectMode = false;
 				let dark = mapKey[game.state.currentCell].hideSecrets;
-				
-				console.log('dark', dark);
 				dark ? console.p("An overhead lightbulb flickers on, faintly illuminating the room.") : console.p("The lightbulb is extinguished.");
 				mapKey[game.state.currentCell].hideSecrets = !dark;
 				return game.describeSurroundings();

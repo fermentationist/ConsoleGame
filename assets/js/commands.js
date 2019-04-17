@@ -179,8 +179,13 @@ const Commands = (game) => {
 	}
 
 	const _poof = () => {
-		$("body").empty().css("background-color", "black");
+		const body = document.querySelector("body");
+		body.parentNode.removeChild(body);
 		return console.papyracy(">poof<");
+	}
+
+	const _help = () => {
+
 	}
 
 	const cases = (...wordArgs) => {
@@ -249,6 +254,7 @@ const Commands = (game) => {
 
 		// Misc
 		[_inventoryTable, cases("inventoryTable", "invTable", "invt")],
+		[_help, cases("help") + ",h,H"],
 		// [_all, cases("all")],
 		[_save, cases("save")],
 		[_save_slot, "_0,save0,Save0,SAVE0"],

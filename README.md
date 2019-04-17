@@ -1,6 +1,6 @@
 # ConsoleGame
 
-As a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's javascript console.
+As a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console.
 
 It is currently more proof-of-concept than a real game with a fleshed-out narrative. Open the console in your browser's developer tools to check it out! (command-option-i on Mac, control-shift-i on Windows or Linux).
 
