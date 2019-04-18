@@ -1,6 +1,6 @@
 const customConsole = (() => {
 
-	const customLog = function (message, {logType = "log", size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", lineHeight = "1rem"} = {}) {
+	const customLog = function (message, logType = "log", size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", lineHeight = "1rem") {
 		console[logType](`%c${message}`, `font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};font-style:${style}`);
 	}
 
@@ -11,19 +11,19 @@ const customConsole = (() => {
 			`font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};font-style:${style};${styleProperty}:${styleValue};`,
 			`font-size:${size};color:${color};font-weight:${weight};font-family:${font};line-height:${lineHeight};font-style:${style};`);
 }
-	console.custom = (message, {logType = "log", size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", lineHeight = "1rem"} = {}) => {
-		customLog(message, {logType, size, color, weight, style, font, lineHeight});
+	console.custom = (message, logType = "log", size = "inherit", color = "inherit", weight = "inherit", style = "inherit", font = "inherit", lineHeight = "1rem") => {
+		customLog(message, logType, size, color, weight, style, font, lineHeight);
 	}
 	console.h1 = message => {
-		customLog(message, {size: "125%", color: "pink", font: primaryFont});
+		customLog(message, "log", "125%", "pink", "normal", "normal", primaryFont);
 	}
 
 	console.gameTitle = message => {
-		customLog(message, {size: "50%", color: "pink", weight: "bold", font: primaryFont, lineHeight: ".5rem"});
+		customLog(message, "log", "50%", "pink", "bold", "normal", primaryFont, lineHeight=".5rem");
 	}
 
 	console.intro = message => {
-		console.custom(message, {size: "125%", color: "thistle", font: "helvetica"});
+		console.custom(message, "log", "125%", "thistle", "normal", "normal", "helvetica");
 	}
 
 	console.note = message => {
@@ -31,35 +31,35 @@ const customConsole = (() => {
 	}
 
 	console.warning = message => {
-		customLog(message, { logType: "warn", size: "115%", color: "orange"})//, "normal", "normal", "inherit");
+		customLog(message, "warn", "115%", "orange")//, "normal", "normal", "inherit");
 	}
 
 	console.papyracy = message => {
-		customLog(message, {size: "140%", color: "yellow", font: "Papyrus"});
+		customLog(message, "log", "140%", "yellow", "normal", "normal", "Papyrus");
 	}
 
 	console.p = message => {
-		customLog(message, {size: "120%", color: textColor, font: primaryFont});
+		customLog(message, "log", "120%", textColor, "normal", "normal", primaryFont);
 	}
 
 	console.tiny = message => {
-		customLog(message, {size: "60%", color: "#75715E", font: primaryFont});
+		customLog(message, "log", "60%", "#75715E", "normal", "normal", primaryFont);
 	}
 
 	console.info = message => {
-		customLog(message, { color: "#B9AFAF", font: primaryFont});
+		customLog(message, "log", "100%", "#B9AFAF", "normal", "normal", primaryFont);
 	}
 
 	console.italic = message => {
-		customLog(message, {size: "120%", color: textColor, weight: "italic", font: primaryFont});
+		customLog(message, "log", "120%", textColor, "italic", "normal", primaryFont);
 	}
 
 	console.invalid = message => {
-		customLog(message, {size: "120%", color: "red", font: primaryFont});
+		customLog(message, "log", "120%", "red", "normal", "normal", primaryFont);
 	}
 
 	console.inventory = message => {
-		customLog(message, {size: "120%", color: "cyan", font: primaryFont});
+		customLog(message, "log", "120%", "cyan", "normal", "normal", primaryFont);
 	}
 
 	console.italicInline = (before, italicized, after) => {
@@ -75,29 +75,22 @@ const customConsole = (() => {
 	}
 
 	console.title = message => {
-		customLog(message, {size: "125%", color: textColor, weight: "bold", font: primaryFont});
+		customLog(message, "log", "125%", textColor, "bold", "normal", primaryFont);
 	}
 
 	console.header = (currentHeader) => {
-		customLog(currentHeader, {size: "125%", color: textColor, weight: "bold", font: primaryFont});
+		customLog(currentHeader, "log", "125%", textColor, "bold", "normal", primaryFont);
 	}
 
 	console.groupTitle = (title) => {
-		customLog(title, { logType: "group", size: "125%", color: "#75EA5B", font: primaryFont});
+		customLog(title, "group", "125%", "#75EA5B", "normal", "normal", primaryFont);
 	}
 
 	console.inline = (stringSegmentArray, styleArray) => {
 		const stringSegments = stringSegmentArray.map((segment) => `%c${segment}`).join("");
 		console.log(stringSegments, ...styleArray);
 	}
-	console.codeInline = (stringSegmentArray, baseStyle, codeStyle) => {
-		baseStyle = `font-family:${primaryFont};font-weight:inherit;` + (baseStyle ? baseStyle : "");
-		codeStyle = "font-family:courier;font-weight:bold;" + (codeStyle ? codeStyle : "");
-		const styleArray = Array(stringSegmentArray.length).fill(baseStyle).map((baseStyle, index) => {
-			return index % 2 !== 0 ? codeStyle : baseStyle;
-		})
-		console.inline(stringSegmentArray, styleArray);
-	}
+
 })();
 
 

@@ -184,8 +184,41 @@ const Commands = (game) => {
 		return console.papyracy(">poof<");
 	}
 
-	const _help = () => {
+	const _start = () => {
+		game.start();
+	}
 
+	const _help = () => {
+		// Greeting to be displayed at the beginning of the game
+		const text = [
+			"Due to the limitations of the medium, the commands you may enter can be only one-word long, with no spaces. \nTwo-word commands may be constructed on two separate lines. For example, if you wanted to examine the glove, you would first type ",
+			"examine ",
+			"to which the game would respond ",
+			"What is it you would like to examine? ",
+			"Then you would type the object of your intended action, ",
+			"glove",
+			", to complete the command."
+		];
+		// "separated by a carriage return, or on the same the same line, separated by only a semicolon. For example:"
+		// ];
+
+		const text_2 = [
+			"examine;glove \n",
+			"or \n",
+			"examine \n[what would you like to examine?]\nglove \n",
+			"will work, but \n",
+			"examine glove \n",
+			"will produce an error."
+		];
+		// const style_1 = "font-family:helvetica;color:thistle;font-size:125%;font-style:normal;";
+		// const style_2 = "font-family:courier;color:#32cd32;font-style:italic;font-size:125%;";
+		// console.inline([text_1, ...text_2], [style_1, style_2, style_1, style_2, style_1, style_2, style_1]);
+		console.codeInline(text, "color:thistle;font-size:120%", "color:#29E616;font-size:125%")
+		console.info("\nPlease type \"start\" to play, \"help\" for instructions, or \"commands\" for a list of available commands.\n");
+	}
+
+	const _commands = () => {
+		console.log("commands...");
 	}
 
 	const cases = (...wordArgs) => {
@@ -218,6 +251,8 @@ const Commands = (game) => {
 
 	// Command aliases
 	const aliases = [
+		// Start
+		[_start, cases("start")],
 		// Move
 		[_move, cases("north") + ",n,N"],
 		[_move, cases("south") + ",s,S"],
@@ -255,6 +290,8 @@ const Commands = (game) => {
 		// Misc
 		[_inventoryTable, cases("inventoryTable", "invTable", "invt")],
 		[_help, cases("help") + ",h,H"],
+		[_commands, cases("commands") + ",c,C"],
+
 		// [_all, cases("all")],
 		[_save, cases("save")],
 		[_save_slot, "_0,save0,Save0,SAVE0"],

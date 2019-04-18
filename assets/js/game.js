@@ -1,5 +1,7 @@
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
 
+//todo: rewrite with generators
+
 const consoleGame = {
 	state: {
 		objectMode : false,
@@ -9,7 +11,7 @@ const consoleGame = {
 		confirmMode: false,
 		inventory : [],
 		history : [],
-		turn : 1,
+		turn : 0,
 		pendingAction : null,
 		position : {
 			x: 4,
@@ -25,8 +27,9 @@ const consoleGame = {
 	},
 
 		 //===========================================\\
-	// This function runs at the start of each turn\\
+	
 	turnDemon: function (commandName, interpreterFunction) {
+	// This function runs at the start of each turn\\
 		try {
 			if (this.state.saveMode){
 				console.info(`Saving game to slot ${commandName}`);
@@ -39,7 +42,7 @@ const consoleGame = {
 
 			interpreterFunction(commandName);
 
-			let dontCountTurn = this.state.saveMode || this.state.restoreMode || this.state.prefMode;
+			let dontCountTurn = this.state.saveMode || this.state.restoreMode || this.state.prefMode || ["help", "start", "commands", "look"].includes(commandName);
 			if (!dontCountTurn) {
 				this.addToHistory(commandName);
 				// console.tiny(this.state.history);
@@ -52,8 +55,9 @@ const consoleGame = {
 		}
 	},
 
-	// Method adds executed command to history and increments turn counter.
+	
 	addToHistory: function (commandName){
+	// Method adds executed command to history and increments turn counter.
 		if (false){
 			// something
 		} else {
@@ -68,9 +72,9 @@ const consoleGame = {
 		});
 		return console.groupEnd();
 	},
-
-	// Method adds item to player inventory
+	
 	addToInventory: function (itemArray){
+	// Method adds item to player inventory
 		itemArray.map((item) => {
 			if (item instanceof String){
 				return this.state.inventory.push(Items[`_${item}`]);
@@ -149,7 +153,7 @@ const consoleGame = {
 
 	currentHeader: function (columnWidth = 80){
 		const roomName = mapKey[this.state.currentCell].name;
-		const turn = `Turn : ${this.state.turn}`;
+		const turn = `Turn : ${this.state.turn + 1}`;
 		const gapSize = columnWidth - roomName.length - turn.length;
 		const gap = " ".repeat(gapSize);
 		return `${roomName}${gap}${turn}`;
@@ -256,7 +260,28 @@ const consoleGame = {
 		scriptTag.type = "text/javascript";
 		body.prepend(scriptTag);
 		return setTimeout(() => consoleGame.describeSurroundings(), 500);	
+	},
+
+	intro: function (){
+		// Greeting to be displayed at the beginning of the game
+		const intro_1 = "\nWelcome!\nAs a huge fan of Infocom-style text adventures, and as someone intimately acquainted with the command line, I wanted to see if I could make a text-based game to run in the JavaScript console of a web browser's developers' tools. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below.\n";
+		console.intro(intro_1);
+		const text = [
+			"Please type ",
+			"start ",
+			"to play, ",
+			"help ",
+			"for instructions, or ",
+			"commands ",
+			"for a list of available commands."
+		];
+		console.codeInline(text,"","font-size:125%;");
+	},
+
+	start: function () {
+		this.describeSurroundings();
 	}
+
 }
 
 const _ = (value) => {
@@ -272,26 +297,10 @@ const _ = (value) => {
 // Creating commands from array returned by commands.js...
 consoleGame.initCommands(Commands(consoleGame));
 
-// Greeting to be displayed at the beginning of the game
-const intro1 = "\nWelcome!\nAs a huge fan of Infocom-style text adventures, and as someone who has spent almost twenty years interacting with the command line on a daily basis, I wanted to see if I could make a text-based game to run in the JavaScript console of a web browser's developers' tools. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below. \n\nDue to the limitations of the medium (as far as I am aware of them), the commands you may enter can be only one-word long, with no spaces. Two-word commands may be constructed on two separate lines, separated by a carriage return, or on the same the same line, separated by only a semicolon. For example:"// \nexamine;glove \nor \nexamine \nglove \nwould be acceptable, but \nexamine glove \nwill not work.";
 
-const intro2 = [
-	"examine;glove \n",
-	"or \n",
-	"examine \nglove \n",
-	"will work, but \n",
-	"examine glove \n",
-	"will produce an error."
-];
-
-const style1 = "font-family:helvetica;color:thistle;font-size:125%;font-style:normal;";
-const style2 = "font-family:courier;color:#32cd32;font-style:italic;font-size:125%;";
-const note = "\nPlease type a command to play, or \"help\" to see a list of existing commands.\n";
 // Wait for page to load, and display greeting.
 
 setTimeout(() => {
-	console.inline([intro1, ...intro2],[style1, style2, style1, style2, style1, style2, style1]);
-	console.info(note);
-	consoleGame.describeSurroundings();
+	consoleGame.intro();
 	}, 500);
 
