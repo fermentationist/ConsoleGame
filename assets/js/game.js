@@ -9,11 +9,11 @@ const consoleGame = {
 		restoreMode: false,
 		prefMode: false,
 		confirmMode: false,
-		inventory : [],
-		history : [],
-		turn : 0,
-		pendingAction : null,
-		position : {
+		inventory: [],
+		history: [],
+		turn: 0,
+		pendingAction: null,
+		position: {
 			x: 4,
 			y: 2,
 			z: 3
@@ -264,8 +264,8 @@ const consoleGame = {
 
 	intro: function (){
 		// Greeting to be displayed at the beginning of the game
-		const intro_1 = "\nWelcome!\nAs a huge fan of Infocom-style text adventures, and as someone intimately acquainted with the command line, I wanted to see if I could make a text-based game to run in the JavaScript console of a web browser's developers' tools. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below.\n";
-		console.intro(intro_1);
+		const intro_1 = "\nWelcome!\nAs a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below.\n";
+		console.custom(intro_1, "font-size:120%;color:thistle;line-height:1.85;");
 		const text = [
 			"Please type ",
 			"start ",
@@ -275,8 +275,30 @@ const consoleGame = {
 			"commands ",
 			"for a list of available commands."
 		];
-		console.codeInline(text,"","font-size:125%;");
+		console.codeInline(this.introOptions());
 	},
+
+	introOptions: function (turn){
+		console.log("turn equals ", turn);
+		const commonOptions = [
+			"Please type ",
+			"help ",
+			"for instructions, ",
+			"commands ",
+			"for a list of available commands, or "
+		];
+		const options = [
+			...commonOptions,
+			"continue ",
+			"to continue playing. "
+		];
+		const initialOptions = [
+			...commonOptions,
+			"start ",
+			"to start the game. "
+		]
+		return turn === 0 ? initialOptions : options;
+	}, 
 
 	start: function () {
 		this.describeSurroundings();

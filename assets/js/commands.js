@@ -190,8 +190,10 @@ const Commands = (game) => {
 
 	const _help = () => {
 		// Greeting to be displayed at the beginning of the game
-		const text = [
-			"Due to the limitations of the medium, the commands you may enter can be only one-word long, with no spaces. \nTwo-word commands may be constructed on two separate lines. For example, if you wanted to examine the glove, you would first type ",
+		const baseStyle = "font-family:helvetica;color:thistle;font-size:110%";
+		const codeStyle = "color:#29E616;font-size:115%;";
+		const text_1 = [
+			"Due to the limitations of the browser console as a medium, the commands you may enter can only be one-word long, with no spaces. \nHowever, two-word commands may be constructed on two separate lines. For example, if you wanted to examine the glove, you would first type ",
 			"examine ",
 			"to which the game would respond ",
 			"What is it you would like to examine? ",
@@ -199,26 +201,29 @@ const Commands = (game) => {
 			"glove",
 			", to complete the command."
 		];
-		// "separated by a carriage return, or on the same the same line, separated by only a semicolon. For example:"
-		// ];
-
+		console.codeInline(text_1, baseStyle, codeStyle)
 		const text_2 = [
-			"examine;glove \n",
-			"or \n",
-			"examine \n[what would you like to examine?]\nglove \n",
-			"will work, but \n",
-			"examine glove \n",
-			"will produce an error."
-		];
-		// const style_1 = "font-family:helvetica;color:thistle;font-size:125%;font-style:normal;";
-		// const style_2 = "font-family:courier;color:#32cd32;font-style:italic;font-size:125%;";
-		// console.inline([text_1, ...text_2], [style_1, style_2, style_1, style_2, style_1, style_2, style_1]);
-		console.codeInline(text, "color:thistle;font-size:120%", "color:#29E616;font-size:125%")
-		console.info("\nPlease type \"start\" to play, \"help\" for instructions, or \"commands\" for a list of available commands.\n");
+			"Alternately, you may enter both words on the same line, provided they are separated with a semicolon and no spaces, i.e ",
+			"examine;glove"
+		]
+		console.codeInline(text_2, baseStyle, codeStyle);
+		console.log("is game?", game.state.turn);
+		console.codeInline(game.introOptions(game.state.turn));
 	}
 
 	const _commands = () => {
-		console.log("commands...");
+		console.log("commands...\n");
+		// console.log(aliases);
+		const commands = aliases.map(alias => {
+			return alias[1];
+		});
+		const commandTable = {};
+		commands.forEach(commandString => {
+			const splitString = commandString.split(",");
+			const [commandName, aliases] = [splitString.shift(), splitString.join(", ")];
+			commandTable[commandName] = aliases;
+		});
+		console.table(commandTable);
 	}
 
 	const cases = (...wordArgs) => {
