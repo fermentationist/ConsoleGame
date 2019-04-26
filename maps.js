@@ -116,5 +116,4 @@ const maps = (function (){
 	return processMaps([boundary, basement, floorSeparator1, groundFloor, floorSeparator2, secondFloor, boundary]);
 
 })();
-
 export default maps;

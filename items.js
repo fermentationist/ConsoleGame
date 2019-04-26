@@ -1,18 +1,21 @@
-
-// ===========//Items//===========
-const Items = (function (game){
+import consoleGame from "./game.js";
+import { pStyle } from "./prefs.js";
+// ===========//ItemModule//===========
+const itemModule = game => {
 	const Item = {
 		name : "Item",
 		used : false,
 		weight : 1,
-		description: `There is nothing particularly interesting about this ${this.name}.`,
+		get description () {
+			return `There is nothing particularly interesting about this ${this.name}.`
+		},
 		takeable: true,
 		article: "a",
 		take: function (){
 			game.state.objectMode = false;
 			if(this.takeable && game.inEnvironment(this.name)){
 				game.addToInventory([this]);
-				mapKey[game.state.currentCell].removeFromEnv(this);
+				game.mapKey[game.state.currentCell].removeFromEnv(this);
 				return console.p(`You pick up the ${this.name}`);
 			} else {
 				return console.p("You can't take that.");
@@ -22,7 +25,7 @@ const Items = (function (game){
 			game.state.objectMode = false;
 			if (game.inInventory(this.name)){
 				game.removeFromInventory(this);
-				mapKey[game.state.currentCell].env.push(this);
+				game.mapKey[game.state.currentCell].env.push(this);
 				return console.p(`${this.name} dropped.`);
 			} else {
 				return console.p("You don't have that.");
@@ -56,18 +59,20 @@ const Items = (function (game){
 	}
 
 	const items = {
-		stockDungeon: function (subEnvName){
-			Object.keys(mapKey).map((key) => {
-				let roomEnv = mapKey[key][subEnvName];
-				let newEnv = [];
-				if (roomEnv.length){
-					roomEnv.map((item) => {
-						let itemObj = typeof item === "string" ? items[`_${item}`] : item;
-						itemObj ? newEnv.push(itemObj) : console.log(`Cannot stock ${item}. No such item.`);;
-					});
-				}
-				return mapKey[key][subEnvName] = newEnv;
-			});
+		_all: {
+			name: "all",
+			_take_all: function () {
+				const all = game.state.env;
+				console.log("TCL: all", all);
+				// game.state.objectMode = false;
+				// if (this.takeable && game.inEnvironment(this.name)) {
+				// 	game.addToInventory([this]);
+				// 	game.mapKey[game.state.currentCell].removeFromEnv(this);
+				// 	return console.p(`You pick up the ${this.name}`);
+				// } else {
+				// 	return console.p("You can't take that.");
+				// }
+			},
 		},
 
 		_book: {
@@ -82,7 +87,8 @@ const Items = (function (game){
 			article: "a",
 			description: "This booklet appears to be the exhibition catalogue for some fancy art show. ",
 			read: function (){
-				return game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
+				console.info(`[click link to read => "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing"]`)
+				// window.open("https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing", "_blank");//game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
 			}
 		},
 
@@ -93,9 +99,9 @@ const Items = (function (game){
 			takeable: false,
 			pull: function (){
 				game.state.objectMode = false;
-				let dark = mapKey[game.state.currentCell].hideSecrets;
+				let dark = game.mapKey[game.state.currentCell].hideSecrets;
 				dark ? console.p("An overhead lightbulb flickers on, faintly illuminating the room.") : console.p("The lightbulb is extinguished.");
-				mapKey[game.state.currentCell].hideSecrets = !dark;
+				game.mapKey[game.state.currentCell].hideSecrets = !dark;
 				return game.describeSurroundings();
 			},
 			use: function (){
@@ -112,7 +118,7 @@ const Items = (function (game){
 				if (this.contents.length){
 					const hiddenItem = this.contents.pop();
 					console.p(`${this.description}\nAs you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);
-					return mapKey[game.state.currentCell].addToEnv(hiddenItem.name);
+					return game.mapKey[game.state.currentCell].addToEnv(hiddenItem.name);
 				} 
 				return this.description;
 			}
@@ -150,7 +156,7 @@ const Items = (function (game){
 
 		_note: {
 			name : "note",
-			text: `\n\n\n\n\n    Dear John,\n\n    I'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner).\n\n    It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> ${href="http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2"} to see why I prefer their produce for its quality and respectability.    \n\n\n\n`,
+			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
 			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
 
@@ -164,9 +170,10 @@ const Items = (function (game){
 					this.methodCallcount ++;
 					console.log('this.methodCallcount', this.methodCallcount);
 					game.state.objectMode = false;
+					console.p(message);
 					// return console.p(`${message} ${this.methodCallcount > 1 ? "Perhaps you should contemplate that for a moment..." : ""}`);
 					if (this.methodCallcount > 1){
-						console.italic("Perhaps you should take a moment to ", "contemplate", " that.")	
+						console.inline(["Perhaps you should take a moment to ", "contemplate", " that."], [pStyle, pStyle + "font-style:italic;", pStyle])	
 					}
 			},
 			drink: function (){
@@ -185,11 +192,11 @@ const Items = (function (game){
 				return this.no_teaMethod("Unsurprisingly, using the no tea has no effect.");
 			},
 			contemplate: function (){
-				if (this.methodCallcount > 2){
+				if (this.methodCallcount > 1){
 					console.p("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
-					return console.h1("You fucking win, you winner, you!");
+					return console.h1("You just won, you winner, you!");
 				}
-				return console.p("Let's not resort to that just yet!");
+				return this.no_teaMethod("Let's not resort to that just yet!");
 			},
 			takeable: false
 		}
@@ -200,14 +207,12 @@ const Items = (function (game){
 	});
 
 	return items;
+};
+// Items.stockDungeon("hiddenEnv");
+// Items.stockDungeon("visibleEnv");
 
-})(consoleGame);
+// Items._glove.contents.push(Items._key);
 
-Items.stockDungeon("hiddenEnv");
-Items.stockDungeon("visibleEnv");
+// consoleGame.addToInventory([Items._grue_repellant, Items._no_tea]);
 
-Items._glove.contents.push(Items._key);
-
-consoleGame.addToInventory([Items._grue_repellant, Items._no_tea]);
-
-export default Items;
+export default itemModule;

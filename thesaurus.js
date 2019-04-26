@@ -26,4 +26,5 @@ const thesaurus = {
 	"glove":["mitt","gloves","handwear"
 	]
 }
+
 export default thesaurus;

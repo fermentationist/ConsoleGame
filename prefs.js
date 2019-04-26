@@ -1,19 +1,18 @@
+// Global preference values.
+export var defaultFont = "monaco";
+export var defaultTextColor = "#32cd32";
+export var defaultFontSize = "100%";
 
+export var prefs = Object.keys(localStorage).some((key) => {
+	return key.indexOf("ConsoleGame.prefs") !== -1;
+});
 
-const prefs = (() => {
-	// Global preference values.
-	var defaultFont = "helvetica";
-	var defaultTextColor = "#32cd32";
-	var pStyle = `font-size:120%;color:#32cd32;font-family:${primaryFont}`;
+console.log(!prefs ? "no user preferences detected." : "user preferences applied.");
 
-	var prefs = Object.keys(localStorage).some((key) => {
-		return key.indexOf("ConsoleGame.prefs") !== -1;
-	});
+export var primaryFont = localStorage.getItem("ConsoleGame.prefs.font") || defaultFont;
+export var textColor = localStorage.getItem("ConsoleGame.prefs.color") || defaultTextColor;
+export var fontSize = localStorage.getItem("ConsoleGame.prefs.size") || defaultFontSize;
 
-	console.log(!prefs ? "no user preferences detected." : "user preferences applied.");
+export var pStyle = `font-size:calc(1.2 * ${fontSize});color:${textColor};font-family:${primaryFont}`;
 
-	var primaryFont = localStorage.getItem("ConsoleGame.prefs.font") || defaultFont;
-	var textColor = localStorage.getItem("ConsoleGame.prefs.color") || defaultTextColor;
-})();
-
-export default prefs;
+export default (!prefs ? "no user preferences detected." : "user preferences applied.");												

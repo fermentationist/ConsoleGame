@@ -1,3 +1,5 @@
+import { primaryFont, textColor, fontSize } from "./prefs.js";
+
 const customConsole = (() => {
 	const customLog = function (message, style, logType = "log") {
 		console[logType](`%c${message}`, style);
@@ -6,51 +8,51 @@ const customConsole = (() => {
 		customLog(message, style);
 	}
 	console.h1 = message => {
-		customLog(message, `font-size:125%;color:pink;font-family:${primaryFont}`);
+		customLog(message, `font-size:125%;color:pink;font-family:${primaryFont};`);
 	}
 	console.intro = message => {
-		customLog(message, `font-size:125%;color:thistle;font-family:helvetica;`);
+		customLog(message, `font-size:calc(1.25 * ${fontSize});color:thistle;font-family:helvetica;`);
 	}
 	console.note = message => {
-		customLog(message, "font-size:110%;font-family:courier new;font-weight:bold;color:#75715E;background-color:white");
+		customLog(message, `font-size:calc(1.2 * ${fontSize});font-family:courier new;font-weight:bold;color:#75715E;background-color:white;line-spacing:2em;padding:0 1em 1em;margin-right:auto;`);
 	}
 	console.warning = message => {
-		customLog(message, "size:115%;color:orange;", logType = "warn");
+		customLog(message, `font-size:calc(1.15 * ${fontSize});color:orange;`, logType = "warn");
 	}
 	console.papyracy = message => {
-		customLog(message, "font-size:140%;color:beige;font-family:Papyrus;");
+		customLog(message, `font-size:calc(1.4 * ${fontSize});color:beige;font-family:Papyrus;`);
 	}
 	console.p = message => {
-		customLog(message, `font-size:120%;color:${textColor};font-family:${primaryFont};`);
+		customLog(message, `font-size:calc(1.2 * ${fontSize});color:${textColor};font-family:${primaryFont};padding:0 1em;`);
 	}
 	console.tiny = message => {
-		customLog(message, `font-size:60%;color:#75715E;font-family:${primaryFont}`);
+		customLog(message, `font-size:calc(0.5 * ${fontSize});color:#75715E;font-family:${primaryFont};`);
 	}
 	console.info = message => {
-		customLog(message, `color:#B9AFAF;font-family:${primaryFont}`);
+		customLog(message, `color:#B9AFAF;font-family:${primaryFont};font-size:${fontSize};`);
 	}
 	console.invalid = message => {
-		customLog(message, `font-size:120%;color:red;font-family:${primaryFont}`);
+		customLog(message, `font-size:calc(1.2 * ${fontSize});color:red;font-family:${primaryFont};`);
 	}
 	console.inventory = message => {
-		customLog(message, `font-size:120%;color:cyan;font-family:${primaryFont}`);
+		customLog(message, `font-size:calc(1.2 * ${fontSize});color:cyan;font-family:${primaryFont};padding:0 1em;`);
 	}
 	console.title = message => {
-		customLog(message, `font-size:125%;font-weight:bold;color:${textColor};font-family:${primaryFont};`);
+		customLog(message, `font-size:calc(1.25 * ${fontSize});font-weight:bold;color:${textColor};font-family:${primaryFont};`);
 	}
 	console.header = (currentHeader) => {
-		customLog(currentHeader, `font-size:125%;font-weight:bold;color:${textColor};font-family:${primaryFont};`);
+		customLog(currentHeader, `font-size:calc(1.25 * ${fontSize});font-weight:bold;color:${textColor};font-family:${primaryFont};padding:0 1em;`);
 	}
 	console.groupTitle = (title) => {
-		customLog(title, `font-size:125%;color:#75EA5B;font-family:${primaryFont}`, "group");
+		customLog(title, `font-size:calc(1.25 * ${fontSize});color:#75EA5B;font-family:${primaryFont}`, "group");
 	}
 	console.inline = (stringSegmentArray, styleArray) => {
 		const stringSegments = stringSegmentArray.map((segment) => `%c${segment}`).join("");
 		console.log(stringSegments, ...styleArray);
 	}
 	console.codeInline = (stringSegmentArray, baseStyle, codeStyle) => {
-		baseStyle = `font-family:${primaryFont};font-weight:inherit;line-height:1.5;` + (baseStyle ? baseStyle : "");
-		codeStyle = "font-family:courier;font-weight:bold;line-height:1.5;font-size:125%;" + (codeStyle ? codeStyle : "");
+		baseStyle = `font-size:${fontSize}; font-family:${primaryFont};font-weight:inherit;line-height:1.5;padding-top:1em;` + (baseStyle ? baseStyle : "");
+		codeStyle = `font-family:courier;font-weight:bold;line-height:1.5;padding-top:1em;font-size:calc(1.25*${fontSize});` + (codeStyle ? codeStyle : "");
 		const styleArray = Array(stringSegmentArray.length).fill(baseStyle).map((baseStyle, index) => {
 			return index % 2 !== 0 ? codeStyle : baseStyle;
 		})

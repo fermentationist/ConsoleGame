@@ -1,8 +1,8 @@
-const mapKey = (function (){
+const mapKey = game => {
 	const MapCell = {
 		name: "Nowhere",
 		hideSecrets: false,
-		description: "You find yourself in a non-descript, liminal, non-place– a locational limbo. That, or it is so boring that you have already forgotten what it looks like. Either way, nothing of interest is likely to ever happen here.",
+		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing of interest is likely to ever happen here.",
 		hiddenEnv: [],
 		visibleEnv: [],
 		get env (){
@@ -22,12 +22,11 @@ const mapKey = (function (){
 			return index !== -1 ? this.env.splice(index, 1): console.log("Cannot remove as item is not present in environment.");
 		},
 		addToEnv: function (itemName) {
-			const itemObj = Items[`_${itemName}`];
+			const itemObj = game.items[`_${itemName}`];
 			return this.visibleEnv.push(itemObj);
 
 		}
 	}
-
 	const mapkey = {
 		"0": {
 
@@ -54,7 +53,7 @@ const mapKey = (function (){
 				const hidden = this.hiddenEnv;
 				const text = "The inside of this small broom closet is devoid of brooms, or anything else, for that matter";
 				const plural = hidden.length > 1 ? "y" : "ies";
-				return text + (hidden.length ? `, with the exception of ${consoleGame.formatList(hidden.map(item => `${item.article} ${item.name}`))} which occup${plural} a dusty corner.`: ".");
+				return text + (hidden.length ? `, with the exception of ${game.formatList(hidden.map(item => `${item.article} ${item.name}`))} which occup${plural} a dusty corner.`: ".");
 			},
 			get description (){
 				return this.hideSecrets ? this.des1 : this.des2;
@@ -67,6 +66,6 @@ const mapKey = (function (){
 	});
 
 	return mapkey;
-})();
+};
 
 export default mapKey;
