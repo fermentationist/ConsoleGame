@@ -6,7 +6,7 @@ import commandsList from "./commands.js";
 import customConsole from "./console_styles.js";
 
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
-//todo: rewrite with generators
+//todo: rewrite with generators?
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
@@ -20,10 +20,15 @@ const ConsoleGame = {
 		history: [],
 		turn: null,
 		pendingAction: null,
+		startPosition: {
+			z: 3,
+			y: 13,
+			x: 7
+		},
 		position: {
-			x: 4,
-			y: 2,
-			z: 3
+			z: 3,
+			y: 13,
+			x: 7
 		},
 		get currentCell (){ 
 			return ConsoleGame.maps[this.position.z][this.position.y][this.position.x]
@@ -39,12 +44,13 @@ const ConsoleGame = {
 	set mapKey (value) {
 		this.key = value;
 	},
+	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "_save_slot"],
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
 	// This function runs at the start of each turn\\
-		const immuneCommands = ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "_save_slot"];
+		
 		try {
-			let dontCountTurn = immuneCommands.includes(commandName);
+			let dontCountTurn = this.immuneCommands.includes(commandName);
 			if (!dontCountTurn) {
 				this.addToHistory(commandName);
 				if (!this.state.objectMode) {
@@ -67,10 +73,10 @@ const ConsoleGame = {
 
 	replayHistory: function (commandList){
 		this.state.restoreMode = false;
-		this._start();
+		this.initializeNewGame();
 		console.groupCollapsed("Game loading...");
 		commandList.split(",").map((command) =>{
-			return eval(`${command}`);
+			(Function(`${command}`))();
 		});
 		return console.groupEnd("Game loaded.");
 	},
@@ -99,11 +105,7 @@ const ConsoleGame = {
 		this.state.history = [];
 		this.state.turn = 0;
 		this.state.pendingAction = null;
-		this.state.position = {
-				x: 4,
-				y: 2,
-				z: 3
-			};
+		this.state.position = this.state.startPosition;
 		window.localStorage.removeItem("ConsoleGame.history");
 		return;
 	},
@@ -111,6 +113,9 @@ const ConsoleGame = {
 	formatList: function (itemArray, disjunction = false){
 		const length = itemArray.length;
 		const conjunction = disjunction ? "or" : "and";
+		if (length === 0) {
+			return "nowhere";
+		}
 		if (length === 1) {
 			return itemArray[0];
 		} 
@@ -132,17 +137,14 @@ const ConsoleGame = {
 	},
 	// Returns an array of directions (as strings) that player can move in from present location.
 	possibleMoves: function (z, y, x){
-		const n = ["north", maps[z][y - 1][x] !== "*"];
-		const s = ["south", maps[z][y + 1][x] !== "*"];
-		const e = ["east", maps[z][y][x + 1] !== "*"];
-		const w = ["west", maps[z][y][x - 1] !== "*"];
-		const u = ["up", maps[z + 1][y][x] !== "*"];
-		const d = ["down", maps[z - 1][y][x] !== "*"];
+		const n = ["north", maps[z][y - 1] !== undefined && maps[z][y - 1][x] !== "*"];
+		const s = ["south", maps[z][y + 1] !== undefined && maps[z][y + 1][x] !== "*"];
+		const e = ["east", maps[z][y][x + 1] !== undefined && maps[z][y][x + 1] !== "*"];
+		const w = ["west", maps[z][y][x - 1] !== undefined && maps[z][y][x - 1] !== "*"];
+		const u = ["up", maps[z + 1] !== undefined && maps[z + 1][y][x] !== "*"];
+		const d = ["down", maps[z - 1] !== undefined && maps[z - 1][y][x] !== "*"];
 		let options = [n, s, e, w, u, d];
-		let result = [];
-		options.map((direction) => {
-			direction[1] ? result.push(direction[0]):null;
-		});
+		let result = options.filter(elt => elt[1]).map(dir => dir[0]);
 		return result;
 	},
 
@@ -157,7 +159,7 @@ const ConsoleGame = {
 		const description = this.mapKey[this.state.currentCell].description;
 		const itemStr = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
 		const moveOptions = `You can go ${this.movementOptions()}.`;
-		console.p("\n\n");// console.clear();
+		// console.p("\n\n");// console.clear();
 		console.header(this.currentHeader());
 		return console.p(description + "\n" + moveOptions + "\n" + itemStr + "\n");
 	},
@@ -167,7 +169,7 @@ const ConsoleGame = {
 		const turn = `Turn : ${this.state.turn}`;
 		const gapSize = columnWidth - roomName.length - turn.length;
 		const gap = " ".repeat(gapSize);
-		return `${roomName}${gap}${turn}`;
+		return `\n${roomName}${gap}${turn}`;
 	},
 
 	inInventory: function (itemName){
@@ -201,18 +203,13 @@ const ConsoleGame = {
 		return contentDiv.append(objElement);
 	},
 
-	_saveGame: function (slot){
-		const slotName = `ConsoleGame.save.${slot}`;
-		if (localStorage.getItem(slotName)){
-			this.state.confirmMode = true;
-			return console.invalid("That save slot is already in use. Type \"yes\" to overwrite it or enter a different save slot.")
-		} 
-		if (!localStorage.getItem(slotName)){
-			this.state.saveMode = false;
-			return localStorage.setItem(slotName, this.state.history);
-		} 
-
+	dead: function (text) {
+		console.p(text);
+		console.p("You have died. Of course, being dead, you are unaware of this unfortunate truth. In fact, you are no longer aware of anything at all.");
+		window.localStorage.removeItem("ConsoleGame.history");
+		setTimeout(() => location.reload(), 2000);
 	},
+
 	_restore: function (command) {
 		let keys = Object.keys(localStorage);
 		let saves = keys.filter((key) => {
@@ -232,7 +229,7 @@ const ConsoleGame = {
 			console.info("Please choose which slot number (0 – 9) to restore from. To restore, type an underscore, immediately followed by the slot number.");
 			return console.inline([`For example, type `, `_3`, ` to select slot 3.`],[infoStyle, boldInfo, infoStyle]);
 		}
-		return console.info("No saved games found.");
+		return console.invalid("No saved games found.");
 	},
 
 	_restoreGame: function (slotName){
@@ -247,16 +244,14 @@ const ConsoleGame = {
 		this.state.saveMode = true;
 		this.state.restoreMode = false;
 		this.state.pendingAction = command;
-		console.log('this.state.pendingAction', this.state.pendingAction)
 		const infoStyle = `font-size:100%;color:#75715E;font-family:${primaryFont};`;
 		const boldInfo = infoStyle + `font-weight:bold;color:white`;
 		console.info("Please choose a slot number (_0 through _9) to save your this. To save to the selected slot, type an underscore, immediately followed by the slot number.");
-		console.inline([`For example, type `, `_3`, ` to select slot 3.`],[infoStyle, boldInfo, infoStyle]);
+		console.codeInline([`For example, type `, `_3`, ` to select slot 3.`]);
 	},
 
 	_save_slot: function (slotNumber)  {
 		if (this.state.saveMode){
-			this.state.saveMode = false;
 			try {
 				return this._saveGame(slotNumber);
 			}
@@ -265,19 +260,42 @@ const ConsoleGame = {
 				return console.trace(err);
 			}
 		} else if (this.state.restoreMode){
-			this.state.restoreMode = false;
+			
 			try {
-				return this._restoreGame(slotNumber);
+				this._restoreGame(slotNumber);
+				return this.state.restoreMode = false;
 			} 
 			catch (err) {
 				console.invalid(`Restore from slot ${slotNumber} failed.`);
 				return console.trace(err);
+			}
+		} else {
+			console.invalid("Operation failed.");
+		}
+	},
+
+	_saveGame: function (slot) {
+		const slotName = `ConsoleGame.save.${slot}`;
+		if (localStorage.getItem(slotName)) {
+			// this.state.confirmMode = true;
+			// return console.invalid("That save slot is already in use. Type \"yes\" to overwrite it or enter a different save slot.")
+			return console.invalid("That save slot is already in use. Please select a different save slot.");
+		}
+		if (!localStorage.getItem(slotName)) {
+			this.state.saveMode = false;
+			try {
+				localStorage.setItem(slotName, this.state.history);
+				return console.info(`Game saved to slot ${slot}.`);
+			}
+			catch (err) {
+				return console.invalid(`Save to slot ${slot} failed.`)
 			}
 		}
 	},
 
 	// Reload window (and game)
 	_quit: function () {
+		this.resetGame();
 		location.reload();
 		return "reloading...";
 	},
@@ -313,7 +331,8 @@ const ConsoleGame = {
 	},
 	bindInitialCommands: function () {
 		const initialCommands = [
-			[this._start, this.cases("start", "resume")],
+			[this._start, this.cases("start", "begin")],
+			[this._resume, this.cases("resume")],
 			[this._help, this.cases("help") + ",h,H,ayuda"],
 			[this._commands, this.cases("command", "commands")],
 			[this._restore, this.cases("restore", "load")],
@@ -356,14 +375,27 @@ const ConsoleGame = {
 		return setTimeout(() => this.describeSurroundings(), 500);	
 	},
 
+	unfinishedGame: function () {
+		return window.localStorage.getItem("ConsoleGame.history");
+	},
+
 	intro: function (){
 		// Greeting to be displayed at the beginning of the game
 		const intro_1 = "\nWelcome!\nAs a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below.\n";
-		console.custom(intro_1, "font-size:110%;color:thistle;line-height:1.85;padding:0 1em;");
+		console.intro(intro_1);
 		console.codeInline(this.introOptions());
 	},
 
 	introOptions: function (){
+		const existingGame= [
+			"[ It looks like you have an unsaved game in progress from a previous session. If you would like to continue, type ",
+			"resume",
+			". If you like to load a saved game, type ",
+			"restore",
+			". To begin a new game, please type ",
+			"start",
+			". ]"
+		];
 		const commonOptions = [
 			"[ Please type ",
 			"help ",
@@ -382,8 +414,11 @@ const ConsoleGame = {
 			...commonOptions,
 			"start ",
 			"to start the game. ]"
-		]
-		return this.state.turn === null ? initialOptions : options;
+		];
+		if (this.state.turn === null) {
+			return this.unfinishedGame() ? existingGame : initialOptions;
+		}
+		return options;
 	}, 
 
 	stockDungeon: function (subEnvName){
@@ -416,6 +451,20 @@ const ConsoleGame = {
 			this.initializeNewGame();
 		}
 		return this.describeSurroundings();
+	},
+
+	_resume: function () {
+		const unfinishedGame = this.unfinishedGame();
+		if (unfinishedGame) {
+			this.replayHistory(unfinishedGame);
+			this.describeSurroundings();
+			return;
+		}
+		if (this.state.turn) {
+			this.describeSurroundings();
+			return;
+		}
+		this._start();
 	},
 
 	_help: function () {

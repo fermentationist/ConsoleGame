@@ -32,19 +32,31 @@ const mapKey = game => {
 
 		},
 
+		"^": {
+			name: "Second floor hallway",
+			description: "You are at the top of a wide wooden staircase, on the second floor of the old house.",
+			visibleEnv: []
+		},
+
 		"#": {
-			name: "Oak Staircase",
-			description: "You are on a worn oak staircase connecting the first and second floors of the old abandoned house.",
+			name: "Staircase landing",
+			description: "You are on the landing of a worn oak staircase connecting the first and second floors of the old abandoned house.",
 			visibleEnv: ["key", "note", "catalogue"]
 		},
 
+		"%": {
+			name: "Entrance hall",
+			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, and facing you in the center is a wide oak staircase that connects the first and second floors of the old abandoned house.",
+			visibleEnv: []
+		},
+
 		"@": {
-			name: "Stone Staircase",
+			name: "Stone staircase",
 			description: "You are standing on a stone staircase leading to the basement. A faint cold draft greets you from below.",
 		},
 
 		"$": {
-			name: "Broom Closet",
+			name: "Broom closet",
 			hideSecrets: true,
 			hiddenEnv: ["glove"],
 			visibleEnv: ["chain"],

@@ -95,7 +95,7 @@ const itemModule = game => {
 		_chain: {
 			name : "chain",
 			weight : 0,
-			description: "The chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \"pull\" it...",
+			description: "The thin ball chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \"pull\" it...",
 			takeable: false,
 			pull: function (){
 				game.state.objectMode = false;
@@ -126,7 +126,7 @@ const itemModule = game => {
 
 		_grue_repellant: {
 			name : "grue_repellant",
-			defective : 1,//Math.random() < 0.03,
+			defective : Math.random() < 0.03,
 			weight : 3,
 			article: "some",
 			description: "A 12oz can of premium aerosol grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.",
@@ -146,6 +146,9 @@ const itemModule = game => {
 			},
 			spray: function () {
 				return this.use();
+			},
+			drink: function () {
+				game.dead("Drinking from an aerosol can is awkward at best, but still you manage to ravenously slather your chops with the foaming grue repellant. You try to enjoy the searing pain inflicted by this highly caustic (and highly toxic!) chemical as it dissolves the flesh of your mouth and throat, but to no avail. It is not delicious, and you are starting to realize that there are some non-trivial drawbacks to willingly ingesting poison. Oops.");
 			}
 		},
 
@@ -168,7 +171,6 @@ const itemModule = game => {
 			methodCallcount: 0,
 			no_teaMethod: function (message){
 					this.methodCallcount ++;
-					console.log('this.methodCallcount', this.methodCallcount);
 					game.state.objectMode = false;
 					console.p(message);
 					// return console.p(`${message} ${this.methodCallcount > 1 ? "Perhaps you should contemplate that for a moment..." : ""}`);

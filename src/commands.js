@@ -200,6 +200,7 @@ const Commands = game => {
 	const _save = game._save;
 	const _save_slot = game._save_slot;
 	const _quit = game._quit;
+	const _resume = game._resume;
 	const cases = game.cases;
 
 	const aliasString = (word, thesaurus = null, optionalString = "") => {
@@ -218,7 +219,8 @@ const Commands = game => {
 	// Command aliases
 	const aliases = [
 		// Start
-		[_start, cases("start", "resume")],
+		[_start, cases("start", "begin")],
+		[_resume, cases("resume")],
 		// Move
 		[_move, cases("north") + ",n,N"],
 		[_move, cases("south") + ",s,S"],
