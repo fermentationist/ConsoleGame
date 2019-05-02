@@ -6,7 +6,7 @@ const game = {};
 Object.setPrototypeOf(game, ConsoleGame);
 // Wait for page to load, and display greeting.
 window.onload = () => {
-    console.clear();
+    // console.clear();
     game.intro();
 };
 // for debugging - remove later
