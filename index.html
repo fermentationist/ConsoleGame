@@ -8,16 +8,49 @@
 		body {
 			background-color: darkslategray;
 			font-family: 'Monaco';
-			color: #F1F1F1;
+			color: rgb(241, 241, 241); 
+		}		
+		main {
+			text-align: center;
+			max-width: 1000px;
+		}
+		p {
+			text-align: justify;
+			margin: 2em;
+		}
+		table {
+			margin: auto;
+		}
+		table, th, td {
+			border: 1px solid rgb(241, 241, 241);
+			font-family: Geneva;
+		}
+		th, td {
+			padding: 1em;
 		}
 	</style>
-	<title>Console Text Game</title>
+	<title>ConsoleGame</title>
 </head>
 <body>
-	<h1>Please open the console...</h1>
-	<p>[Press Ctrl + Shift + J (Windows / Linux) or Cmd + Opt + J (Mac)]</p>
-	<div id="content"> 
-	</div>	
+	<main>
+		<h1>ConsoleGame</h1>
+
+		<p>As a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below.</p>
+
+		<p>Please open the console to play...</p>
+		
+		<div id="content"> 
+			<table>
+					<caption style="font-style:italic;">to open the console:</caption>
+					<tr><th colspan=3>Press F12</th></tr>
+					<tr><th>≈ or ≈</th><th>Mac</th><th>Windows/ Linux</th></tr>
+					<tr><th>Chrome</th><td>Command + Option + j</td><td>Control + Shift + j</td></tr>
+					<tr><th>Safari</th><td>Command + Option + c</td><td>Control + Shift + c</td></tr>
+					<tr><th>Firefox</th><td>Command + Option + k</td><td>Control + Shift + k</td></tr>
+					<tr><th>Edge</th><td>N/A</td><td>Control + Shift + j</td></tr>
+			</table>
+		</div>	
+	</main>
 </body>
 </body>
 </html>
