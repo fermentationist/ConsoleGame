@@ -354,25 +354,61 @@ const ConsoleGame = {
 			this.bindCommandToFunction(interpreterFunction, aliases, null);
 		});
 	},
-	setPreference: function (pref, value){
-		return localStorage.setItem(`ConsoleGame.prefs.${pref}`, value);
+	setPreference: function (value){
+		console.info(`value for ${this.state.pendingAction} will be set to ${value}`);
+		this.state.prefMode = false;
+		localStorage.setItem(`ConsoleGame.prefs.${this.state.pendingAction}`, value);
+		// location.reload();
+		this.reloadScript().then(()=>this._resume());
 	},
 
 // preferences are forced to reload by removing and reinserting original script tag for prefs.js
-	reloadScript: function (filename){
-		const body = document.getElementsByTagName("body")[0];
-		const tags = Array.from(document.getElementsByTagName("script"));
-		tags.forEach((tag) => {
-			let index = tag.src.indexOf(filename);
-			if(index !== -1){
-				tag.remove();
-			}
+	reloadScript: async function (){
+		return await new Promise((resolve, reject) => {
+			console.log("TCL: document.readyState", document.readyState)
+			const pollInterval = setInterval(()=>{
+				if (document.readyState === "complete"){
+					console.log("Loaded!")
+					resolve(true);
+					return clearInterval(pollInterval);
+				} 
+			}, 200);
+			location.reload();
 		});
-		const scriptTag = document.createElement("script");
-		scriptTag.src = `assets/js/${filename}`;
-		scriptTag.type = "text/javascript";
-		body.prepend(scriptTag);
-		return setTimeout(() => this.describeSurroundings(), 500);	
+
+		//check for Navigation Timing API support
+		if (window.performance) {
+			console.info("window.performance works fine on this browser");
+		}
+			location.reload();
+			while (performance.navigation.loadEventEnd === 0){
+				console.log("*", performance.navigation.type)
+			}
+			this._resume();
+			return;
+			if (performance.navigation.type == 1) {
+			console.info( "This page is reloaded" );
+			} else {
+			console.info( "This page is not reloaded");
+			}
+		// const body = document.getElementsByTagName("body")[0];
+		// const tags = Array.from(document.getElementsByTagName("script"));
+		// let tagSrc, tagType;
+		// tags.forEach((tag) => {
+		// 	let index = tag.src.indexOf(filename);
+		// 	if(index !== -1){
+		// 		tagSrc = tag.src;
+		// 		console.log("TCL: tagSrc", tagSrc)
+		// 		tagType = tag.type;
+		// 		tag.remove();
+		// 	}
+		// });
+		// const scriptTag = document.createElement("script");
+		// scriptTag.src = tagSrc;
+		// scriptTag.type = tagType;
+		// body.append(scriptTag);
+		// console.log("TCL: scriptTag", scriptTag)
+		// return setTimeout(() => this.describeSurroundings(), 500);	
 	},
 
 	unfinishedGame: function () {
@@ -504,23 +540,16 @@ const ConsoleGame = {
 		});
 		console.table(commandTable);
 	},
-
-	setPref: function (value) {
-		console.info(`value for ${this.state.pendingAction} will be set to ${value}`);
-		this.state.prefMode = false;
-		this.setPreference(`${this.state.pendingAction}`, value);
-		return this.reloadScript("./prefs.js");
-
-	}
 }
-
+// this function enables user to set preferences
 window._ = (value) => {
-	return ConsoleGame.setPref(value);
+	return ConsoleGame.setPreference(value);
 }
-
+// include imported items
 ConsoleGame.items = itemModule(ConsoleGame);
+// include imported commands
 ConsoleGame.commands = [...commandsList(ConsoleGame)];
-ConsoleGame.mapKey = {...mapKeyModule(ConsoleGame)};
+// enable "start" and other essential commands contained in ConsoleGame, but not imported commands
 ConsoleGame.bindInitialCommands();
 
 export default ConsoleGame;
