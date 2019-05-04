@@ -63,7 +63,7 @@ const mapKey = game => {
 			des1: "The small closet is dark, although you can see a small chain hanging in front of you.",
 			get des2 (){
 				const hidden = this.hiddenEnv;
-				const text = "The inside of this small broom closet is devoid of brooms, or anything else, for that matter";
+				const text = "The inside of this small broom closet is devoid of brooms, or much of anything else, for that matter";
 				const plural = hidden.length > 1 ? "y" : "ies";
 				return text + (hidden.length ? `, with the exception of ${game.formatList(hidden.map(item => `${item.article} ${item.name}`))} which occup${plural} a dusty corner.`: ".");
 			},

@@ -4,9 +4,19 @@ import maps from "./maps.js";
 
 var ALIASES;
 
+// Command functions
 const Commands = game => {
-	// Command functions
 
+	// destructure admin methods from game object
+	const { _start,
+		_help,
+		_commands,
+		_restore,
+		_save,
+		_save_slot,
+		_quit,
+		_resume,
+		cases} = game;
 	// Change player's location on the map, given a direction
 	const _move = (direction) => {
 		let newPosition = {
@@ -59,25 +69,29 @@ const Commands = game => {
 	const _act_upon = (command) => {
 		game.state.objectMode = true;
 		game.state.pendingAction = command;
-		return console.p(`What is it you would like to ${command}?`);
+		console.p(`What is it you would like to ${command}?`);
 	}
 
-	// change to console.info
+	// todo: move to game.js
 	const _pref = (whichPref) => {
 		game.state.prefMode = true;
 		game.state.pendingAction = whichPref;
+		console.codeInline([`To set the value of ${whichPref}, you must type an underscore `, `_`, `, followed by the value enclosed in backticks `,`\``,`.`]);
+		console.codeInline([`For example: `, `_\`value\``]);
+		
 
-		const italic = `font-size:120%;color:#32cd32;font-style:italic;font-family:${primaryFont}`;
-		const bold = `font-size:120%;color:#32cd32;font-style:bold;font-family:${primaryFont}`;
-		const example = `font-size:120%;color:#7BF65E;font-weight:bold;font-family:${primaryFont}`;
-		const exampleItalic = `font-size:120%;color:#7BF65E;font-style:italic;font-weight:bold;font-family:${primaryFont}`;
-		console.p(`Enter value for ${whichPref}.`);
-		console.inline([`Value must be entered`,` within parentheses (and quotes, if the value is a string), and immediately preceded by an underscore.`],[pStyle, italic]);
-		return console.inline([`Like this:  `, `_(`, `"value"`, `)`], [bold, example, exampleItalic, example]);
+		// const italic = `font-size:120%;color:#32cd32;font-style:italic;font-family:${primaryFont}`;
+		// const bold = `font-size:120%;color:#32cd32;font-style:bold;font-family:${primaryFont}`;
+		// const example = `font-size:120%;color:#7BF65E;font-weight:bold;font-family:${primaryFont}`;
+		// const exampleItalic = `font-size:120%;color:#7BF65E;font-style:italic;font-weight:bold;font-family:${primaryFont}`;
+		// console.p(`Enter value for ${whichPref}.`);
+		// console.inline([`Value must be entered`,` within parentheses`, `(and quotes, if the value is a string), and immediately preceded by an underscore.`],[pStyle, italic, pStyle]);
+		// console.inline([`Value must be entered`,` within parentheses`, `(and quotes, if the value is a string), and immediately preceded by an underscore.`],[pStyle, italic, pStyle]);
+		// console.inline([`Like this:  `, `_(`, `"value"`, `)`], [bold, example, exampleItalic, example]);
 	}
 
 	const _wait = () => {
-		return console.p("Time passes...");
+		console.p("Time passes...");
 	}
 
 	// Displays items in the player's inventory.
@@ -133,50 +147,16 @@ const Commands = game => {
 		return item[action]();
 	}
 
-	// const _save = (command) => {
-	// 	game.state.saveMode = true;
-	// 	game.state.restoreMode = false;
-	// 	game.state.pendingAction = command;
-	// 	console.log('game.state.pendingAction', game.state.pendingAction)
-	// 	const infoStyle = `font-size:100%;color:#75715E;font-family:${primaryFont};`;
-	// 	const boldInfo = infoStyle + `font-weight:bold;color:white`;
-	// 	console.info("Please choose a slot number (_0 through _9) to save your game. To save to the selected slot, type an underscore, immediately followed by the slot number.");
-	// 	console.inline([`For example, type `, `_3`, ` to select slot 3.`],[infoStyle, boldInfo, infoStyle]);
-	// }
-
-	// const _save_slot = (slotNumber) => {
-	// 	if (game.state.saveMode){
-	// 		console.invalid(`Save to slot ${slotNumber} failed.`);
-	// 		return game.state.saveMode = false;
-	// 	} else if (game.state.restoreMode){
-	// 		console.invalid(`Restore from slot ${slotNumber} failed.`);
-	// 		return game.state.restoreMode = false;
-	// 	}
-	// 	return console.p(`Game saved to slot ${slotNumber}`);
-	// }
-
-	
-	// const _restore = (command) => {
-	// 	let keys = Object.keys(localStorage);
-	// 	let saves = keys.filter((key) => {
-	// 		return key.indexOf("ConsoleGame.save") !== -1;
-	// 	});
-	// 	if (saves.length > 0) {
-	// 		let slotList = saves.map((save) => {
-	// 			let x = save.substring(save.length - 2);
-	// 			return x;
-	// 		})
-	// 		console.info(`saved games:\n${slotList}`);
-	// 		game.state.restoreMode = true;
-	// 		game.state.saveMode = false;
-	// 		game.state.pendingAction = command;
-	// 		const infoStyle = `font-size:100%;color:#75715E;font-family:${primaryFont};`;
-	// 		const boldInfo = infoStyle + `font-weight:bold;color:white`;
-	// 		console.info("Please choose which slot number (0 – 9) to restore from. To restore, type an underscore, immediately followed by the slot number.");
-	// 		return console.inline([`For example, type `, `_3`, ` to select slot 3.`],[infoStyle, boldInfo, infoStyle]);
-	// 	}
-	// 	return console.info("No saved games found.");
-	// }
+		
+	const _yes = () => {
+		if (! game.state.confirmMode) {
+			console.p("nope.");
+			return;
+		}
+		if (game.confirmationCallback){
+			return game.confirmationCallback();
+		}
+	}
 
 	const _poof = () => {
 		const body = document.querySelector("body");
@@ -192,16 +172,6 @@ const Commands = game => {
 	// 		textColor = "chartreuse";
 	// 	}
 	// }
-
-	const _start = game._start;
-	const _help = game._help;
-	const _commands = game._commands;
-	const _restore = game._restore;
-	const _save = game._save;
-	const _save_slot = game._save_slot;
-	const _quit = game._quit;
-	const _resume = game._resume;
-	const cases = game.cases;
 
 	const aliasString = (word, thesaurus = null, optionalString = "") => {
 		// thesaurus will be added to params
@@ -230,13 +200,13 @@ const Commands = game => {
 		[_move, cases("down") + ",d,D"],
 
 		// Actions
-		[_wait, cases("wait") + ",z,Z"],
+		[_wait, aliasString("wait", thesaurus) + ",z,Z,zzz,ZZZ,Zzz"],
 		[_look, cases("look", "see", "observe") + ",l,L"],
-		[_inventory, cases("inventory") + ",i,I"],
+		[_inventory, aliasString("inventory", thesaurus) + ",i,I"],
 		[_act_upon, aliasString("use", thesaurus)],
 		[_act_upon, aliasString("take", thesaurus)],
 		[_act_upon, aliasString("read", thesaurus)],
-		[_act_upon, aliasString("examine", thesaurus, "x,X")],
+		[_act_upon, aliasString("examine", thesaurus) + ",x,X"],
 		[_act_upon, aliasString("drink", thesaurus)],
 		[_act_upon, aliasString("drop", thesaurus)],
 		[_act_upon, aliasString("pull", thesaurus)],
@@ -279,9 +249,10 @@ const Commands = game => {
 		[_pref, cases("size")],
 		[_poof, cases("poof")],
 		[_quit, cases("quit")],
-		[_quit, cases("restart")]
+		[_quit, cases("restart")],
+		[_yes, cases("yes") + ",y,Y"],
 	];
-	ALIASES = aliases;
+	// ALIASES = aliases;
 	return aliases;
 };//)();
 

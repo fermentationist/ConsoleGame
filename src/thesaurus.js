@@ -1,30 +1,49 @@
 const thesaurus = {
-	"look":["see","observe"
+	"look": [
+		"see", "observe"
 	],
-	"go":["travel","move","locomote","proceed","depart","exit","leave","run"
+	"go": [
+		"travel", "move", "locomote", "proceed", "depart", "exit", "leave", "run"
 	],
-	"use":["utilize","utilise","apply","employ","exploit","expend"
+	"use": [
+		"utilize", "utilise", "apply", "employ", "exploit", "expend"
 	],
-	"take":["acquire","steal","purloin","pilfer","obtain","gank","get","appropriate","arrogate","confiscate","retrieve"
+	"take": [
+		"acquire", "steal", "purloin", "pilfer", "obtain", "gank", "get", "appropriate", "arrogate", "confiscate", "retrieve"
 	],
-	"read":["skim"
+	"read": [
+		"skim", "peruse"
 	],
-	"examine":["analyze","analyse","study","investigate","scan","inspect"
+	"examine": [
+		"analyze", "analyse", "study", "investigate", "inspect", "scan",
 	],
-	"drink":["intake","uptake","imbibe","consume","ingest","have","chug","guzzle"
+	"drink": [
+		"intake", "uptake", "imbibe", "consume", "ingest", "have", "chug", "guzzle"
 	],
-	"drop":["unload","discharge","dismiss","shed","discard","release","shitcan","trash","expel"
+	"drop": [
+		"unload", "discharge", "dismiss", "shed", "discard", "release", "shitcan", "trash", "expel"
 	],
-	"inventory":[],
-	"pull":[],
-	"spray":["squirt","spurt","spirt","scatter","sprinkle","disperse","dispense"
+	"inventory": [
+		"booty", "bounty", "hoard", "possessions", "belongings"
 	],
-	"contemplate":["consider","meditate","think","cogitate","cerebrate","ponder","excogitate","muse","reflect","mull","ruminate"
+	"pull": [
+		"tug", "yank", "jerk"
 	],
-	"note":["letter","missive","paper"
+	"spray": [
+		"squirt", "spurt", "spirt", "scatter", "sprinkle", "disperse", "dispense"
 	],
-	"glove":["mitt","gloves","handwear"
-	]
+	"contemplate": [
+		"consider", "meditate", "think", "cogitate", "cerebrate", "ponder", "excogitate", "muse", "reflect", "mull", "ruminate"
+	],
+	"note": [
+		"letter", "missive", "paper", "epistle", "treatise"
+	],
+	"glove": [
+		"mitt", "gloves", "handwear", "mitten", "mittens"
+	],
+	"wait": [ 
+		"abide", "await", "delay", "tarry", "dawdle", "dillydally", "loiter", "pause", "rest", "relax", "remain", "hesitate", "procrastinate"
+	],
 }
 
 export default thesaurus;

@@ -44,7 +44,7 @@ const ConsoleGame = {
 	set mapKey (value) {
 		this.key = value;
 	},
-	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "_save_slot"],
+	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
 	// This function runs at the start of each turn\\
@@ -63,7 +63,6 @@ const ConsoleGame = {
 			return console.invalid(`${err}. Please try again.`);
 		}
 	},
-
 	
 	addToHistory: function (commandName){
 	// Method adds executed command to history and increments turn counter.
@@ -276,20 +275,24 @@ const ConsoleGame = {
 
 	_saveGame: function (slot) {
 		const slotName = `ConsoleGame.save.${slot}`;
-		if (localStorage.getItem(slotName)) {
+		if (localStorage.getItem(slotName) && !this.state.confirmMode) {
 			// this.state.confirmMode = true;
 			// return console.invalid("That save slot is already in use. Type \"yes\" to overwrite it or enter a different save slot.")
-			return console.invalid("That save slot is already in use. Please select a different save slot.");
+			console.invalid("That save slot is already in use.");
+			console.codeInline([`type `, `yes `, `to overwrite slot ${slot} with current game data.` ]);
+			this.state.confirmMode = true;
+			this.confirmationCallback = () => this._saveGame(slot);
+			return;
 		}
-		if (!localStorage.getItem(slotName)) {
-			this.state.saveMode = false;
-			try {
-				localStorage.setItem(slotName, this.state.history);
-				return console.info(`Game saved to slot ${slot}.`);
-			}
-			catch (err) {
-				return console.invalid(`Save to slot ${slot} failed.`)
-			}
+		this.state.saveMode = false;
+		this.state.confirmMode = false;
+		try {
+			localStorage.setItem(slotName, this.state.history);
+			console.info(`Game saved to slot ${slot}.`);
+			this.describeSurroundings();
+		}
+		catch (err) {
+			return console.invalid(`Save to slot ${slot} failed.`)
 		}
 	},
 
@@ -299,6 +302,7 @@ const ConsoleGame = {
 		location.reload();
 		return "reloading...";
 	},
+
 
 	// Applies bindCommandToFunction() to an array of all of the commands to be created.
 	initCommands: function (commandsArray){
@@ -329,6 +333,7 @@ const ConsoleGame = {
 			console.trace(err);
 		}
 	},
+	
 	bindInitialCommands: function () {
 		const initialCommands = [
 			[this._start, this.cases("start", "begin")],
@@ -356,59 +361,9 @@ const ConsoleGame = {
 	},
 	setPreference: function (value){
 		console.info(`value for ${this.state.pendingAction} will be set to ${value}`);
-		this.state.prefMode = false;
 		localStorage.setItem(`ConsoleGame.prefs.${this.state.pendingAction}`, value);
-		// location.reload();
-		this.reloadScript().then(()=>this._resume());
-	},
-
-// preferences are forced to reload by removing and reinserting original script tag for prefs.js
-	reloadScript: async function (){
-		return await new Promise((resolve, reject) => {
-			console.log("TCL: document.readyState", document.readyState)
-			const pollInterval = setInterval(()=>{
-				if (document.readyState === "complete"){
-					console.log("Loaded!")
-					resolve(true);
-					return clearInterval(pollInterval);
-				} 
-			}, 200);
-			location.reload();
-		});
-
-		//check for Navigation Timing API support
-		if (window.performance) {
-			console.info("window.performance works fine on this browser");
-		}
-			location.reload();
-			while (performance.navigation.loadEventEnd === 0){
-				console.log("*", performance.navigation.type)
-			}
-			this._resume();
-			return;
-			if (performance.navigation.type == 1) {
-			console.info( "This page is reloaded" );
-			} else {
-			console.info( "This page is not reloaded");
-			}
-		// const body = document.getElementsByTagName("body")[0];
-		// const tags = Array.from(document.getElementsByTagName("script"));
-		// let tagSrc, tagType;
-		// tags.forEach((tag) => {
-		// 	let index = tag.src.indexOf(filename);
-		// 	if(index !== -1){
-		// 		tagSrc = tag.src;
-		// 		console.log("TCL: tagSrc", tagSrc)
-		// 		tagType = tag.type;
-		// 		tag.remove();
-		// 	}
-		// });
-		// const scriptTag = document.createElement("script");
-		// scriptTag.src = tagSrc;
-		// scriptTag.type = tagType;
-		// body.append(scriptTag);
-		// console.log("TCL: scriptTag", scriptTag)
-		// return setTimeout(() => this.describeSurroundings(), 500);	
+		localStorage.setItem("ConsoleGame.prefMode", "true");
+		location.reload();
 	},
 
 	unfinishedGame: function () {
@@ -491,6 +446,7 @@ const ConsoleGame = {
 
 	_resume: function () {
 		const unfinishedGame = this.unfinishedGame();
+		this.state.prefMode = false;
 		if (unfinishedGame) {
 			this.replayHistory(unfinishedGame);
 			this.describeSurroundings();
@@ -541,6 +497,7 @@ const ConsoleGame = {
 		console.table(commandTable);
 	},
 }
+
 // this function enables user to set preferences
 window._ = (value) => {
 	return ConsoleGame.setPreference(value);
@@ -549,6 +506,8 @@ window._ = (value) => {
 ConsoleGame.items = itemModule(ConsoleGame);
 // include imported commands
 ConsoleGame.commands = [...commandsList(ConsoleGame)];
+// include map key
+ConsoleGame.mapKey = {...mapKeyModule(ConsoleGame)};
 // enable "start" and other essential commands contained in ConsoleGame, but not imported commands
 ConsoleGame.bindInitialCommands();
 
