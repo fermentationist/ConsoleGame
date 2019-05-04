@@ -1,6 +1,7 @@
 const mapKey = game => {
 	const MapCell = {
 		name: "Nowhere",
+		locked: false,
 		hideSecrets: false,
 		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing of interest is likely to ever happen here.",
 		hiddenEnv: [],
@@ -31,7 +32,9 @@ const mapKey = game => {
 		"0": {
 
 		},
-
+		"!": {
+			locked: true,
+		},
 		"^": {
 			name: "Second floor hallway",
 			description: "You are at the top of a wide wooden staircase, on the second floor of the old house.",

@@ -219,14 +219,14 @@ const ConsoleGame = {
 				let x = save.substring(save.length - 2);
 				return x;
 			})
-			console.info(`saved games:\n${slotList}`);
+			console.codeInline(["saved games:\n", slotList]);
 			this.state.restoreMode = true;
 			this.state.saveMode = false;
 			this.state.pendingAction = command;
 			const infoStyle = `font-size:100%;color:#75715E;font-family:${primaryFont};`;
 			const boldInfo = infoStyle + `font-weight:bold;color:white`;
-			console.info("Please choose which slot number (0 – 9) to restore from. To restore, type an underscore, immediately followed by the slot number.");
-			return console.inline([`For example, type `, `_3`, ` to select slot 3.`],[infoStyle, boldInfo, infoStyle]);
+			console.info("Please choose which slot number (0 – 9) to restore from. To restore, type an underscore, ", "_ ", "immediately followed by the slot number.");
+			return console.codeInline([`For example, type `, `_3`, ` to select slot 3.`]);
 		}
 		return console.invalid("No saved games found.");
 	},
