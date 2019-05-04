@@ -336,23 +336,23 @@ const ConsoleGame = {
 	
 	bindInitialCommands: function () {
 		const initialCommands = [
-			[this._start, this.cases("start", "begin")],
+			[this._start, this.cases("start", "begin", "commence")],
 			[this._resume, this.cases("resume")],
 			[this._help, this.cases("help") + ",h,H,ayuda"],
 			[this._commands, this.cases("command", "commands")],
 			[this._restore, this.cases("restore", "load")],
 			[this._quit, this.cases("quit", "restart")],
 			[this._save, this.cases("save")],
-			[this._save_slot, "_0,save0,Save0,SAVE0"],
-			[this._save_slot, "_1,save1,Save1,SAVE1"],
-			[this._save_slot, "_2,save2,Save2,SAVE2"],
-			[this._save_slot, "_3,save3,Save3,SAVE3"],
-			[this._save_slot, "_4,save4,Save4,SAVE4"],
-			[this._save_slot, "_5,save5,Save5,SAVE5"],
-			[this._save_slot, "_6,save6,Save6,SAVE6"],
-			[this._save_slot, "_7,save7,Save7,SAVE7"],
-			[this._save_slot, "_8,save8,Save8,SAVE8"],
-			[this._save_slot, "_9,save9,Save9,SAVE9"],
+			[this._save_slot, "_0"],
+			[this._save_slot, "_1"],
+			[this._save_slot, "_2"],
+			[this._save_slot, "_3"],
+			[this._save_slot, "_4"],
+			[this._save_slot, "_5"],
+			[this._save_slot, "_6"],
+			[this._save_slot, "_7"],
+			[this._save_slot, "_8"],
+			[this._save_slot, "_9"],
 		]
 		initialCommands.map(command => {
 			const [interpreterFunction, aliases] = command;
