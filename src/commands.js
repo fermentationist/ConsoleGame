@@ -16,6 +16,7 @@ const Commands = game => {
 		_save_slot,
 		_quit,
 		_resume,
+		mapKey,
 		cases} = game;
 	// Change player's location on the map, given a direction
 	const _move = (direction) => {
@@ -52,7 +53,7 @@ const Commands = game => {
 			console.p("You can't go that direction");
 			return;
 		}
-		if (newCell.locked){
+		if (mapKey[newCell].locked){
 			console.p("The way is blocked.");
 			return;
 		}
@@ -239,16 +240,16 @@ const Commands = game => {
 
 		// [_all, cases("all")],
 		[_save, cases("save")],
-		[_save_slot, "_0"],
-		[_save_slot, "_1"],
-		[_save_slot, "_2"],
-		[_save_slot, "_3"],
-		[_save_slot, "_4"],
-		[_save_slot, "_5"],
-		[_save_slot, "_6"],
-		[_save_slot, "_7"],
-		[_save_slot, "_8"],
-		[_save_slot, "_9"],
+		[_save_slot, "_0,save0,Save0,SAVE0"],
+		[_save_slot, "_1,save1,Save1,SAVE1"],
+		[_save_slot, "_2,save2,Save2,SAVE2"],
+		[_save_slot, "_3,save3,Save3,SAVE3"],
+		[_save_slot, "_4,save4,Save4,SAVE4"],
+		[_save_slot, "_5,save5,Save5,SAVE5"],
+		[_save_slot, "_6,save6,Save6,SAVE6"],
+		[_save_slot, "_7,save7,Save7,SAVE7"],
+		[_save_slot, "_8,save8,Save8,SAVE8"],
+		[_save_slot, "_9,save9,Save9,SAVE9"],
 		[_restore, cases("restore", "load")],
 		[_pref, cases("font")],
 		[_pref, cases("color")],

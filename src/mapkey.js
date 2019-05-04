@@ -32,7 +32,8 @@ const mapKey = game => {
 		"0": {
 
 		},
-		"!": {
+		"A": {
+			name: "Freedom!",
 			locked: true,
 		},
 		"^": {
