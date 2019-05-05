@@ -154,12 +154,10 @@ const ConsoleGame = {
 
 	describeSurroundings: function (){
 		const name = this.mapKey[this.state.currentCell].name;
-		console.log("TCL: this.mapKey", this.mapKey)
 		const turn = this.state.turn;
 		const description = this.mapKey[this.state.currentCell].description;
 		const itemStr = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
 		const moveOptions = `You can go ${this.movementOptions()}.`;
-		// console.p("\n\n");// console.clear();
 		console.header(this.currentHeader());
 		return console.p(description + "\n" + moveOptions + "\n" + itemStr + "\n");
 	},
