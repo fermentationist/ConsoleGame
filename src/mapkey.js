@@ -54,8 +54,8 @@ const mapKey = game => {
 
 		"%": {
 			name: "Entrance hall",
-			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, and facing you in the center is a wide oak staircase that connects the first and second floors of the old abandoned house.",
-			visibleEnv: []
+			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, several of which have been boarded up. The dust and cobwebs suggest Facing you at the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
+			visibleEnv: ["lock", "lock"]
 		},
 
 		"@": {

@@ -92,6 +92,12 @@ const itemModule = game => {
 			}
 		},
 
+		_lock: {
+			name: "lock",
+			weight: 0,
+			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be opening it."
+		},
+
 		_chain: {
 			name : "chain",
 			weight : 0,
