@@ -55,6 +55,7 @@ const Commands = game => {
 		}
 		if (mapKey[newCell].locked){
 			console.p("The way is blocked.");
+			console.p(mapKey[newCell].lockText ? mapKey[newCell].lockText : "");
 			return;
 		}
 		// If movement in direction is possible, update player position

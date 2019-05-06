@@ -32,12 +32,13 @@ const mapKey = game => {
 	}
 	const mapkey = {
 		"0": {
-
+			locked: true,
+			lockText: "An attempt has been made to board up this door. Reaching between the unevenly spaced boards, you try the doorknob and discover that it is also locked."
 		},
 		"A": {
 			name: "Freedom!",
 			locked: true,
-			lockText: "The formidable oak front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless murky layers of varnish that coat its carved ornamentation. This makes the cause of the obstruction easy to determine: a shiny, new-looking stainless steel deadbolt that looks like it was installed just days ago."
+			lockText: "The formidable wooden front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless murky layers of varnish. This makes it very easy to see exactly why the door won't open– a shiny, apparently new stainless steel deadbolt. The keyhole is empty."
 		},
 		"^": {
 			name: "Second floor hallway",
