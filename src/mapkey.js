@@ -2,6 +2,8 @@ const mapKey = game => {
 	const MapCell = {
 		name: "Nowhere",
 		locked: false,
+		lockText: "",
+		unlockText: "",
 		hideSecrets: false,
 		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing of interest is likely to ever happen here.",
 		hiddenEnv: [],
@@ -35,6 +37,7 @@ const mapKey = game => {
 		"A": {
 			name: "Freedom!",
 			locked: true,
+			lockText: "The formidable oak front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless murky layers of varnish that coat its carved ornamentation. This makes the cause of the obstruction easy to determine: a shiny, new-looking stainless steel deadbolt that looks like it was installed just days ago."
 		},
 		"^": {
 			name: "Second floor hallway",
