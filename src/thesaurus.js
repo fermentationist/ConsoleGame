@@ -26,6 +26,12 @@ const thesaurus = {
 	"inventory": [
 		"booty", "bounty", "hoard", "possessions", "belongings"
 	],
+	"lock": [
+		"deadbolt"
+	],
+	"grue_repellant": [
+		"repellant", "aerosol", "spray"
+	],
 	"pull": [
 		"tug", "yank", "jerk"
 	],

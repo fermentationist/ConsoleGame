@@ -311,8 +311,8 @@ const ConsoleGame = {
 		});
 	},
 
-	// This function is what makes this console game possible. It creates a global variable with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the variable(s). This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
-	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his or her console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
+	// This function creates a global variable with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the variable. This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
+	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
 	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases.
 	bindCommandToFunction: function (interpreterFunction, commandAliases, middleware=this.turnDemon){
 	
@@ -342,16 +342,16 @@ const ConsoleGame = {
 			[this._restore, this.cases("restore", "load")],
 			[this._quit, this.cases("quit", "restart")],
 			[this._save, this.cases("save")],
-			[this._save_slot, "_0,save0,Save0,SAVE0"],
-			[this._save_slot, "_1,save1,Save1,SAVE1"],
-			[this._save_slot, "_2,save2,Save2,SAVE2"],
-			[this._save_slot, "_3,save3,Save3,SAVE3"],
-			[this._save_slot, "_4,save4,Save4,SAVE4"],
-			[this._save_slot, "_5,save5,Save5,SAVE5"],
-			[this._save_slot, "_6,save6,Save6,SAVE6"],
-			[this._save_slot, "_7,save7,Save7,SAVE7"],
-			[this._save_slot, "_8,save8,Save8,SAVE8"],
-			[this._save_slot, "_9,save9,Save9,SAVE9"],
+			[this._save_slot, "_0"],
+			[this._save_slot, "_1"],
+			[this._save_slot, "_2"],
+			[this._save_slot, "_3"],
+			[this._save_slot, "_4"],
+			[this._save_slot, "_5"],
+			[this._save_slot, "_6"],
+			[this._save_slot, "_7"],
+			[this._save_slot, "_8"],
+			[this._save_slot, "_9"],
 		]
 		initialCommands.map(command => {
 			const [interpreterFunction, aliases] = command;
@@ -380,7 +380,7 @@ const ConsoleGame = {
 		const existingGame= [
 			"[ It looks like you have an unsaved game in progress from a previous session. If you would like to continue, type ",
 			"resume",
-			". If you like to load a saved game, type ",
+			". If you would like to load a saved game, type ",
 			"restore",
 			". To begin a new game, please type ",
 			"start",

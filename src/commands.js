@@ -1,6 +1,7 @@
 import {pStyle, textColor, primaryFont, fontSize} from "./prefs.js";
 import thesaurus from "./thesaurus.js";
 import maps from "./maps.js";
+import itemModule from "./items.js";
 
 var ALIASES;
 
@@ -16,7 +17,6 @@ const Commands = game => {
 		_save_slot,
 		_quit,
 		_resume,
-		mapKey,
 		cases} = game;
 	// Change player's location on the map, given a direction
 	const _move = (direction) => {
@@ -47,16 +47,9 @@ const Commands = game => {
 			default:
 				break;
 		}
-		const newCell = maps[newPosition.z][newPosition.y][newPosition.x];
 		// Exit function if movement in given direction is not possible
-		if (newCell === "*"){
-			console.p("You can't go that direction");
-			return;
-		}
-		if (mapKey[newCell].locked){
-			console.p("The way is blocked.");
-			console.p(mapKey[newCell].lockText ? mapKey[newCell].lockText : "");
-			return;
+		if (maps[newPosition.z][newPosition.y][newPosition.x] === "*"){
+			return console.p("You can't go that direction");
 		}
 		// If movement in direction is possible, update player position
 		console.p(`You walk ${direction}...`);
@@ -195,9 +188,9 @@ const Commands = game => {
 		return `${cases(word)},${variations.join()}${optionalString ? "," +optionalString : ""}`;
 	}
 	// Command aliases
-	const aliases = [
+	const commandAliases = [
 		// Start
-		[_start, cases("start", "begin")],
+		[_start, cases("start", "begin", "commence")],
 		[_resume, cases("resume")],
 		// Move
 		[_move, cases("north") + ",n,N"],
@@ -220,17 +213,19 @@ const Commands = game => {
 		[_act_upon, aliasString("pull", thesaurus)],
 		[_act_upon, aliasString("spray", thesaurus)],
 		[_act_upon, aliasString("contemplate", thesaurus)],
+		[_act_upon, aliasString("unlock", thesaurus)],
+		[_act_upon, aliasString("open", thesaurus)],
 		[_act_upon, cases("hide")],
 
-		// Objects
-		[_items, cases("grue_repellant", "repellant")],
-		[_items, cases("key")],
-		[_items, aliasString("note", thesaurus)],
-		[_items, cases("no_tea")],
-		[_items, cases("chain")],
-		[_items, aliasString("glove", thesaurus)],
-		[_items, cases("catalogue", "catalog")],
-		[_items, cases("all")],
+		// // Objects
+		// [_items, cases("grue_repellant", "repellant")],
+		// [_items, cases("key")],
+		// [_items, aliasString("note", thesaurus)],
+		// [_items, cases("no_tea")],
+		// [_items, cases("chain")],
+		// [_items, aliasString("glove", thesaurus)],
+		// [_items, cases("catalogue", "catalog")],
+		// [_items, cases("all")],
 
 
 
@@ -241,16 +236,16 @@ const Commands = game => {
 
 		// [_all, cases("all")],
 		[_save, cases("save")],
-		[_save_slot, "_0,save0,Save0,SAVE0"],
-		[_save_slot, "_1,save1,Save1,SAVE1"],
-		[_save_slot, "_2,save2,Save2,SAVE2"],
-		[_save_slot, "_3,save3,Save3,SAVE3"],
-		[_save_slot, "_4,save4,Save4,SAVE4"],
-		[_save_slot, "_5,save5,Save5,SAVE5"],
-		[_save_slot, "_6,save6,Save6,SAVE6"],
-		[_save_slot, "_7,save7,Save7,SAVE7"],
-		[_save_slot, "_8,save8,Save8,SAVE8"],
-		[_save_slot, "_9,save9,Save9,SAVE9"],
+		[_save_slot, "_0"],
+		[_save_slot, "_1"],
+		[_save_slot, "_2"],
+		[_save_slot, "_3"],
+		[_save_slot, "_4"],
+		[_save_slot, "_5"],
+		[_save_slot, "_6"],
+		[_save_slot, "_7"],
+		[_save_slot, "_8"],
+		[_save_slot, "_9"],
 		[_restore, cases("restore", "load")],
 		[_pref, cases("font")],
 		[_pref, cases("color")],
@@ -260,6 +255,15 @@ const Commands = game => {
 		[_quit, cases("restart")],
 		[_yes, cases("yes") + ",y,Y"],
 	];
+	const itemNames = Object.keys(game.items).map(item => item.slice(1));
+	const itemAliases = itemNames.map(item => [_items, aliasString(item, thesaurus)])
+	console.log("TCL: itemAliases", itemAliases)
+	const aliases = commandAliases.concat(itemAliases);
+	console.log("TCL: aliases", aliases);
+	// console.log("TCL: item names", Object.keys(game.items).map(item => item.slice(1)))
+	// console.log("TCL: item names-", Array.from(game.items).map(x => x))
+	// // console.log("TCL: aliases", aliases)
+
 	// ALIASES = aliases;
 	return aliases;
 };//)();
