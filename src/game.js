@@ -318,9 +318,9 @@ const ConsoleGame = {
 	
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
-		if (commandName in window){
-			return;// console.tiny(`${commandName} already defined.`);
-		}
+		// if (commandName in window){
+		// 	console.log(`${commandName} already defined.`);
+		// }
 		const interpretCommand = middleware ? middleware.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
 		// const interpretCmd = interpreterFunction.bind(null, interpreterDemon);
 		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
@@ -329,7 +329,8 @@ const ConsoleGame = {
 				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
 			});
 		} catch (err) {
-			console.trace(err);
+			// fail silently
+			// console.log(err);
 		}
 	},
 	
@@ -501,6 +502,7 @@ const ConsoleGame = {
 window._ = (value) => {
 	return ConsoleGame.setPreference(value);
 }
+window.open = () => console.invalid("window open!!")
 // include imported items
 ConsoleGame.items = itemModule(ConsoleGame);
 // include imported commands

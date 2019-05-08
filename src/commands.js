@@ -257,12 +257,7 @@ const Commands = game => {
 	];
 	const itemNames = Object.keys(game.items).map(item => item.slice(1));
 	const itemAliases = itemNames.map(item => [_items, aliasString(item, thesaurus)])
-	console.log("TCL: itemAliases", itemAliases)
 	const aliases = commandAliases.concat(itemAliases);
-	console.log("TCL: aliases", aliases);
-	// console.log("TCL: item names", Object.keys(game.items).map(item => item.slice(1)))
-	// console.log("TCL: item names-", Array.from(game.items).map(x => x))
-	// // console.log("TCL: aliases", aliases)
 
 	// ALIASES = aliases;
 	return aliases;

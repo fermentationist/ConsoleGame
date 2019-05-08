@@ -10,6 +10,9 @@ const itemModule = game => {
 			return `There is nothing particularly interesting about this ${this.name}.`
 		},
 		takeable: true,
+		openable: false,
+		closed: false,
+		locked: false, 
 		article: "a",
 		take: function (){
 			game.state.objectMode = false;
@@ -36,6 +39,29 @@ const itemModule = game => {
 			return console.p(this.description);
 				
 		},
+		open: function () {
+			game.state.objectMode = false;
+			if (!game.inEnvironment) {
+				console.p(`You don't see ${this.article} ${this.name} here.`);
+				return;
+			}
+			if (!this.openable) {
+				console.p("It cannot be opened.");
+				return;
+			}
+			if (!this.closed) {
+				console.p("It is already open.");
+				return;
+			}
+			if (this.locked){
+				console.p("It appears to be locked.");
+				return;
+			}
+			console.p(`The ${this.name} is now open.`);
+			this.closed = false;
+			return;
+		},
+
 		read: function (){
 			game.state.objectMode = false;
 			if (!this.text){
@@ -52,6 +78,21 @@ const itemModule = game => {
 			return game.displayItem();
 		},
 
+		unlock: function () {
+			game.state.objectMode = false;
+			if (!this.locked){
+				console.p(`The ${this.name} is not locked.`);
+				return;
+			}
+			if (game.inInventory(this.unlockedBy)){
+				this.locked= false;
+				console.p(`Using the ${this.unlockedBy}, you are able to unlock the ${this.name}`);
+				return;
+			}
+			console.p(`You do not have the means to unlock the ${this.name}.`)
+			return;
+		},
+
 		use: function (){
 			game.state.objectMode = false;
 			return console.p(`Try as you might, you cannot manage to use the ${this.name}`);
@@ -63,7 +104,6 @@ const itemModule = game => {
 			name: "all",
 			_take_all: function () {
 				const all = game.state.env;
-				console.log("TCL: all", all);
 				// game.state.objectMode = false;
 				// if (this.takeable && game.inEnvironment(this.name)) {
 				// 	game.addToInventory([this]);
@@ -95,16 +135,18 @@ const itemModule = game => {
 		_door: {
 			name: "door",
 			article: "a",
+			openable: true,
+			locked: true,
+			closed: true,
+			unlockedBy: "key",
 			description: "It is a massive wooden door, darkened with generations of dirt and varnish. It is secured with a steel deadbolt.",
-			unlock: function () {
-				console.p("Nope.")
-			}
+			
 		},
 
 		_lock: {
 			name: "lock",
 			weight: 0,
-			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it."
+			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
 		},
 
 		_chain: {
