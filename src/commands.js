@@ -17,6 +17,7 @@ const Commands = game => {
 		_save_slot,
 		_quit,
 		_resume,
+		mapKey,
 		cases} = game;
 	// Change player's location on the map, given a direction
 	const _move = (direction) => {
@@ -47,9 +48,16 @@ const Commands = game => {
 			default:
 				break;
 		}
+		const newCell = maps[newPosition.z][newPosition.y][newPosition.x];
 		// Exit function if movement in given direction is not possible
-		if (maps[newPosition.z][newPosition.y][newPosition.x] === "*"){
-			return console.p("You can't go that direction");
+		if (newCell === "*"){
+			console.p("You can't go that direction");
+			return;
+		}
+		if (mapKey[newCell].locked || mapKey[newCell].closed){
+			console.p("The way is blocked.");
+			console.p(mapKey[newCell].lockText ? mapKey[newCell].lockText : "");
+			return;
 		}
 		// If movement in direction is possible, update player position
 		console.p(`You walk ${direction}...`);
