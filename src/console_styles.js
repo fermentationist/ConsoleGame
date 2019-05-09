@@ -32,7 +32,7 @@ const customConsole = (() => {
 		customLog(message, `font-size:calc(1.15*${fontSize});padding:0.5em 1em 0 0.5em;font-family:${primaryFont};`);
 	}
 	console.invalid = message => {
-		customLog(message, `font-size:calc(1.2 * ${fontSize});color:red;font-family:${primaryFont};`);
+		customLog(message, `font-size:calc(1.2 * ${fontSize});color:red;font-family:${primaryFont};padding:0 1em;`);
 	}
 	console.inventory = message => {
 		customLog(message, `font-size:calc(1.2 * ${fontSize});color:cyan;font-family:${primaryFont};padding:0 1em;`);

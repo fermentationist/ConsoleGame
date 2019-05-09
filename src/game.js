@@ -48,7 +48,6 @@ const ConsoleGame = {
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
 	// This function runs at the start of each turn\\
-		
 		try {
 			let dontCountTurn = this.immuneCommands.includes(commandName);
 			if (!dontCountTurn) {
@@ -60,7 +59,7 @@ const ConsoleGame = {
 			return interpreterFunction(commandName);
 		}
 		catch (err){
-			return console.invalid(`${err}. Please try again.`);
+			return console.p(`That's not going to work. Please try something else.`);
 		}
 	},
 	
@@ -502,7 +501,6 @@ const ConsoleGame = {
 window._ = (value) => {
 	return ConsoleGame.setPreference(value);
 }
-window.open = () => console.invalid("window open!!")
 // include imported items
 ConsoleGame.items = itemModule(ConsoleGame);
 // include imported commands
