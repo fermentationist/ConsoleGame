@@ -41,7 +41,7 @@ const itemModule = game => {
 		},
 		open: function () {
 			game.state.objectMode = false;
-			if (!game.inEnvironment) {
+			if (!game.inEnvironment(this.name)) {
 				console.p(`You don't see ${this.article} ${this.name} here.`);
 				return;
 			}
@@ -59,6 +59,25 @@ const itemModule = game => {
 			}
 			console.p(`The ${this.name} is now open.`);
 			this.closed = false;
+			return;
+		},
+
+		close: function () {
+			game.state.objectMode = false;
+			if (!game.inEnvironment(this.name)) {
+				console.p(`You don't see ${this.article} ${this.name} here.`);
+				return;
+			}
+			if (!this.openable) {
+				console.p("It cannot be closed.");
+				return;
+			}
+			if (this.closed) {
+				console.p("It is already closed.");
+				return;
+			}
+			console.p(`The ${this.name} is now closed.`);
+			this.closed = true;
 			return;
 		},
 
@@ -119,7 +138,7 @@ const itemModule = game => {
 			name: "book",
 			weight: 2,
 			article: "a",
-			description: "This dusty, leatherbound tome"
+			description: "A dusty, leatherbound tome"
 		},
 
 		_catalogue: {
@@ -141,10 +160,22 @@ const itemModule = game => {
 			takeable: false,
 			unlockedBy: "key",
 			lockedTarget: "A",
+			closedTarget: "A",
 			description: "It is a massive wooden door, darkened with generations of dirt and varnish. It is secured with a steel deadbolt.",
 			unlock (){
 				Object.getPrototypeOf(this).unlock.call(this);
 				game.mapKey[this.lockedTarget].locked = false;
+				return;
+			},
+			open () {
+				Object.getPrototypeOf(this).open.call(this);
+				game.mapKey[this.closedTarget].closed = false;
+				return;
+			},
+			close () {
+				Object.getPrototypeOf(this).open.call(this);
+				game.mapKey[this.closedTarget].closed = true;
+				return;
 			}
 			
 		},

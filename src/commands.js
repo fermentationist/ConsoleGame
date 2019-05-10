@@ -223,6 +223,8 @@ const Commands = game => {
 		[_act_upon, aliasString("contemplate", thesaurus)],
 		[_act_upon, aliasString("unlock", thesaurus)],
 		[_act_upon, aliasString("open", thesaurus)],
+		[_act_upon, aliasString("close", thesaurus)],
+		[_act_upon, aliasString("lock", thesaurus)],
 		[_act_upon, cases("hide")],
 
 		// // Objects
