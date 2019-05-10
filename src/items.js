@@ -140,12 +140,11 @@ const itemModule = game => {
 			closed: true,
 			takeable: false,
 			unlockedBy: "key",
-			reveals: "A",
+			lockedTarget: "A",
 			description: "It is a massive wooden door, darkened with generations of dirt and varnish. It is secured with a steel deadbolt.",
 			unlock (){
 				Object.getPrototypeOf(this).unlock.call(this);
-				game.mapKey[this.reveals].locked = false;
-				console.log("TCL: unlock -> game.mapKey[this.reveals]", game.mapKey[this.reveals])
+				game.mapKey[this.lockedTarget].locked = false;
 			}
 			
 		},
@@ -158,7 +157,12 @@ const itemModule = game => {
 			// locked: true,
 			// unlockedBy: "key",
 			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
-			proto: "_door"
+			unlock (){
+				Object.getPrototypeOf(Object.getPrototypeOf(this)).unlock.call(this);
+				game.mapKey[this.lockedTarget].locked = false;
+			},
+			proto: "_door",
+
 		},
 
 		_chain: {

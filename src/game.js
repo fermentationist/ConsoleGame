@@ -59,6 +59,7 @@ const ConsoleGame = {
 			return interpreterFunction(commandName);
 		}
 		catch (err){
+			// return console.invalid(err)
 			return console.p(`That's not going to work. Please try something else.`);
 		}
 	},

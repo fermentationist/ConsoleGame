@@ -38,7 +38,11 @@ const mapKey = game => {
 		"A": {
 			name: "Freedom!",
 			locked: true,
-			lockText: "The formidable wooden front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless murky layers of varnish. This makes it very easy to see exactly why the door won't open– a shiny, apparently new stainless steel deadbolt. The keyhole is empty."
+			lockText: "The formidable wooden front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless layers of murky varnish. This makes it very easy to see exactly why the door won't open– a shiny, apparently new stainless steel deadbolt."
+			get description () {
+				return "You have escaped! "
+			},
+			// description: "You have escaped! "
 		},
 		"^": {
 			name: "Second floor hallway",
