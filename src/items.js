@@ -173,7 +173,7 @@ const itemModule = game => {
 				return;
 			},
 			close () {
-				Object.getPrototypeOf(this).open.call(this);
+				Object.getPrototypeOf(this).close.call(this);
 				game.mapKey[this.closedTarget].closed = true;
 				return;
 			}

@@ -39,11 +39,13 @@ const mapKey = game => {
 			name: "Freedom!",
 			locked: true,
 			closed: true,
-			lockText: "The formidable wooden front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless layers of murky varnish. This makes it very easy to see exactly why the door won't open– a shiny, apparently new stainless steel deadbolt.",
+			get lockText () {
+				return `The formidable wooden front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless layers of murky varnish. It is ${this.locked ? "locked" : "unlocked"}.`;
+				
+			},
 			get description () {
 				return "You have escaped! "
 			},
-			// description: "You have escaped! "
 		},
 		"^": {
 			name: "Second floor hallway",
@@ -60,7 +62,7 @@ const mapKey = game => {
 		"%": {
 			name: "Entrance hall",
 			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, several of which have been boarded up. Facing you at the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
-			visibleEnv: ["door", "lock"]
+			visibleEnv: ["door"]
 		},
 
 		"@": {
