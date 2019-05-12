@@ -49,11 +49,12 @@ const Commands = game => {
 				break;
 		}
 		const newCell = maps[newPosition.z][newPosition.y][newPosition.x];
-		// Exit function if movement in given direction is not possible
+		// Exit function if movement in given direction is not possible due to map boundary
 		if (newCell === "*"){
 			console.p("You can't go that direction");
 			return;
 		}
+		// Display message and exit function if path to next space is blocked by a locked or closed door or analagous item
 		if (game.mapKey[newCell].locked || game.mapKey[newCell].closed){
 			console.p("The way is blocked.");
 			console.p(game.mapKey[newCell].lockText && (game.mapKey[newCell].locked || game.mapKey[newCell].closed) ? game.mapKey[newCell].lockText : "");
@@ -66,6 +67,7 @@ const Commands = game => {
 			y: newPosition.y,
 			z: newPosition.z,
 		}
+		// End by describing new environment after move
 		return game.describeSurroundings();
 	}
 
