@@ -80,7 +80,7 @@ const Commands = game => {
 	const _act_upon = (command) => {
 		game.state.objectMode = true;
 		game.state.pendingAction = command;
-		console.p(`What is it you would like to ${command}?`);
+		console.p(`What would you like to ${command}?`);
 	}
 
 	// todo: move to game.js
@@ -89,16 +89,6 @@ const Commands = game => {
 		game.state.pendingAction = whichPref;
 		console.codeInline([`To set the value of ${whichPref}, you must type an underscore `, `_`, `, followed by the value enclosed in backticks `,`\``,`.`]);
 		console.codeInline([`For example: `, `_\`value\``]);
-		
-
-		// const italic = `font-size:120%;color:#32cd32;font-style:italic;font-family:${primaryFont}`;
-		// const bold = `font-size:120%;color:#32cd32;font-style:bold;font-family:${primaryFont}`;
-		// const example = `font-size:120%;color:#7BF65E;font-weight:bold;font-family:${primaryFont}`;
-		// const exampleItalic = `font-size:120%;color:#7BF65E;font-style:italic;font-weight:bold;font-family:${primaryFont}`;
-		// console.p(`Enter value for ${whichPref}.`);
-		// console.inline([`Value must be entered`,` within parentheses`, `(and quotes, if the value is a string), and immediately preceded by an underscore.`],[pStyle, italic, pStyle]);
-		// console.inline([`Value must be entered`,` within parentheses`, `(and quotes, if the value is a string), and immediately preceded by an underscore.`],[pStyle, italic, pStyle]);
-		// console.inline([`Like this:  `, `_(`, `"value"`, `)`], [bold, example, exampleItalic, example]);
 	}
 
 	const _wait = () => {

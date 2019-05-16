@@ -314,14 +314,14 @@ const ConsoleGame = {
 	// This function creates a global variable with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the variable. This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
 	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
 	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases.
-	bindCommandToFunction: function (interpreterFunction, commandAliases, middleware=this.turnDemon){
+	bindCommandToFunction: function (interpreterFunction, commandAliases, daemon=this.turnDemon){
 	
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
 		// if (commandName in window){
 		// 	console.log(`${commandName} already defined.`);
 		// }
-		const interpretCommand = middleware ? middleware.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
+		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
 		// const interpretCmd = interpreterFunction.bind(null, interpreterDemon);
 		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
 		try {
@@ -461,15 +461,16 @@ const ConsoleGame = {
 
 	_help: function () {
 		// Greeting to be displayed at the beginning of the game
-		const baseStyle = `font-family:${primaryFont};color:thistle;font-size:110%;line-spacing:1.5;`;
-		const codeStyle = "color:#29E616;font-size:125%;";
+		const baseStyle = `font-family:${primaryFont};color:pink;font-size:105%;line-height:1.5;`;
+		const italicCodeStyle = "font-family:courier;color:#29E616;font-size:115%;font-style:italic;line-height:2;";
+		const codeStyle = "font-family:courier;color:#29E616;font-size:115%;line-height:2;";/*
 		const text_0 = ["Due to the limitations of the browser console as a medium, the commands you may enter can only be one-word long, with no spaces. "];
 		console.codeInline(text_0, baseStyle, null);
 		const text_1 = [
 			"However, two-word commands may be constructed on two separate lines. For example, if you wanted to examine the glove, you would first type ",
 			"examine ",
 			"to which the game would respond ",
-			"What is it you would like to examine? ",
+			"What would you like to examine? ",
 			"Then you would type the object of your intended action, ",
 			"glove",
 			", to complete the command."
@@ -479,7 +480,29 @@ const ConsoleGame = {
 			"Alternately, you may enter both words on the same line, provided they are separated with a semicolon and no spaces, i.e ",
 			"examine;glove"
 		]
-		console.codeInline(text_2, baseStyle, codeStyle);
+		console.codeInline(text_2, baseStyle, codeStyle);*/
+	
+		const text = ["Valid commands are one word long, with no spaces. Compound commands consist of at most two commands, separated by a carriage return or a semicolon. For example:\n", "get\n", "What would you like to take?\n", "lamp\n", "You pick up the lamp.\n","or,\n", "get;lamp\n", "What would you like to take?\nYou pick up the lamp."];
+		const styles = [baseStyle, codeStyle, italicCodeStyle, codeStyle, italicCodeStyle, baseStyle, codeStyle, italicCodeStyle];
+		console.inline(text, styles);
+		/*
+		When the game loads, you will be asked to type start to start a new game, resume if the history of a previous game persists in localStorage. You can type restore to load a previously saved game.
+		
+		At any time once the game begins, typing inventory or i will display a list of any items the player is carrying. Typing look or l will give you a description of your current environs in the game.
+		
+		In the game's current form, there are no prepositions, and look will only be used for this purpose, and not to "look at" something. Please instead use examine or its shortcut x instead. For example:
+		
+		examine
+		What would you like to examine?
+		
+		lamp
+		A battery-powered brass lantern is on the trophy case.
+		
+		Because the game map consists of a multidimesional array of strings, it is gridlike by nature, and movement has therefore been restricted to the cardinal directions, north, south, east, and west, as well as up and down. These may be abbreviated as n, s, e, w, u and d, respectively.
+		
+		You may save your game progress (it will be saved to localStorage) by typing save. You will then be asked to select a save slot, _0 through _9 (remember, user input can't begin with a number). Typing help will display the in-game help text.
+		
+		"]*/
 		console.codeInline(this.introOptions(this.state.turn));
 	},
 
