@@ -463,7 +463,7 @@ const ConsoleGame = {
 		// Greeting to be displayed at the beginning of the game
 		const baseStyle = `font-family:${primaryFont};color:pink;font-size:105%;line-height:1.5;`;
 		const italicCodeStyle = "font-family:courier;color:#29E616;font-size:115%;font-style:italic;line-height:2;";
-		const codeStyle = "font-family:courier;color:#29E616;font-size:115%;line-height:2;";/*
+		const codeStyle = "font-family:courier;color:#29E616;font-size:115%;line-height:1.5;";/*
 		const text_0 = ["Due to the limitations of the browser console as a medium, the commands you may enter can only be one-word long, with no spaces. "];
 		console.codeInline(text_0, baseStyle, null);
 		const text_1 = [
@@ -485,24 +485,14 @@ const ConsoleGame = {
 		const text = ["Valid commands are one word long, with no spaces. Compound commands consist of at most two commands, separated by a carriage return or a semicolon. For example:\n", "get\n", "What would you like to take?\n", "lamp\n", "You pick up the lamp.\n","or,\n", "get;lamp\n", "What would you like to take?\nYou pick up the lamp."];
 		const styles = [baseStyle, codeStyle, italicCodeStyle, codeStyle, italicCodeStyle, baseStyle, codeStyle, italicCodeStyle];
 		console.inline(text, styles);
-		/*
-		When the game loads, you will be asked to type start to start a new game, resume if the history of a previous game persists in localStorage. You can type restore to load a previously saved game.
+
+		const text_2 = ["Typing ", "inventory ", "or ", "i ", "will display a list of any items the player is carrying. \nTyping ", "look ", "or ", "l ", "will give you a description of your current environs in the game. \nCommands with prepositions are not presently supported, and ", "look ", "can only be used to \"look around\", and not to \"look at\" something. Please instead use ", "examine ", "or its shortcut ", "x ", "to investigate an item's properties. \nThe player may move in the cardinal directions– ", "north", ", ", "south", ", ", "east", " and ", "west ", "as well as ", "up ", "and ", "down. ", "Simply type the direction you want to move. These may be abbreviated as ", "n", ", ", "s", ", ", "e", ", ", "w", ", ", "u ", "and ", "d ", ", respectively."];
 		
-		At any time once the game begins, typing inventory or i will display a list of any items the player is carrying. Typing look or l will give you a description of your current environs in the game.
-		
-		In the game's current form, there are no prepositions, and look will only be used for this purpose, and not to "look at" something. Please instead use examine or its shortcut x instead. For example:
-		
-		examine
-		What would you like to examine?
-		
-		lamp
-		A battery-powered brass lantern is on the trophy case.
-		
-		Because the game map consists of a multidimesional array of strings, it is gridlike by nature, and movement has therefore been restricted to the cardinal directions, north, south, east, and west, as well as up and down. These may be abbreviated as n, s, e, w, u and d, respectively.
-		
-		You may save your game progress (it will be saved to localStorage) by typing save. You will then be asked to select a save slot, _0 through _9 (remember, user input can't begin with a number). Typing help will display the in-game help text.
-		
-		"]*/
+		console.codeInline(text_2, baseStyle, codeStyle);
+
+		const text_3 = ["You may save your game progress (it will be saved to localStorage) by typing ", "save", ". You will then be asked to select a save slot, ", "_0 ", "through ", "_9 ", "(remember, user input can't begin with a number). Typing ", "help ", "will display the in-game help text."];
+	
+		console.codeInline(text_3, baseStyle, codeStyle);
 		console.codeInline(this.introOptions(this.state.turn));
 	},
 

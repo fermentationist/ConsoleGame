@@ -161,7 +161,9 @@ const itemModule = game => {
 			unlockedBy: "key",
 			lockedTarget: "A",
 			closedTarget: "A",
-			description: "It is a massive wooden door, darkened with generations of dirt and varnish. It is secured with a steel deadbolt.",
+			get description () {
+				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a steel deadbolt, which is ${this.locked ? "locked." : "unlocked!"}`
+			},
 			unlock (){
 				Object.getPrototypeOf(this).unlock.call(this);
 				game.mapKey[this.lockedTarget].locked = false;
