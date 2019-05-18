@@ -10,6 +10,7 @@ import customConsole from "./console_styles.js";
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
+	timeLimit: 3,
 	state: {
 		objectMode : false,
 		saveMode: false,
@@ -48,6 +49,7 @@ const ConsoleGame = {
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
 	// This function runs at the start of each turn\\
+		this.timers();
 		try {
 			let dontCountTurn = this.immuneCommands.includes(commandName);
 			if (!dontCountTurn) {
@@ -184,7 +186,8 @@ const ConsoleGame = {
 	},
 
 	itemsInEnvironment: function () {
-		return this.state.env.length && this.formatList(this.state.env.map((item) => `${item.article} ${item.name}`));
+		return this.state.env.length && this.formatList(this.state.env.filter(item => item.listed)
+			.map((item) => `${item.article} ${item.name}`));
 	},
 
 	displayItem: function (filename, type, width, height) {
@@ -201,13 +204,31 @@ const ConsoleGame = {
 		return contentDiv.append(objElement);
 	},
 
+	timers: function () {
+		//add any timer logic here
+		if (this.state.turn === 2) {
+			console.p("You hear a short metallic scraping punctuated by a dull \"thunk\". It sounds a lot like a deadbolt sliding into place.");
+
+			this.items._door.closed = true;
+			this.items._door.locked = true;
+			this.mapKey[this.items._door.lockedTarget].locked = true;
+			this.mapKey[this.items._door.closedTarget].closed = true;
+		}
+		if (this.turn > this.timeLimit) {
+			this.dead("You jump suddenly as the silence is shattered by a loud sustained alarm tone, not unlike the sound of the Emergency Alert System test you remember from the days of network television. It continues for another excruciating minute before it is mercifully ended by the  explosion that tears you and the house you are trapped into a thousand fragments. ")
+		}
+	},
+
 	dead: function (text) {
 		console.p(text);
-		console.p("You have died. Of course, being dead, you are unaware of this unfortunate truth. In fact, you are no longer aware of anything at all.");
+		console.p("You have died. Of course, being dead, you are unaware of this unfortunate turn of events. In fact, you are no longer aware of anything at all.");
 		window.localStorage.removeItem("ConsoleGame.history");
 		setTimeout(() => location.reload(), 2000);
 	},
 
+	captured: function () {
+		console.p("As you step out onto the front porch, you struggle to see in the bright midday sun, your eyes having adjusted to the dimly lit interior of the house. You hear a surprised voice say, \"Hey! How did you get out here?!\" You spin around to see the source of the voice, but something blunt and heavy has other plans for you and your still aching skull. You descend back into the darkness of sleep")
+	},
 	_restore: function (command) {
 		let keys = Object.keys(localStorage);
 		let saves = keys.filter((key) => {
@@ -372,7 +393,7 @@ const ConsoleGame = {
 
 	intro: function (){
 		// Greeting to be displayed at the beginning of the game
-		const intro_1 = "\nWelcome!\nAs a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This demonstration of the concept is as yet incomplete, but you may try it out by typing in the console below.\n";
+		const intro_1 = "\nWelcome!\nAs a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This work in progress is my attempt. Try it out by typing in the console below. Have fun!\n";
 		console.intro(intro_1);
 		console.codeInline(this.introOptions());
 	},
@@ -411,7 +432,9 @@ const ConsoleGame = {
 		}
 		return options;
 	}, 
-
+	preface: function () {
+		console.p("You slowly open your eyes. Your eyelids aren't halfway open before the throbbing pain in your head asserts itself. You feel hungover, but you can't seem to remember what you were doing last night, or how you came to be in this unfamiliar place. You appear to be in the entrance hall of a dusty old house, neglected and in disrepair.")
+	},
 	stockDungeon: function (subEnvName){
 		Object.keys(this.mapKey).map((key) => {
 			let roomEnv = this.mapKey[key][subEnvName];
@@ -441,6 +464,7 @@ const ConsoleGame = {
 		if (this.state.turn < 1){
 			this.initializeNewGame();
 		}
+		this.preface();
 		return this.describeSurroundings();
 	},
 

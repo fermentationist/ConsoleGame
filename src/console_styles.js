@@ -11,7 +11,7 @@ const customConsole = (() => {
 		customLog(message, `font-size:125%;color:pink;font-family:${primaryFont};`);
 	}
 	console.intro = message => {
-		customLog(message, `font-size:calc(1.25 * ${fontSize});color:thistle;font-family:${primaryFont};padding:0 1em;line-height:1.5;`);
+		customLog(message, `font-size:calc(1.25 * ${fontSize});color:orange;font-family:${primaryFont};padding:0 1em;line-height:1.5;`);
 	}
 	console.note = message => {
 		customLog(message, `font-size:calc(1.2 * ${fontSize});font-family:courier new;font-weight:bold;color:#75715E;background-color:white;line-spacing:2em;padding:0 1em 1em;margin-right:auto;`);

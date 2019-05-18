@@ -14,6 +14,7 @@ const itemModule = game => {
 		closed: false,
 		locked: false, 
 		article: "a",
+		listed: true,
 		take: function (){
 			game.state.objectMode = false;
 			if(this.takeable && game.inEnvironment(this.name)){
@@ -150,14 +151,31 @@ const itemModule = game => {
 				// window.open("https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing", "_blank");//game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
 			}
 		},
-
+		_chair: {
+			name: "chair",
+			takeable: false,
+		},
+		_desk: {
+			name: "desk",
+			takeable: false,
+		},
+		
+		_books: {
+			name: "books",
+			takeable: false,
+		},
+		_paintings: {
+			name: "paintings",
+			takeable: false,
+		},
 		_door: {
 			name: "door",
 			article: "a",
 			openable: true,
-			locked: true,
+			locked: false,
 			closed: true,
 			takeable: false,
+			listed: false,
 			unlockedBy: "key",
 			lockedTarget: "A",
 			closedTarget: "A",
@@ -187,6 +205,7 @@ const itemModule = game => {
 			// weight: 0,
 			// takeable: false,
 			openable: false,
+			listed: false,
 			// locked: true,
 			// unlockedBy: "key",
 			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
@@ -263,12 +282,32 @@ const itemModule = game => {
 			description: "It is an old-timey key that appears to be made of tarnished brass"
 		},
 
+		_matchbook: {
+			name: "matchbook",
+			get description () { 
+				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is a faded green and says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\"" }`;
+			},
+			openable: true,
+			closed: true,
+		},
+
 		_note: {
 			name : "note",
-			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
+			text: `Welcome! Congratulations! You have been chosen to participate in a research study to investigate the effects of stress response on logical reasoning skills. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out the supplied survey card. And remember to have fun!`,
+			description: "It is a typewritten note on folded stationery. You found it lying next to you on the floor when you regained consciousness."
+		},
+
+		_card: {
+			name: "card",
+			text: `Welcome! Congratulations! You have been chosen to participate in a research study to investigate the effects of stress response on logical reasoning skills. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out the supplied survey card.`,
 			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
 
+		_filthy_note: {
+			name: "filthy note",
+			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
+			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
+		},
 		_no_tea: {
 			name: "no_tea",
 			weight: 0,
