@@ -44,8 +44,9 @@ const mapKey = game => {
 				
 			},
 			get description () {
-				if (this.game.state.turn < 3) {
-					return this.game.captured();
+				if (game.state.turn < 3) {
+					game.captured();
+					return "";
 				}
 				return "You have escaped! "
 			},
@@ -63,7 +64,7 @@ const mapKey = game => {
 		"#": {
 			name: "Staircase landing",
 			description: "You are on the landing of a worn oak staircase connecting the first and second floors of the old abandoned house.",
-			visibleEnv: ["key", "note", "catalogue"]
+			visibleEnv: ["key", "filthy_note", "catalogue"]
 		},
 
 		"%": {

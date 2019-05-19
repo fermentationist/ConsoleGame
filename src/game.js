@@ -10,7 +10,7 @@ import customConsole from "./console_styles.js";
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
-	timeLimit: 3,
+	timeLimit: 10,
 	state: {
 		objectMode : false,
 		saveMode: false,
@@ -21,6 +21,7 @@ const ConsoleGame = {
 		history: [],
 		turn: null,
 		pendingAction: null,
+		gameOver: false,
 		startPosition: {
 			z: 3,
 			y: 13,
@@ -50,6 +51,9 @@ const ConsoleGame = {
 	turnDemon: function (commandName, interpreterFunction) {
 	// This function runs at the start of each turn\\
 		this.timers();
+		if (this.state.gameOver) {
+			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
+		}
 		try {
 			let dontCountTurn = this.immuneCommands.includes(commandName);
 			if (!dontCountTurn) {
@@ -61,7 +65,7 @@ const ConsoleGame = {
 			return interpreterFunction(commandName);
 		}
 		catch (err){
-			// return console.invalid(err)
+			console.invalid(err)
 			return console.p(`That's not going to work. Please try something else.`);
 		}
 	},
@@ -105,6 +109,7 @@ const ConsoleGame = {
 		this.state.inventory = [];
 		this.state.history = [];
 		this.state.turn = 0;
+		this.state.gameOver = false;
 		this.state.pendingAction = null;
 		this.state.position = this.state.startPosition;
 		window.localStorage.removeItem("ConsoleGame.history");
@@ -179,6 +184,9 @@ const ConsoleGame = {
 	},
 
 	inEnvironment: function (itemName){
+		if (itemName === "all") {
+			return this.items._all;
+		}
 		const environment = this.mapKey[this.state.currentCell].env;
 		const envIndex = environment.map((item) => item.name).indexOf(itemName);
 		const objectFromEnvironment = (envIndex !== -1) && this.mapKey[`${this.state.currentCell}`].env[envIndex];
@@ -186,7 +194,8 @@ const ConsoleGame = {
 	},
 
 	itemsInEnvironment: function () {
-		return this.state.env.length && this.formatList(this.state.env.filter(item => item.listed)
+		const listedItems = this.state.env.filter(item => item.listed);
+		return listedItems.length && this.formatList(this.state.env.filter(item => item.listed)
 			.map((item) => `${item.article} ${item.name}`));
 	},
 
@@ -207,15 +216,15 @@ const ConsoleGame = {
 	timers: function () {
 		//add any timer logic here
 		if (this.state.turn === 2) {
-			console.p("You hear a short metallic scraping punctuated by a dull \"thunk\". It sounds a lot like a deadbolt sliding into place.");
+			console.p("You hear a short metallic scraping punctuated by a dull \"thunk\". It sounds a lot like a deadbolt sliding into place.\n");
 
 			this.items._door.closed = true;
 			this.items._door.locked = true;
 			this.mapKey[this.items._door.lockedTarget].locked = true;
 			this.mapKey[this.items._door.closedTarget].closed = true;
 		}
-		if (this.turn > this.timeLimit) {
-			this.dead("You jump suddenly as the silence is shattered by a loud sustained alarm tone, not unlike the sound of the Emergency Alert System test you remember from the days of network television. It continues for another excruciating minute before it is mercifully ended by the  explosion that tears you and the house you are trapped into a thousand fragments. ")
+		if (this.state.turn >= this.timeLimit && ! this.state.gameOver) {
+			this.dead("You jump suddenly as the silence is shattered by a loud sustained alarm tone, not unlike the sound of the Emergency Alert System test you remember from the days of network television. It continues for another excruciating minute before it is mercifully ended by the  explosion that tears you and the house into a thousand fragments. ")
 		}
 	},
 
@@ -223,11 +232,22 @@ const ConsoleGame = {
 		console.p(text);
 		console.p("You have died. Of course, being dead, you are unaware of this unfortunate turn of events. In fact, you are no longer aware of anything at all.");
 		window.localStorage.removeItem("ConsoleGame.history");
-		setTimeout(() => location.reload(), 2000);
+		this.state.gameOver = true;
 	},
 
 	captured: function () {
-		console.p("As you step out onto the front porch, you struggle to see in the bright midday sun, your eyes having adjusted to the dimly lit interior of the house. You hear a surprised voice say, \"Hey! How did you get out here?!\" You spin around to see the source of the voice, but something blunt and heavy has other plans for you and your still aching skull. You descend back into the darkness of sleep")
+		console.p("As you step out onto the front porch, you struggle to see in the bright midday sun, your eyes having adjusted to the dimly lit interior of the house. You hear a surprised voice say, \"Hey! How did you get out here?!\" You spin around to see the source of the voice, but something blunt and heavy has other plans for you and your still aching skull. You descend back into the darkness of sleep.");
+		this.state.position = this.state.startPosition;
+		this.state.turn += 3;
+		for (let i = 0; i < 3; i++) {
+			window.wait;
+		}
+		this.items._door.closed = true;
+		this.items._door.locked = true;
+		this.mapKey[this.items._door.lockedTarget].locked = true;
+		this.mapKey[this.items._door.closedTarget].closed = true;
+		console.p("Groggily, you lift yourself from the floor, your hands probing the fresh bump on the back of your head.");
+		// return;
 	},
 	_restore: function (command) {
 		let keys = Object.keys(localStorage);
@@ -461,7 +481,7 @@ const ConsoleGame = {
 	},
 
 	_start: function () {
-		if (this.state.turn < 1){
+		if (this.state.turn < 1 || this.state.gameOver){
 			this.initializeNewGame();
 		}
 		this.preface();

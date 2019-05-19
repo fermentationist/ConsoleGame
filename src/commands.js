@@ -136,7 +136,7 @@ const Commands = game => {
 	const _items = (itemName) => {
 		// Exit function with error message if previous command does not require an object
 		if (!game.state.objectMode){
-			return console.p("Invalid command");
+			return console.invalid("Invalid command");
 		}
 		// Exit function with error message if item is not available in player inventory or current location.
 		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
@@ -217,6 +217,7 @@ const Commands = game => {
 		[_act_upon, aliasString("open", thesaurus)],
 		[_act_upon, aliasString("close", thesaurus)],
 		[_act_upon, aliasString("lock", thesaurus)],
+		[_act_upon, aliasString("turn", thesaurus)],
 		[_act_upon, cases("hide")],
 
 		// // Objects

@@ -20,7 +20,7 @@ const itemModule = game => {
 			if(this.takeable && game.inEnvironment(this.name)){
 				game.addToInventory([this]);
 				game.mapKey[game.state.currentCell].removeFromEnv(this);
-				return console.p(`You pick up the ${this.name}`);
+				return console.p(`You pick up the ${this.name}.`);
 			} else {
 				return console.p("You can't take that.");
 			}
@@ -93,11 +93,11 @@ const itemModule = game => {
 			console.p(`The text on the ${this.name} reads: \n`);
 			return console.note(this.text);
 		},
-
-		hide: function (){
-			return game.displayItem();
+		turn: function () {
+			game.state.objectMode = false;
+			console.p(`Turning the ${this.name} has no noticeable effect.`);
+			return;
 		},
-
 		unlock: function () {
 			game.state.objectMode = false;
 			if (!this.locked){
@@ -122,8 +122,13 @@ const itemModule = game => {
 	const items = {
 		_all: {
 			name: "all",
-			_take_all: function () {
+			listed: false,
+			takeable: false,
+			take: function () {
 				const all = game.state.env;
+				all.map(item => {
+					return item.takeable ? item.take() : null;
+				});
 				// game.state.objectMode = false;
 				// if (this.takeable && game.inEnvironment(this.name)) {
 				// 	game.addToInventory([this]);
@@ -147,6 +152,7 @@ const itemModule = game => {
 			article: "a",
 			description: "This booklet appears to be the exhibition catalogue for some fancy art show. ",
 			read: function (){
+				game.state.objectMode = false;
 				console.info(`[click link to read => "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing"]`)
 				// window.open("https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing", "_blank");//game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
 			}
@@ -180,6 +186,7 @@ const itemModule = game => {
 			lockedTarget: "A",
 			closedTarget: "A",
 			get description () {
+				game.state.objectMode = false;
 				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a steel deadbolt, which is ${this.locked ? "locked." : "unlocked!"}`
 			},
 			unlock (){
@@ -293,14 +300,25 @@ const itemModule = game => {
 
 		_note: {
 			name : "note",
-			text: `Welcome! Congratulations! You have been chosen to participate in a research study to investigate the effects of stress response on logical reasoning skills. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out the supplied survey card. And remember to have fun!`,
+			text: `Welcome! Congratulations! You have been chosen to participate in an exclusive private research study. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out the supplied survey card. And remember to have fun!`,
 			description: "It is a typewritten note on folded stationery. You found it lying next to you on the floor when you regained consciousness."
 		},
 
 		_card: {
 			name: "card",
-			text: `Welcome! Congratulations! You have been chosen to participate in a research study to investigate the effects of stress response on logical reasoning skills. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out the supplied survey card.`,
-			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
+			text: `Survey Card \n\nFor each of the following questions, please circle 1 for 'strongly disagree', 2 for 'somewhat disagree', 3 for 'no opinion', 4 for 'somewhat agree' and 5 for 'strongly agree'. \n1. `,
+			description: "It is a four by six inch card cut from off-white cardstock, with a survey printed on one side ",
+			turn: function () {
+				game.state.objectMode = false;
+				console.p("Upon turning over the survey card, you notice that an unfamiliar symbol, printed in red ink.");
+				return;
+			}
+		},
+		_symbol: {
+			name: "symbol",
+			listed: false,
+			takeable: false,
+			description: "The symbol on the card's reverse is printed in red ink, and is shaped like (??)",
 		},
 
 		_filthy_note: {
@@ -314,6 +332,7 @@ const itemModule = game => {
 			article: "",
 			description: "You do not have any tea.",
 			methodCallcount: 0,
+			takeable: false,
 			no_teaMethod: function (message){
 					this.methodCallcount ++;
 					game.state.objectMode = false;
@@ -345,7 +364,6 @@ const itemModule = game => {
 				}
 				return this.no_teaMethod("Let's not resort to that just yet!");
 			},
-			takeable: false
 		}
 	}
 	
