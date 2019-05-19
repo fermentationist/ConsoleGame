@@ -14,7 +14,7 @@ const customConsole = (() => {
 		customLog(message, `font-size:calc(1.25 * ${fontSize});color:orange;font-family:${primaryFont};padding:0 1em;line-height:1.5;`);
 	}
 	console.note = message => {
-		customLog(message, `font-size:calc(1.2 * ${fontSize});font-family:courier new;font-weight:bold;color:#75715E;background-color:white;line-spacing:2em;padding:0 1em 1em;margin-right:auto;`);
+		customLog(message, `font-size:calc(1.2 * ${fontSize});font-family:courier new;font-weight:bold;color:#75715E;background-color:white;line-spacing:2em;padding:0 1em 1em;margin:0 auto;`);
 	}
 	console.warning = message => {
 		customLog(message, `font-size:calc(1.15 * ${fontSize});color:orange;`, logType = "warn");
@@ -38,7 +38,7 @@ const customConsole = (() => {
 		customLog(message, `font-size:calc(1.2 * ${fontSize});color:cyan;font-family:${primaryFont};padding:0 1em;`);
 	}
 	console.title = message => {
-		customLog(message, `font-size:calc(1.25 * ${fontSize});font-weight:bold;color:${textColor};font-family:${primaryFont};`);
+		customLog(message, `font-size:calc(2.5 * ${fontSize});font-weight:bold;color:gold;text-shadow:orange 2px 2px 5px;goldenrod -2px -2px 5px;font-family:Courier;padding:0 1em;margin:0 auto 0 35%;`);
 	}
 	console.header = (currentHeader) => {
 		customLog(currentHeader, `font-size:calc(1.25 * ${fontSize});font-weight:bold;color:${textColor};font-family:${primaryFont};padding:0 1em;`);

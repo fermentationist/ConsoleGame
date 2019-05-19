@@ -118,6 +118,12 @@ const thesaurus = {
         "confiscate",
         "retrieve"
     ],
+    turn: [
+        "flip",
+        "rotate",
+        "revolve", 
+        "twist"
+    ],
     use: [
         "utilize",
         "utilise",

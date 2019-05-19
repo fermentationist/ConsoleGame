@@ -314,6 +314,12 @@ const itemModule = game => {
 				return;
 			}
 		},
+		_survey: {
+			name: "survey",
+			proto: "_card",
+			listed: false,
+			takeable: false,
+		},
 		_symbol: {
 			name: "symbol",
 			listed: false,

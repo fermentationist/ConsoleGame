@@ -410,10 +410,11 @@ const ConsoleGame = {
 	unfinishedGame: function () {
 		return window.localStorage.getItem("ConsoleGame.history");
 	},
-
 	intro: function (){
 		// Greeting to be displayed at the beginning of the game
-		const intro_1 = "\nWelcome!\nAs a fan of old Infocom interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This work in progress is my attempt. Try it out by typing in the console below. Have fun!\n";
+		const intro_1 = "\nWelcome!\nAs a fan of old Infocom™ interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This work in progress is my attempt. Try it out by typing in the console below. Have fun!\n";
+		console.title("\nconsoleGame\n");
+		console.custom("by Dennis Hodges\ncopyright 2019", "font-size:100%;color:lightgray;padding:0 1em;");
 		console.intro(intro_1);
 		console.codeInline(this.introOptions());
 	},
