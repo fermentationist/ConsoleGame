@@ -10,7 +10,7 @@ import customConsole from "./console_styles.js";
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
-	timeLimit: 10,
+	timeLimit: 30,
 	state: {
 		objectMode : false,
 		saveMode: false,
@@ -52,6 +52,7 @@ const ConsoleGame = {
 	// This function runs at the start of each turn\\
 		this.timers();
 		if (this.state.gameOver) {
+			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 		}
 		try {
@@ -248,6 +249,13 @@ const ConsoleGame = {
 		this.mapKey[this.items._door.closedTarget].closed = true;
 		console.p("Groggily, you lift yourself from the floor, your hands probing the fresh bump on the back of your head.");
 		// return;
+	},
+	winner: function (text) {
+		text ? console.p(text) : null;
+		console.win("You win!! Congratulations and thanks for playing!");
+		window.localStorage.removeItem("ConsoleGame.history");
+		this.state.gameOver = true;
+		console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 	},
 	_restore: function (command) {
 		let keys = Object.keys(localStorage);

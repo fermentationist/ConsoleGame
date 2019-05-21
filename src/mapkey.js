@@ -48,7 +48,7 @@ const mapKey = game => {
 					game.captured();
 					return "";
 				}
-				return "You have escaped! "
+				return game.winner("\nYou have escaped!\n");
 			},
 		},
 		"^": {
@@ -69,7 +69,7 @@ const mapKey = game => {
 
 		"%": {
 			name: "Entrance hall",
-			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, several of which have been boarded up. Facing you at the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
+			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, several of which have been boarded up. The front door is to the south. At the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
 			visibleEnv: ["door", "note", "card", "survey", "symbol"]
 		},
 

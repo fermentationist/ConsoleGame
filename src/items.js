@@ -306,7 +306,7 @@ const itemModule = game => {
 
 		_card: {
 			name: "card",
-			text: `Survey Card \n\nFor each of the following questions, please circle 1 for 'strongly disagree', 2 for 'somewhat disagree', 3 for 'no opinion', 4 for 'somewhat agree' and 5 for 'strongly agree'. \n1. `,
+			text: `Survey Card \nFor each of the following questions, please circle 1 for 'strongly disagree', 2 for 'somewhat disagree', 3 for 'no opinion', 4 for 'somewhat agree' and 5 for 'strongly agree'. \n1. `,
 			description: "It is a four by six inch card cut from off-white cardstock, with a survey printed on one side ",
 			turn: function () {
 				game.state.objectMode = false;
@@ -364,9 +364,9 @@ const itemModule = game => {
 				return this.no_teaMethod("Unsurprisingly, using the no tea has no effect.");
 			},
 			contemplate: function (){
-				if (this.methodCallcount > 1){
+				if (this.methodCallcount > 2){
 					console.p("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
-					return console.h1("You just won, you winner, you!");
+					return game.winner();
 				}
 				return this.no_teaMethod("Let's not resort to that just yet!");
 			},
