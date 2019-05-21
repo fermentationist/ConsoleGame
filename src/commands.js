@@ -72,12 +72,23 @@ const Commands = game => {
 	}
 
 	// Describe environment and movement options in current location
-	const _look = (command) => {
+	const _look = command => {
 		return game.describeSurroundings();
 	}
  
+	const _smell = command => {
+		const currentCell = game.state.currentCell;
+		console.p(game.mapKey[currentCell].smell);
+		return;
+	}
+
+	const _listen = command => {
+		const currentCell = game.state.currentCell;
+		console.p(game.mapKey[currentCell].sound);
+		return;
+	}
 	// Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.                               
-	const _act_upon = (command) => {
+	const _act_upon = command => {
 		game.state.objectMode = true;
 		game.state.pendingAction = command;
 		console.p(`What would you like to ${command}?`);
@@ -95,8 +106,12 @@ const Commands = game => {
 		console.p("Time passes...");
 	}
 
+	const _go = () => {
+		console.p("Which direction do you want to go?");
+	}
+
 	// Displays items in the player's inventory.
-	const _inventory = (command) => {
+	const _inventory = command => {
 
 		let items = [], itemsPlusArticles = [];
 		game.state.inventory.map((item) => {
@@ -124,7 +139,7 @@ const Commands = game => {
 	}
 
 	// Displays inventory as a table.
-	const _inventoryTable = (command) => {
+	const _inventoryTable = command => {
 		const table =game.state.inventory.map(item => {
 			const {name, description} = item;
 			return {name, description};
@@ -201,8 +216,11 @@ const Commands = game => {
 		[_move, cases("down") + ",d,D"],
 
 		// Actions
+		[_go, aliasString("go", thesaurus)],
 		[_wait, aliasString("wait", thesaurus) + ",z,Z,zzz,ZZZ,Zzz"],
 		[_look, cases("look", "see", "observe") + ",l,L"],
+		[_smell, aliasString("smell", thesaurus)],
+		[_listen, aliasString("listen", thesaurus)],
 		[_inventory, aliasString("inventory", thesaurus) + ",i,I"],
 		[_act_upon, aliasString("use", thesaurus)],
 		[_act_upon, aliasString("take", thesaurus)],

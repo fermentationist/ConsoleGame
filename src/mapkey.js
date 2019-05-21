@@ -6,6 +6,8 @@ const mapKey = game => {
 		unlockText: "",
 		hideSecrets: false,
 		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing of interest is likely to ever happen here.",
+		smell: "Your nose is unable to detect anything unusual, beyond the smell of mildew and rot that permeates the entirety of the decrepit building.",
+		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creaking of sagging floorboards underfoot.",
 		hiddenEnv: [],
 		visibleEnv: [],
 		get env (){
@@ -58,7 +60,8 @@ const mapKey = game => {
 		},
 		"+": {
 			name: "Study",
-			description: "The walls of the dark, wood-panelled study are lined with bookshelves, from which waft the pleasantly musty smell of old books emanates from the bookshelves that line the wall. Other than a few paintings on the wall, the only other furnishings are an imposing walnut desk, and a leather upholstered desk chair.",
+			description: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Other than a few paintings on the wall, the only other furnishings are an imposing walnut desk, and a leather upholstered desk chair.",
+			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			visibleEnv: ["desk", "paintings", "chair", "books"]
 		},
 		"#": {

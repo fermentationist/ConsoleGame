@@ -1,5 +1,4 @@
 import consoleGame from "./game.js";
-import { pStyle } from "./prefs.js";
 // ===========//ItemModule//===========
 const itemModule = game => {
 	const Item = {
@@ -343,9 +342,8 @@ const itemModule = game => {
 					this.methodCallcount ++;
 					game.state.objectMode = false;
 					console.p(message);
-					// return console.p(`${message} ${this.methodCallcount > 1 ? "Perhaps you should contemplate that for a moment..." : ""}`);
-					if (this.methodCallcount > 1){
-						console.inline(["Perhaps you should take a moment to ", "contemplate", " that."], [pStyle, pStyle + "font-style:italic;", pStyle])	
+					if (this.methodCallcount > 1 && game.state.pendingAction !== "contemplate"){
+						console.p("Perhaps you should take a moment to contemplate that.");	
 					}
 			},
 			drink: function (){

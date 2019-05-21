@@ -13,6 +13,6 @@ export var primaryFont = localStorage.getItem("ConsoleGame.prefs.font") || defau
 export var textColor = localStorage.getItem("ConsoleGame.prefs.color") || defaultTextColor;
 export var fontSize = localStorage.getItem("ConsoleGame.prefs.size") || defaultFontSize;
 
-export var pStyle = `font-size:calc(1.2 * ${fontSize});color:${textColor};font-family:${primaryFont}`;
+export var pStyle = `font-size:calc(1.2 *${fontSize});color:${textColor};font-family:${primaryFont};padding:0 1em;line-height:1.5;`;
 
 export default (!prefs ? "no user preferences detected." : "user preferences applied.");												
