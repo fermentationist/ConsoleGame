@@ -70,6 +70,9 @@ const thesaurus = {
         "possessions",
         "belongings"
     ],
+    listen: [
+        "hear"
+    ],
     lock: [
         "deadbolt"
     ],
@@ -95,6 +98,9 @@ const thesaurus = {
     read: [
         "skim",
         "peruse"
+    ],
+    smell: [
+        "sniff"
     ],
     spray: [
         "squirt",
