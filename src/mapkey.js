@@ -1,25 +1,27 @@
 const mapKey = game => {
+	// Prototype definition for a single cell on the map grid (usually a room)
 	const MapCell = {
-		name: "Nowhere",
-		locked: false,
-		lockText: "",
-		unlockText: "",
-		hideSecrets: false,
-		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing of interest is likely to ever happen here.",
-		smell: "Your nose is unable to detect anything unusual, beyond the smell of mildew and rot that permeates the entirety of the decrepit building.",
-		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creaking of sagging floorboards underfoot.",
-		hiddenEnv: [],
-		visibleEnv: [],
-		get env (){
-			if (this.hideSecrets){
+		name: "Nowhere", // room name to be displayed by game.currentHeader() 
+		locked: false, 
+		lockText: "", // text to be displayed when player attempts to enter the locked area (but is prevented)
+		unlockText: "", // text to be displayed when area becomes unlocked
+		hideSecrets: false, // used to toggle room description and whether player has access to hiddenEnv
+		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing is happening, nor is anything of interest is likely to happen here in the future.", // the default text displayed when player enters or "looks" at room
+		smell: "Your nose is unable to detect anything unusual, beyond the smell of mildew and rot that permeates the entirety of the decrepit building.", // text displayed in response to smell command
+		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creaking of sagging floorboards underfoot.", // text displayed in response to listen command
+		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
+		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
+		get env (){ // accessor property returns an array containing the names (as strngs) of the items in present environment
+			if (this.hideSecrets){ //do not include items in hiddenEnv
 				return this.visibleEnv;
 			}
-			this.visibleEnv = this.visibleEnv.concat(this.hiddenEnv);
-			this.hiddenEnv = [];
-			return this.visibleEnv;
+			return [...this.visibleEnv, ...this.hiddenEnv];
+			// this.visibleEnv = this.visibleEnv.concat(this.hiddenEnv);
+			// this.hiddenEnv = [];
+			// return this.visibleEnv;
 			
 		},
-		set env (newEnv){
+		set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
 			return this.visibleEnv = newEnv;
 		},
 		removeFromEnv: function (item) {
@@ -37,6 +39,7 @@ const mapKey = game => {
 			locked: true,
 			lockText: "An attempt has been made to board up this door. Reaching between the unevenly spaced boards, you try the doorknob and discover that it is also locked."
 		},
+
 		"A": {
 			name: "Freedom!",
 			locked: false,
@@ -53,17 +56,26 @@ const mapKey = game => {
 				return game.winner("\nYou have escaped!\n");
 			},
 		},
+
 		"^": {
 			name: "Second floor hallway",
 			description: "You are at the top of a wide wooden staircase, on the second floor of the old house.",
 			visibleEnv: []
 		},
+
 		"+": {
 			name: "Study",
-			description: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Other than a few paintings on the wall, the only other furnishings are an imposing walnut desk, and a leather upholstered desk chair.",
+			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair, upholstered in worn mahogany leather. On the wall behind the chair hangs an ornately framed painting.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
-			visibleEnv: ["desk", "paintings", "chair", "books"]
+			hideSecrets: true,
+			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books"],
+			hiddenEnv: [/*"lockbox"*/],
+			hiddenDescription: "In space where a painting formerly hung there is a small alcove containing a steel lockbox.",
+			get description (){
+				return this.hideSecrets ? this.visibleDescription : this.visibleDescription + "\n" + this.hiddenDescription;
+			}
 		},
+
 		"#": {
 			name: "Staircase landing",
 			description: "You are on the landing of a worn oak staircase connecting the first and second floors of the old abandoned house.",
@@ -99,7 +111,8 @@ const mapKey = game => {
 		}
 	}
 
-	Object.keys(mapkey).map((cell) => {
+	// every cell defined in mapkey will inherit from MapCell
+	Object.keys(mapkey).forEach((cell) => {
 		Object.setPrototypeOf(mapkey[cell], MapCell);
 	});
 

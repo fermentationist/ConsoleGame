@@ -20,7 +20,7 @@ const Commands = game => {
 		mapKey,
 		cases} = game;
 	// Change player's location on the map, given a direction
-	const _move = (direction) => {
+	const _movePlayer = (direction) => {
 		let newPosition = {
 			x: game.state.position.x,
 			y: game.state.position.y,
@@ -120,6 +120,7 @@ const Commands = game => {
 			itemsPlusArticles.push(itemWithArticle);
 		});
 		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ");
+		console.log("TCL: segments", segments)
 		let itemStyle = `font-size:120%;color:cyan;font-style:italic;`;
 
 		let styles = segments.map((word) => {
@@ -208,12 +209,12 @@ const Commands = game => {
 		[_start, cases("start", "begin", "commence")],
 		[_resume, cases("resume")],
 		// Move
-		[_move, cases("north") + ",n,N"],
-		[_move, cases("south") + ",s,S"],
-		[_move, cases("east") + ",e,E"],
-		[_move, cases("west") + ",w,W"],
-		[_move, cases("up") + ",u,U"],
-		[_move, cases("down") + ",d,D"],
+		[_movePlayer, cases("north") + ",n,N"],
+		[_movePlayer, cases("south") + ",s,S"],
+		[_movePlayer, cases("east") + ",e,E"],
+		[_movePlayer, cases("west") + ",w,W"],
+		[_movePlayer, cases("up") + ",u,U"],
+		[_movePlayer, cases("down") + ",d,D"],
 
 		// Actions
 		[_go, aliasString("go", thesaurus)],
@@ -228,6 +229,7 @@ const Commands = game => {
 		[_act_upon, aliasString("examine", thesaurus) + ",x,X"],
 		[_act_upon, aliasString("drink", thesaurus)],
 		[_act_upon, aliasString("drop", thesaurus)],
+		[_act_upon, aliasString("move", thesaurus)],
 		[_act_upon, aliasString("pull", thesaurus)],
 		[_act_upon, aliasString("spray", thesaurus)],
 		[_act_upon, aliasString("contemplate", thesaurus)],

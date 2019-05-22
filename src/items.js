@@ -6,7 +6,7 @@ const itemModule = game => {
 		used : false,
 		weight : 1,
 		get description () {
-			return `There is nothing particularly interesting about this ${this.name}.`
+			return `There is nothing particularly interesting about the ${this.name}.`
 		},
 		takeable: true,
 		openable: false,
@@ -21,8 +21,17 @@ const itemModule = game => {
 				game.mapKey[game.state.currentCell].removeFromEnv(this);
 				return console.p(`You pick up the ${this.name}.`);
 			} else {
-				return console.p("You can't take that.");
+				return console.p(`You can't take ${this.name}`);
 			}
+		},
+		takeComponent: function () {
+			const realItem = Object.getPrototypeOf(this);
+			if (! this.takeable || ! game.inEnvironment(this)) {
+				return console.p(`You can't take that.`);
+			}
+			game.addToInventory([this]);
+			game.mapKey[game.state.currentCell].removeFromEnv(this);
+			realItem.take.call(realItem);
 		},
 		drop: function (){
 			game.state.objectMode = false;
@@ -139,12 +148,12 @@ const itemModule = game => {
 			},
 		},
 
-		_book: {
-			name: "book",
-			weight: 2,
-			article: "a",
-			description: "A dusty, leatherbound tome"
-		},
+		// _book: {
+		// 	name: "book",
+		// 	weight: 2,
+		// 	article: "a",
+		// 	description: "A dusty, leatherbound tome"
+		// },
 
 		_catalogue: {
 			name: "catalogue",
@@ -164,14 +173,39 @@ const itemModule = game => {
 			name: "desk",
 			takeable: false,
 		},
-		
 		_books: {
 			name: "books",
-			takeable: false,
+			listed: false,
+			proto: "_bookshelves"
 		},
-		_paintings: {
-			name: "paintings",
+		_bookshelves: {
+			name: "bookshelves",
 			takeable: false,
+			article: "some"
+		},
+		_painting: {
+			name: "painting",
+			takeable: true,
+			description: "The small, grimy image is of an owl, teaching a class about catching mice, to a classroom of kittens. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.",
+			previouslyRevealed: false,
+			location: "+",
+			take () {
+				Object.getPrototypeOf(this).take.call(this);
+				this.revealText("When you remove the terrible painting, ");
+			},
+			revealText (text) {
+				if (! this.previouslyRevealed) {
+					console.p(text + "a small recess is revealed. Within the shallow niche is a scuffed and battered steel lockbox.");
+					game.mapKey[this.location].hideSecrets = false;
+					this.previouslyRevealed = true;
+				}
+			},
+			move () {
+				this.revealText("When you move the terrible painting, ");
+			},
+			turn () {
+				this.move()
+			}
 		},
 		_door: {
 			name: "door",
@@ -240,6 +274,12 @@ const itemModule = game => {
 			}
 		},
 
+		_crowbar: {
+			name: "crowbar",
+			weight: 5,
+			description: "It is a typical crowbar, made of hexagonal steel stock, with an unpolished black surface. It weighs about five pounds."
+		},
+
 		_glove: {
 			name : "glove",
 			description: "It is a well-worn gray leather work glove. There is nothing otherwise remarkable about it. 🧤",
@@ -299,17 +339,18 @@ const itemModule = game => {
 
 		_note: {
 			name : "note",
-			text: `Welcome! Congratulations! You have been chosen to participate in an exclusive private research study. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out the supplied survey card. And remember to have fun!`,
+			text: `Welcome! Congratulations! You have been chosen to participate in an exclusive private research study. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out a survey card. And remember to have fun!`,
 			description: "It is a typewritten note on folded stationery. You found it lying next to you on the floor when you regained consciousness."
 		},
 
 		_card: {
 			name: "card",
-			text: `Survey Card \nFor each of the following questions, please circle 1 for 'strongly disagree', 2 for 'somewhat disagree', 3 for 'no opinion', 4 for 'somewhat agree' and 5 for 'strongly agree'. \n1. `,
-			description: "It is a four by six inch card cut from off-white cardstock, with a survey printed on one side ",
+			text: `Survey Card \nFor each of the following questions, please circle '1' for 'strongly disagree', '2' for 'somewhat disagree', '3' for 'no opinion', '4' for 'somewhat agree' and '5' for 'strongly agree'. \n1. This is the first involuntary study I have participated in.\n2. I found the study conditions to be inadequately challenging.\n3. I would be willing to participate in additional studies.\n4. I am aware that any attempt to contact law enforcement will have adverse consequences for myself or my family, whose location of residence is known to the Director.\n`,
+			description: "It is a four by six inch card cut from off-white cardstock, on which a survey is printed.",
 			turn: function () {
 				game.state.objectMode = false;
-				console.p("Upon turning over the survey card, you notice that an unfamiliar symbol, printed in red ink.");
+				console.p("Upon turning over the survey card, you notice a message, written in pencil. It says,");
+				console.note("\n\"THE OWLS ARE NOT WHAT THEY SEEM\".");
 				return;
 			}
 		},
@@ -317,7 +358,10 @@ const itemModule = game => {
 			name: "survey",
 			proto: "_card",
 			listed: false,
-			takeable: false,
+			takeable: true,
+			take: function () {
+				 this.takeComponent.call(this)
+			}
 		},
 		_symbol: {
 			name: "symbol",

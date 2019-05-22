@@ -50,7 +50,6 @@ const thesaurus = {
     ],
     go: [
         "travel",
-        "move",
         "locomote",
         "proceed",
         "depart",
@@ -79,6 +78,11 @@ const thesaurus = {
     look: [
         "see",
         "observe"
+    ],
+    move: [
+        "displace",
+        "upend",
+        "push"
     ],
     note: [
         "letter",
@@ -122,7 +126,8 @@ const thesaurus = {
         "appropriate",
         "arrogate",
         "confiscate",
-        "retrieve"
+        "retrieve",
+        "remove"
     ],
     turn: [
         "flip",
@@ -154,5 +159,10 @@ const thesaurus = {
         "procrastinate"
     ]
 }
+const allWords = Object.entries(thesaurus).reduce((accum, entry) => [accum, ...entry]);
+const duplicates = allWords.filter((word, currentIndex) => allWords.indexOf(word) !== currentIndex)
 
+if (duplicates.length) {
+    throw Error(`Duplicates found in thesaurus.js:\n${duplicates}`);
+}
 export default thesaurus;

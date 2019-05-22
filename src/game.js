@@ -11,6 +11,7 @@ const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
 	timeLimit: 30,
+	weightLimit: 20,
 	state: {
 		objectMode : false,
 		saveMode: false,
