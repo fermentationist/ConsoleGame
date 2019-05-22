@@ -120,7 +120,7 @@ const Commands = game => {
 			itemsPlusArticles.push(itemWithArticle);
 		});
 		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ");
-		console.log("TCL: segments", segments)
+		// console.log("TCL: segments", segments)
 		let itemStyle = `font-size:120%;color:cyan;font-style:italic;`;
 
 		let styles = segments.map((word) => {
