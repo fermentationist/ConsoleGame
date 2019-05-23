@@ -155,8 +155,8 @@ const itemModule = game => {
 		// 	description: "A dusty, leatherbound tome"
 		// },
 
-		_catalogue: {
-			name: "catalogue",
+		_booklet: {
+			name: "booklet",
 			article: "a",
 			description: "This booklet appears to be the exhibition catalogue for some fancy art show. ",
 			read: function (){

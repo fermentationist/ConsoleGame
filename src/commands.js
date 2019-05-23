@@ -114,11 +114,13 @@ const Commands = game => {
 	const _inventory = command => {
 
 		let items = [], itemsPlusArticles = [];
-		game.state.inventory.map((item) => {
-			items.push(item.name)
+		// const itemsPlusArticles = game.state.inventory.map(item => item.article ? `${item.article} ${item.name}` :  item.name);
+		game.state.inventory.forEach(item => {
+			items.push(item.name);
 			const itemWithArticle = item.article ? `${item.article} ${item.name}` :  item.name;
 			itemsPlusArticles.push(itemWithArticle);
 		});
+		
 		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ");
 		// console.log("TCL: segments", segments)
 		let itemStyle = `font-size:120%;color:cyan;font-style:italic;`;

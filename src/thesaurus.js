@@ -1,4 +1,11 @@
 const thesaurus = {
+    booklet: [
+        "catalog",
+        "catalogue",
+        "book",
+        "program"
+    ],
+
     contemplate: [
         "consider",
         "meditate",

@@ -15,11 +15,7 @@ const mapKey = game => {
 			if (this.hideSecrets){ //do not include items in hiddenEnv
 				return this.visibleEnv;
 			}
-			return [...this.visibleEnv, ...this.hiddenEnv];
-			// this.visibleEnv = this.visibleEnv.concat(this.hiddenEnv);
-			// this.hiddenEnv = [];
-			// return this.visibleEnv;
-			
+			return [...this.visibleEnv, ...this.hiddenEnv]; // include the items in hiddenEnv
 		},
 		set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
 			return this.visibleEnv = newEnv;
@@ -28,7 +24,7 @@ const mapKey = game => {
 			const index = this.visibleEnv.map((item) => item.name).indexOf(item.name);
 			return index !== -1 ? this.env.splice(index, 1): console.log("Cannot remove as item is not present in environment.");
 		},
-		addToEnv: function (itemName) {
+		addToEnv: function (itemName) { 
 			const itemObj = game.items[`_${itemName}`];
 			return this.visibleEnv.push(itemObj);
 
@@ -72,6 +68,7 @@ const mapKey = game => {
 			hiddenEnv: [/*"lockbox"*/],
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove containing a steel lockbox.",
 			get description (){
+				const catalogLocation = this.env.contains("booklet") ? "There is a booklet on the desk";
 				return this.hideSecrets ? this.visibleDescription : this.visibleDescription + "\n" + this.hiddenDescription;
 			}
 		},
@@ -79,13 +76,13 @@ const mapKey = game => {
 		"#": {
 			name: "Staircase landing",
 			description: "You are on the landing of a worn oak staircase connecting the first and second floors of the old abandoned house.",
-			visibleEnv: ["key", "filthy_note", "catalogue"]
+			visibleEnv: ["booklet", "card", "survey"]
 		},
 
 		"%": {
 			name: "Entrance hall",
 			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, several of which have been boarded up. The front door is to the south. At the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
-			visibleEnv: ["door", "note", "card", "survey", "symbol"]
+			visibleEnv: ["door", "note"]
 		},
 
 		"@": {
