@@ -183,6 +183,22 @@ const itemModule = game => {
 			takeable: false,
 			article: "some"
 		},
+
+		_safe: {
+			name : "safe",
+			description: "The wall safe looks ruggerd and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
+			contents:["key"],
+			// examine: function (){
+			// 	game.state.objectMode = false;
+			// 	if (this.contents.length){
+			// 		const hiddenItem = this.contents.pop();
+			// 		console.p(`${this.description}\nAs you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);
+			// 		return game.mapKey[game.state.currentCell].addToEnv(hiddenItem.name);
+			// 	} 
+			// 	return this.description;
+			// }
+		},
+
 		_painting: {
 			name: "painting",
 			takeable: true,
@@ -195,7 +211,7 @@ const itemModule = game => {
 			},
 			revealText (text) {
 				if (! this.previouslyRevealed) {
-					console.p(text + "a small recess is revealed. Within the shallow niche is a scuffed and battered steel lockbox.");
+					console.p(text + "a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.");
 					game.mapKey[this.location].hideSecrets = false;
 					this.previouslyRevealed = true;
 				}

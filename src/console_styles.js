@@ -61,6 +61,9 @@ const customConsole = (() => {
 		})
 		console.inline(stringSegmentArray, styleArray);
 	}
+	console.digi = message => {
+		customLog(message, `font-family:'Lucida console';color:redorange;size:140%;`)
+	}
 })();
 
 export default customConsole;

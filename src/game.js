@@ -18,6 +18,7 @@ const ConsoleGame = {
 		restoreMode: false,
 		prefMode: false,
 		confirmMode: false,
+		solveMode: false,
 		inventory: [],
 		history: [],
 		turn: null,
@@ -108,6 +109,7 @@ const ConsoleGame = {
 		this.state.restoreMode = false;
 		this.state.prefMode = false;
 		this.state.confirmMode = false;
+		this.state.solveMode = false;
 		this.state.inventory = [];
 		this.state.history = [];
 		this.state.turn = 0;
@@ -426,6 +428,7 @@ const ConsoleGame = {
 		console.custom("by Dennis Hodges\ncopyright 2019", "font-size:100%;color:lightgray;padding:0 1em;");
 		console.intro(intro_1);
 		console.codeInline(this.introOptions());
+		console.digi("0123456789")
 	},
 
 	introOptions: function (){

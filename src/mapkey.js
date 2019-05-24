@@ -18,10 +18,13 @@ const mapKey = game => {
 			return [...this.visibleEnv, ...this.hiddenEnv]; // include the items in hiddenEnv
 		},
 		set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
+			console.log("TCL: setenv -> newEnv", newEnv)
 			return this.visibleEnv = newEnv;
 		},
 		removeFromEnv: function (item) {
 			const index = this.visibleEnv.map((item) => item.name).indexOf(item.name);
+			console.log("TCL: index", index)
+			console.log("TCL: this.env", this.env)
 			return index !== -1 ? this.env.splice(index, 1): console.log("Cannot remove as item is not present in environment.");
 		},
 		addToEnv: function (itemName) { 
@@ -64,12 +67,12 @@ const mapKey = game => {
 			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair, upholstered in worn mahogany leather. On the wall behind the chair hangs an ornately framed painting.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
-			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books"],
-			hiddenEnv: [/*"lockbox"*/],
+			visibleEnv: ["desk", "painting", "chair", "bookshelves", "booklet"],
+			hiddenEnv: ["lockbox"],
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove containing a steel lockbox.",
 			get description (){
-				const catalogLocation = this.env.contains("booklet") ? "There is a booklet on the desk";
-				return this.hideSecrets ? this.visibleDescription : this.visibleDescription + "\n" + this.hiddenDescription;
+				const catalogLocation = this.env.map(x=>x.name).includes("booklet") ? "There is a booklet on the desk" : "";
+				return this.hideSecrets ? this.visibleDescription : this.visibleDescription + "\n" + "\n" + this.hiddenDescription + "\n" + catalogLocation;
 			}
 		},
 
