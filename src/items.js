@@ -186,8 +186,20 @@ const itemModule = game => {
 
 		_safe: {
 			name : "safe",
-			description: "The wall safe looks ruggerd and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
+			closed: true,
+			locked: true,
+			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
 			contents:["key"],
+			open: function () {
+
+			},
+			unlock: function (){
+				game.state.solveMode = true;
+				console.digi("ENTER PASSCODE:")
+			},
+			use: function (){
+				this.unlock.call(this);
+			},
 			// examine: function (){
 			// 	game.state.objectMode = false;
 			// 	if (this.contents.length){

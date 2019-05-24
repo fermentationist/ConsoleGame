@@ -3,7 +3,7 @@ import maps from "./maps.js";
 import mapKeyModule from "./mapkey.js";
 import itemModule from "./items.js";
 import commandsList from "./commands.js";
-import customConsole from "./console_styles.js";
+import customConsole, { randomRGBValues } from "./console_styles.js";
 
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
 //todo: rewrite with generators?
@@ -428,7 +428,7 @@ const ConsoleGame = {
 		console.custom("by Dennis Hodges\ncopyright 2019", "font-size:100%;color:lightgray;padding:0 1em;");
 		console.intro(intro_1);
 		console.codeInline(this.introOptions());
-		console.digi("0123456789")
+		console.digi(`${randomRGBValues()}`)
 	},
 
 	introOptions: function (){

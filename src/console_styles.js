@@ -62,8 +62,32 @@ const customConsole = (() => {
 		console.inline(stringSegmentArray, styleArray);
 	}
 	console.digi = message => {
-		customLog(message, `font-family:'Lucida console';color:redorange;size:140%;`)
+		const spacedText = message.split("").join(" ").split("");
+		const styles = spacedText.map(char => {
+			return `font-family:'courier new';color:rgb(${255 + Math.floor(Math.random() * 10)}, ${68 + Math.floor(Math.random() * 10)}, ${0 + Math.floor(Math.random() * 10)});font-size:${2 + (Math.random() / 2)}em;`
+		});
+		console.inline(spacedText, styles);
+        // console.log("TCL: customConsole -> spacedText", spacedText)
+		// customLog(message, `font-family:'courier new';color:orangered;font-size:2em;letter-spacing:1.5px;font-kerning:none;`)
 	}
+	console.irregular = (message, ) => {
+		const spacedText = message.split("").join(" ").split("");
+		const styles = spacedText.map(char => {
+			return `font-family:'courier new';color:rgb(${255 + Math.floor(Math.random() * 10)}, ${68 + Math.floor(Math.random() * 10)}, ${0 + Math.floor(Math.random() * 10)});font-size:${2 + (Math.random() / 2)}em;`
+		});
+		const random255 = () =>
+		console.inline(spacedText, styles);
+	}
+	
 })();
 
+export const randomRGBValues = (r = 128, g = 128, b = 128, maxVariance = 25) => {
+	
+	const randomlyVary = (baseValue, maxVary) => {
+		const randomAbsoluteVariance = Math.floor(Math.random() * maxVariance);
+		const randomActualVariance = Math.random() >= 0.5 ? randomAbsoluteVariance * -1 : randomAbsoluteVariance;
+		return Math.max(Math.min(255, baseValue + randomActualVariance), 0);
+	}
+	return [randomlyVary(r, maxVariance), randomlyVary(g, maxVariance), randomlyVary(b, maxVariance)]
+}
 export default customConsole;
