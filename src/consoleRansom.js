@@ -7,11 +7,14 @@ export default console.ransom = (message) => {
         const {foreground, background, border} = getColors();
         const [r, g, b] = foreground;
         const [br, bg, bb] = background;
-        const style = `font-family:${randomFont()};color:rgb(${r}, ${g}, ${b});font-size:${2.5 + (Math.random() / 2)}em;filter:saturate(0);line-height:${Math.random() + 0.5}em;background-color:rgb(${br}, ${bg}, ${bb});${randomPadding()}${randomOutline(border)}`
+        const style = `font-family:${randomFont()};color:rgb(${r}, ${g}, ${b});font-size:${3 + (Math.random() / 2)}em;line-height:${Math.random() + 0.5}em;background-color:rgb(${br}, ${bg}, ${bb});${randomPadding()}${randomOutline(border)}`
         return char === " " ? blankStyle: style;
     });
     const spacedText = splitText.join(" ").split("");
-    const spacedStyles = styles.map(item => [item, `font-size:${1 + (Math.random())}em;`]).flat();
+    const spacedStyles = styles.map(item => [item, `font-size:${1 + (Math.random())}em;`])
+        .flat()
+        .splice(styles.length - 1);
+	console.log("TCL: defaultconsole.ransom -> spacedStyles", spacedStyles)
     console.inline(spacedText, spacedStyles);
 }
 
@@ -22,6 +25,7 @@ const getColors = () => {
     const border = isGray ? randomRGBGrayValues(0, 128) : randomRGBValues([128, 128, 128], 128);
     return {foreground, background, border};
 }
+
 const randomPadding = (max = 3) => `padding: ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px;`
 
 const randomRGBValues = ([r, g, b] = [128, 128, 128], maxVariance = 25) => {
