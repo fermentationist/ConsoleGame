@@ -12,22 +12,29 @@ const mapKey = game => {
 		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
 		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
 		get env (){ // accessor property returns an array containing the names (as strngs) of the items in present environment
-			if (this.hideSecrets){ //do not include items in hiddenEnv
+			// if (this.hideSecrets){ //do not include items in hiddenEnv
+			// 	return this.visibleEnv;
+			// }
+			// return [...this.visibleEnv, ...this.hiddenEnv]; // include the items in hiddenEnv
+			if (this.hideSecrets){
 				return this.visibleEnv;
 			}
-			return [...this.visibleEnv, ...this.hiddenEnv]; // include the items in hiddenEnv
+			this.visibleEnv = this.visibleEnv.concat(this.hiddenEnv);
+			this.hiddenEnv = [];
+			return this.visibleEnv;
 		},
 		set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
-			console.log("TCL: setenv -> newEnv", newEnv)
 			return this.visibleEnv = newEnv;
 		},
 		removeFromEnv: function (item) {
-			const index = this.visibleEnv.map((item) => item.name).indexOf(item.name);
-			console.log("TCL: index", index)
-			console.log("TCL: this.env", this.env)
-			return index !== -1 ? this.env.splice(index, 1): console.log("Cannot remove as item is not present in environment.");
+			const newEnv =  this.env.filter(it => it.name !== item.name);
+			return this.env = newEnv;
+			
 		},
 		addToEnv: function (itemName) { 
+			// const itemObj = game.items[`_${itemName}`];
+			// const newEnv = this.env.concat(itemObj)
+			// return this.env = newEnv;
 			const itemObj = game.items[`_${itemName}`];
 			return this.visibleEnv.push(itemObj);
 
@@ -68,8 +75,8 @@ const mapKey = game => {
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
 			visibleEnv: ["desk", "painting", "chair", "bookshelves", "booklet"],
-			hiddenEnv: ["lockbox"],
-			hiddenDescription: "In space where a painting formerly hung there is a small alcove containing a steel lockbox.",
+			hiddenEnv: ["safe"],
+			hiddenDescription: "In space where a painting formerly hung there is a small alcove housing a wall safe.",
 			get description (){
 				const catalogLocation = this.env.map(x=>x.name).includes("booklet") ? "There is a booklet on the desk" : "";
 				return this.hideSecrets ? this.visibleDescription : this.visibleDescription + "\n" + "\n" + this.hiddenDescription + "\n" + catalogLocation;

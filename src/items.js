@@ -367,13 +367,16 @@ const itemModule = game => {
 
 		_note: {
 			name : "note",
-			text: `Welcome! Congratulations! You have been chosen to participate in an exclusive private research study. Should you be able to escape the testing environment before the test termination protocol commences, please take a moment to fill out a survey card. And remember to have fun!`,
-			description: "It is a typewritten note on folded stationery. You found it lying next to you on the floor when you regained consciousness."
+			text: `Welcome! This is a timed test`,
+			description: "It is a typewritten note on folded stationery. You found it lying next to you on the floor when you regained consciousness.",
+			read: function () {
+				console.ransom(this.text);
+			}
 		},
 
 		_card: {
 			name: "card",
-			text: `Survey Card \nFor each of the following questions, please circle '1' for 'strongly disagree', '2' for 'somewhat disagree', '3' for 'no opinion', '4' for 'somewhat agree' and '5' for 'strongly agree'. \n1. This is the first involuntary study I have participated in.\n2. I found the study conditions to be inadequately challenging.\n3. I would be willing to participate in additional studies.\n4. I am aware that any attempt to contact law enforcement will have adverse consequences for myself or my family, whose location of residence is known to the Director.\n`,
+			text: `Survey Card \nFor each of the following questions, please circle '1' for 'strongly disagree', '2' for 'somewhat disagree', '3' for 'no opinion', '4' for 'somewhat agree' and '5' for 'strongly agree'. \n1. This is the first involuntary study I have participated in.\n2. I found the study conditions to be inadequately challenging.\n3. I would be willing to participate in additional studies.\n4. I am aware that any attempt to contact law enforcement will have adverse consequences for myself or my family, whose location of residence is known.\n`,
 			description: "It is a four by six inch card cut from off-white cardstock, on which a survey is printed.",
 			turn: function () {
 				game.state.objectMode = false;

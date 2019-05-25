@@ -1,5 +1,6 @@
 import { primaryFont, textColor, fontSize } from "./prefs.js";
 import fonts from "./webFonts.js";
+import ransom from "./consoleRansom.js";
 
 const customConsole = (() => {
 	const customLog = function (message, style, logType = "log") {
@@ -71,47 +72,47 @@ const customConsole = (() => {
         // console.log("TCL: customConsole -> spacedText", spacedText)
 		// customLog(message, `font-family:'courier new';color:orangered;font-size:2em;letter-spacing:1.5px;font-kerning:none;`)
 	}
-	console.ransom = (message) => {
-		const splitText = randomCase(message).split("");//.join(" ").split("");
-		const blankStyle = "background-color: unset;"
-		const styles = splitText.map(char => {
-			const [r, g, b] = randomRGBValues([255,68,0], 128);
-			const [br, bg, bb] = randomRGBValues([255, 255, 255], 75);
-			const style = `font-family:${randomFont()};color:rgb(${r}, ${g}, ${b});font-size:${2.5 + (Math.random() / 2)}em;filter:saturate(0);line-height:${Math.random() + 0.5}em;background-color:rgb(${br}, ${bg}, ${bb});${randomPadding()}${randomOutline()}`
-			return char === " " ? blankStyle: style;
-		});
-		const spacedText = splitText.join(" ").split("");
-		const spacedStyles = styles.map(item => [item, `font-size:${1 + (Math.random())}em;`]).flat();
-		console.inline(spacedText, spacedStyles);
-	}
+	// console.ransom = (message) => {
+	// 	const splitText = randomCase(message).split("");//.join(" ").split("");
+	// 	const blankStyle = "background-color: unset;"
+	// 	const styles = splitText.map(char => {
+	// 		const [r, g, b] = randomRGBValues([255,68,0], 128);
+	// 		const [br, bg, bb] = randomRGBValues([255, 255, 255], 75);
+	// 		const style = `font-family:${randomFont()};color:rgb(${r}, ${g}, ${b});font-size:${2.5 + (Math.random() / 2)}em;filter:saturate(0);line-height:${Math.random() + 0.5}em;background-color:rgb(${br}, ${bg}, ${bb});${randomPadding()}${randomOutline()}`
+	// 		return char === " " ? blankStyle: style;
+	// 	});
+	// 	const spacedText = splitText.join(" ").split("");
+	// 	const spacedStyles = styles.map(item => [item, `font-size:${1 + (Math.random())}em;`]).flat();
+	// 	console.inline(spacedText, spacedStyles);
+	// }
 	
 })();
 
-export const randomPadding = (max = 3) => `padding: ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px;`
+// export const randomPadding = (max = 3) => `padding: ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px;`
 
-export const randomRGBValues = ([r, g, b] = [128, 128, 128], maxVariance = 25) => {
-	const randomlyVary = (baseValue, maxVary) => {
-		const randomAbsoluteVariance = Math.floor(Math.random() * maxVariance);
-		const randomActualVariance = Math.random() >= 0.5 ? randomAbsoluteVariance * -1 : randomAbsoluteVariance;
-		return Math.max(Math.min(255, baseValue + randomActualVariance), 0);
-	}
-	return [randomlyVary(r, maxVariance), randomlyVary(g, maxVariance), randomlyVary(b, maxVariance)]
-}
-export const randomCase = message => {
-	const randomizedArray = message.split("").map(char => {
-		const rand = Math.random();
-		return rand < 0.25 ? char : rand < 0.66 ? char.toUpperCase() : char.toLowerCase();
-	});
-	return randomizedArray.join("");
-}
-export const randomOutline = () => {
-	const width = Math.random() > 0.45 ? Math.random() * 1.75 : 0;
-	const [r, g, b] = randomRGBValues([128, 128, 128], 128);
-	const color = `rgb(${r}, ${g}, ${b})`;
-	return `text-shadow: -${width}px -${width}px ${color}, ${width}px -${width}px ${color}, -${width}px ${width}px ${color}, ${width}px ${width}px ${color};`;
-}
-export const randomFont = () => {
-	const number = Math.floor(Math.random() * fonts.length);
-	return fonts[number];
-}
+// export const randomRGBValues = ([r, g, b] = [128, 128, 128], maxVariance = 25) => {
+// 	const randomlyVary = (baseValue, maxVary) => {
+// 		const randomAbsoluteVariance = Math.floor(Math.random() * maxVariance);
+// 		const randomActualVariance = Math.random() >= 0.5 ? randomAbsoluteVariance * -1 : randomAbsoluteVariance;
+// 		return Math.max(Math.min(255, baseValue + randomActualVariance), 0);
+// 	}
+// 	return [randomlyVary(r, maxVariance), randomlyVary(g, maxVariance), randomlyVary(b, maxVariance)]
+// }
+// export const randomCase = message => {
+// 	const randomizedArray = message.split("").map(char => {
+// 		const rand = Math.random();
+// 		return rand < 0.25 ? char : rand < 0.66 ? char.toUpperCase() : char.toLowerCase();
+// 	});
+// 	return randomizedArray.join("");
+// }
+// export const randomOutline = () => {
+// 	const width = Math.random() > 0.45 ? Math.random() * 1.75 : 0;
+// 	const [r, g, b] = randomRGBValues([128, 128, 128], 128);
+// 	const color = `rgb(${r}, ${g}, ${b})`;
+// 	return `text-shadow: -${width}px -${width}px ${color}, ${width}px -${width}px ${color}, -${width}px ${width}px ${color}, ${width}px ${width}px ${color};`;
+// }
+// export const randomFont = () => {
+// 	const number = Math.floor(Math.random() * fonts.length);
+// 	return fonts[number];
+// }
 export default customConsole;

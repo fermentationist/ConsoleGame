@@ -3,7 +3,7 @@ import maps from "./maps.js";
 import mapKeyModule from "./mapkey.js";
 import itemModule from "./items.js";
 import commandsList from "./commands.js";
-import customConsole, { randomRGBValues } from "./console_styles.js";
+import customConsole from "./console_styles.js";
 import spells from "./spells.js";
 
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
