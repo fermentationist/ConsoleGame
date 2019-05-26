@@ -11,10 +11,7 @@ export default console.ransom = (message) => {
         return char === " " ? blankStyle: style;
     });
     const spacedText = splitText.join(" ").split("");
-    const spacedStyles = styles.map(item => [item, `font-size:${1 + (Math.random())}em;`])
-        .flat()
-        .splice(styles.length - 1);
-	console.log("TCL: defaultconsole.ransom -> spacedStyles", spacedStyles)
+    const spacedStyles = styles.map(item => [item, `font-size:${1 + (Math.random())}em;`]).flat().slice(0, -1);
     console.inline(spacedText, spacedStyles);
 }
 

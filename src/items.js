@@ -367,7 +367,7 @@ const itemModule = game => {
 
 		_note: {
 			name : "note",
-			text: `Welcome! This is a timed test`,
+			text: `We have your doggo.`,
 			description: "It is a typewritten note on folded stationery. You found it lying next to you on the floor when you regained consciousness.",
 			read: function () {
 				console.ransom(this.text);
