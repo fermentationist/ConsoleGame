@@ -1,4 +1,5 @@
 import consoleGame from "./game.js";
+import {randomDogName} from "./dogNames.js";
 // ===========//ItemModule//===========
 const itemModule = game => {
 	const Item = {
@@ -11,7 +12,7 @@ const itemModule = game => {
 		takeable: true,
 		openable: false,
 		closed: false,
-		locked: false, 
+		locked: false,
 		article: "a",
 		listed: true,
 		take: function (){
@@ -191,10 +192,11 @@ const itemModule = game => {
 			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
 			contents:["key"],
 			open: function () {
-
+				this.unlock.call(this);
 			},
 			unlock: function (){
 				game.state.solveMode = true;
+				game.state.objectMode = false;
 				console.digi("ENTER PASSCODE:")
 			},
 			use: function (){
@@ -368,9 +370,18 @@ const itemModule = game => {
 		_note: {
 			name : "note",
 			text: `We have your doggo.`,
-			description: "It is a typewritten note on folded stationery. You found it lying next to you on the floor when you regained consciousness.",
+			firstRead: true,
+			description: "The note is composed of eclectically sourced, cut-out letters, in the style of a movie ransom note. You found it lying next to you on the floor when you regained consciousness.",
 			read: function () {
+				game.state.objectMode = false;
 				console.ransom(this.text);
+				if (this.firstRead) {
+					const dogName = randomDogName()
+					game.state.dogName = dogName;
+					console.p(`Your dog, ${dogName}, is your best buddy! Who would do such a thing!?`);
+					this.firstRead = false;
+				}
+				
 			}
 		},
 
