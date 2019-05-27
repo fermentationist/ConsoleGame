@@ -22,6 +22,5 @@
     "webpack-cli": "^3.3.1"
   },
   "dependencies": {
-    "dog-names": "^2.0.0"
   }
 }
