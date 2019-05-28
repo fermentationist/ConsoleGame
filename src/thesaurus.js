@@ -7,6 +7,12 @@ const thesaurus = {
         "📓"
     ],
 
+    burn: [
+        "ignite",
+        "incinerate",
+        "torch"
+    ],
+
     contemplate: [
         "consider",
         "meditate",
@@ -177,7 +183,8 @@ const thesaurus = {
         "relax",
         "remain",
         "hesitate",
-        "procrastinate"
+        "procrastinate",
+        "sit"
     ]
 }
 const allWords = Object.entries(thesaurus).reduce((accum, entry) => [accum, ...entry]);

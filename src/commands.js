@@ -156,7 +156,8 @@ const Commands = game => {
 	// Handles commands that are item names.
 	const _items = (itemName) => {
 		// Exit function with error message if previous command does not require an object
-		if (!game.state.objectMode){
+		
+		if (!game.state.objectMode && itemName !== "maps"){
 			return console.invalid("Invalid command");
 		}
 		// Exit function with error message if item is not available in player inventory or current location.
@@ -179,6 +180,18 @@ const Commands = game => {
 		if (game.confirmationCallback){
 			return game.confirmationCallback();
 		}
+	}
+
+	const _rezrov = () => {
+		const safe = game.items._safe;
+		if (game.state.solveMode){
+			safe.locked = false;
+			console.digi("PASSCODE ACCEPTED");
+			console.p(`With a sudden 'thunk', a bolt moves inside the door of the safe, which gently pops open. ${safe.contents.length > 0 ? "Inside, you see " + game.formatList(safe.contents) + "." : ""}`);
+			return;
+		}
+		console.invalid("Invalid command");
+		return;
 	}
 
 	const _poof = () => {
@@ -229,6 +242,7 @@ const Commands = game => {
 		[_smell, aliasString("smell", thesaurus)],
 		[_listen, aliasString("listen", thesaurus)],
 		[_inventory, aliasString("inventory", thesaurus) + ",i,I"],
+		[_rezrov, aliasString("rezrov", thesaurus)],
 		[_act_upon, aliasString("use", thesaurus)],
 		[_act_upon, aliasString("take", thesaurus)],
 		[_act_upon, aliasString("read", thesaurus)],
@@ -244,6 +258,7 @@ const Commands = game => {
 		[_act_upon, aliasString("close", thesaurus)],
 		[_act_upon, aliasString("lock", thesaurus)],
 		[_act_upon, aliasString("turn", thesaurus)],
+		[_act_upon, aliasString("burn", thesaurus)],
 		[_act_upon, cases("hide")],
 
 		// this command exists as a hacky fix for bug that happens if console is in "eager evalutaion" mode. Starting to type "glove" auto-evalutes to "globalThis", which for some reason calls _act_upon("close"). This command tricks auto-evaluation because it prioritizes suggestions alphabetically.

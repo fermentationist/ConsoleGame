@@ -125,6 +125,15 @@ const itemModule = game => {
 		use: function (){
 			game.state.objectMode = false;
 			return console.p(`Try as you might, you cannot manage to use the ${this.name}`);
+		},
+		burn: function (){
+			game.state.objectMode = false;
+			if (! game.inInventory(items._matchbook)) {
+				console.p("You don't the means to light a fire.");
+				return;
+			}
+			console.p(`The meager flame is insufficient to ignite the ${this.name}.`);
+			return;
 		}
 	}
 
@@ -172,11 +181,19 @@ const itemModule = game => {
 		_chair: {
 			name: "chair",
 			takeable: false,
+			description: "It looks like a wooden chair– no more, no less.",
 			use: function () {
+				game.state.objectMode = false;
 				console.p("You sit down on the chair.");
 				const wait = game.commands.filter(command => command[0].name === "_wait")[0][0];
 				wait.call(this);
 			}
+		},
+		_table: {
+			name: "table",
+			takeable: false,
+			listed: false,
+			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
 		},
 		_desk: {
 			name: "desk",
@@ -197,8 +214,9 @@ const itemModule = game => {
 			name : "safe",
 			closed: true,
 			locked: true,
+			takeable: false,
 			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
-			contents:["key"],
+			contents:[],
 			open: function () {
 				this.unlock.call(this);
 			},
@@ -210,15 +228,6 @@ const itemModule = game => {
 			use: function (){
 				this.unlock.call(this);
 			},
-			// examine: function (){
-			// 	game.state.objectMode = false;
-			// 	if (this.contents.length){
-			// 		const hiddenItem = this.contents.pop();
-			// 		console.p(`${this.description}\nAs you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);
-			// 		return game.mapKey[game.state.currentCell].addToEnv(hiddenItem.name);
-			// 	} 
-			// 	return this.description;
-			// }
 		},
 
 		_painting: {
@@ -386,7 +395,10 @@ const itemModule = game => {
 		_maps: {
 			name: "maps",
 			article: "some",
-			description: "The stack of dogeared pages appear to be architectural drawings. With a quick survey of your surroundings, you confirm with reasonable certainty that they are likely floor plans for this house.",
+			get description () {
+				this.read();
+				return `The stack of dogeared pages appear to be architectural drawings. With a quick survey of your surroundings, you confirm with reasonable certainty that they are likely floor plans for this house.`;
+			},
 			read: function () {
 				game.state.objectMode = false;
 				if (!game.inInventory(this.name)) {
@@ -396,9 +408,12 @@ const itemModule = game => {
 				const floorMap = game.maps[currentPosition.z].map(row => {
 					return row.map(cell => cell === "*" ? "⬛️" : "🌫");
 				});
-				// console.log("TCL: floorMap", floorMap)
-				floorMap[currentPosition.y].splice(currentPosition.x, 1, "🔻");
-				console.map(floorMap);
+				floorMap[currentPosition.y].splice(currentPosition.x, 1, "⭐️");
+				const croppedMap = floorMap.slice(8).map(row => row.slice(5, 11))
+				console.map(croppedMap);
+			},
+			use: function () {
+				this.read.call(this);
 			}
 		},
 

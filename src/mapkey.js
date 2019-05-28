@@ -64,8 +64,14 @@ const mapKey = game => {
 		},
 
 		"^": {
-			name: "Second floor hallway",
+			name: "Second floor hallway, north",
 			description: "You are at the top of a wide wooden staircase, on the second floor of the old house.",
+			visibleEnv: []
+		},
+
+		"-": {
+			name: "Second floor hallway, south",
+			description: "It looks like there are a couple of rooms on either side of the broad hallway, and a small broom closet at the south end.",
 			visibleEnv: []
 		},
 
@@ -93,9 +99,15 @@ const mapKey = game => {
 		},
 
 		"%": {
-			name: "Entrance hall",
-			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, several of which have been boarded up. The front door is to the south. At the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
-			visibleEnv: ["door", "note", "maps"]
+			name: "Entrance hall, south",
+			description: "You are in the main entrance hall of a seemingly abandoned house. There are two doors on either side of the hall. The front door is to the south. At the north end of the hall is a wide oak staircase that connects the first and second floors of the old house.",
+			visibleEnv: ["door", "note"]
+		},
+
+		"=": {
+			name: "Entrance hall, north",
+			description: "You are in the main entrance hall of a seemingly abandoned house. There are two doors on either side of the hall. The front door is to the south. At the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
+			visibleEnv: []
 		},
 
 		"@": {
@@ -118,7 +130,18 @@ const mapKey = game => {
 			get description (){
 				return this.hideSecrets ? this.des1 : this.des2;
 			}
-		}
+		},
+		"X": {
+			name: "Dining room",
+			visibleEnv: ["chair", "table"],
+			description: "A long cherry dining table runs the length of this formal dining room."
+		},
+		"Z": {
+			name: "Kitchen",
+			visibleEnv: ["maps"],
+			description: "It is quite large for a residential kitchen. While only a few of the original appliances remain, gritty outlines on the walls and floor suggest it was once well appointed. Now it is an echoing tile cavern.",
+			smell: "It smells like a dusty abandoned building. And chicken soup."
+		},
 	}
 
 	// every cell defined in mapkey will inherit from MapCell

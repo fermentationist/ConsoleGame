@@ -11,8 +11,8 @@ import spells from "./spells.js";
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
-	timeLimit: 30,
-	weightLimit: 20,
+	timeLimit: 100,
+	// weightLimit: 20,
 	state: {
 		objectMode : false,
 		saveMode: false,
@@ -66,7 +66,14 @@ const ConsoleGame = {
 					this.state.turn++;
 				}
 			}
-			return interpreterFunction(commandName);
+			interpreterFunction(commandName);
+            
+			if (this.state.solveMode === true && commandName !== "safe") {
+				this.state.solveMode = false;
+				commandName !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
+				return;
+			}
+			return;
 		}
 		catch (err){
 			console.invalid(err)
@@ -229,7 +236,12 @@ const ConsoleGame = {
 			this.mapKey[this.items._door.closedTarget].closed = true;
 		}
 		if (this.state.turn >= this.timeLimit && ! this.state.gameOver) {
-			this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.")
+			return this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.");
+		}
+		if (this.state.solveMode === true && this.pendingAction !== "safe") {
+			this.state.solveMode = false;
+			this.pendingAction !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
+			return;
 		}
 	},
 
@@ -447,8 +459,8 @@ const ConsoleGame = {
 			"[ Please type ",
 			"help ",
 			"for instructions, ",
-			"commands ",
-			"for a list of available commands, ",
+			// "commands ",
+			// "for a list of available commands, ",
 			"restore ",
 			"to load a saved game, or ",
 		];
@@ -491,6 +503,7 @@ const ConsoleGame = {
 		this.stockDungeon("hiddenEnv");
 		this.stockDungeon("visibleEnv");
 		this.items._glove.contents.push(this.items._matchbook);
+		this.items._safe.contents.push(this.items._key);
 		this.addToInventory([this.items._grue_repellant, this.items._no_tea]);
 	
 	},
