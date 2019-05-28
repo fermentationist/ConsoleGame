@@ -398,7 +398,7 @@ const itemModule = game => {
 				});
 				// console.log("TCL: floorMap", floorMap)
 				floorMap[currentPosition.y].splice(currentPosition.x, 1, "🔻");
-				console.table(floorMap.map(row => row.join("")));
+				console.map(floorMap);
 			}
 		},
 
