@@ -325,7 +325,7 @@ const itemModule = game => {
 			}
 		},
 
-		_grue_repellant: {
+		_grue_repellant: { 
 			name : "grue_repellant",
 			defective : Math.random() < 0.03,
 			weight : 3,
@@ -378,7 +378,7 @@ const itemModule = game => {
 				if (this.firstRead) {
 					const dogName = randomDogName()
 					game.state.dogName = dogName;
-					console.p(`Your dog, ${dogName}, is your best buddy! Who would do such a thing!?`);
+					console.p(`${dogName} is your best buddy! Who would do such a thing!?`);
 					this.firstRead = false;
 				}
 				

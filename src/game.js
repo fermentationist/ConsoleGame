@@ -229,7 +229,7 @@ const ConsoleGame = {
 			this.mapKey[this.items._door.closedTarget].closed = true;
 		}
 		if (this.state.turn >= this.timeLimit && ! this.state.gameOver) {
-			this.dead("You don't feel so well. ")
+			this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.")
 		}
 	},
 
@@ -490,7 +490,7 @@ const ConsoleGame = {
 		this.initCommands(this.commands);
 		this.stockDungeon("hiddenEnv");
 		this.stockDungeon("visibleEnv");
-		this.items._glove.contents.push(this.items._key);
+		this.items._glove.contents.push(this.items._matchbook);
 		this.addToInventory([this.items._grue_repellant, this.items._no_tea]);
 	
 	},

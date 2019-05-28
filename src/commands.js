@@ -94,6 +94,9 @@ const Commands = game => {
 		console.p(`What would you like to ${command}?`);
 	}
 
+	// _none function is bound to commands that should do nothing at all
+	const _none = () => {}// do nothing
+
 	// todo: move to game.js
 	const _pref = (whichPref) => {
 		game.state.prefMode = true;
@@ -159,6 +162,7 @@ const Commands = game => {
 		// Exit function with error message if item is not available in player inventory or current location.
 		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
 		if (!item){
+			game.state.objectMode = false;
 			return console.p(`${itemName} is not available`);
 		}
 		const action = game.state.pendingAction;
@@ -241,6 +245,11 @@ const Commands = game => {
 		[_act_upon, aliasString("lock", thesaurus)],
 		[_act_upon, aliasString("turn", thesaurus)],
 		[_act_upon, cases("hide")],
+
+		// this command exists as a hacky fix for bug that happens if console is in "eager evalutaion" mode. Starting to type "glove" auto-evalutes to "globalThis", which for some reason calls _act_upon("close"). This command tricks auto-evaluation because it prioritizes suggestions alphabetically.
+		[_none, cases("globaa")],
+		[_none, cases("thia")],
+
 
 		// // Objects
 		// [_items, cases("grue_repellant", "repellant")],

@@ -86,7 +86,7 @@ const mapKey = game => {
 		"#": {
 			name: "Staircase landing",
 			description: "You are on the landing of a worn oak staircase connecting the first and second floors of the old abandoned house.",
-			visibleEnv: ["booklet", "card", "survey"]
+			visibleEnv: ["booklet", /*"card", "survey"*/]
 		},
 
 		"%": {

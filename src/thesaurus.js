@@ -155,6 +155,8 @@ const thesaurus = {
         "await",
         "delay",
         "tarry",
+        "chill",
+        "exist",
         "dawdle",
         "dillydally",
         "loiter",
