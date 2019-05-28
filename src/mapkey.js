@@ -71,7 +71,7 @@ const mapKey = game => {
 
 		"+": {
 			name: "Study",
-			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair, upholstered in worn mahogany leather. On the wall behind the chair hangs an ornately framed painting.",
+			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair, upholstered in worn mahogany leather.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
 			visibleEnv: ["desk", "painting", "chair", "bookshelves", "booklet"],
@@ -79,7 +79,10 @@ const mapKey = game => {
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove housing a wall safe.",
 			get description (){
 				const catalogLocation = this.env.map(x=>x.name).includes("booklet") ? "There is a booklet on the desk" : "";
-				return this.hideSecrets ? this.visibleDescription : this.visibleDescription + "\n" + "\n" + this.hiddenDescription + "\n" + catalogLocation;
+				if (this.hideSecrets) {
+					return this.visibleDescription + "\n" + "On the wall behind the chair hangs an ornately framed painting.";
+				}
+				return this.visibleDescription + "\n" + "\n" + this.hiddenDescription + "\n" + catalogLocation;
 			}
 		},
 
@@ -92,7 +95,7 @@ const mapKey = game => {
 		"%": {
 			name: "Entrance hall",
 			description: "You are in the main entrance hall of a seemingly abandoned house. There are three doors on either side of the hall, several of which have been boarded up. The front door is to the south. At the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
-			visibleEnv: ["door", "note"]
+			visibleEnv: ["door", "note", "maps"]
 		},
 
 		"@": {

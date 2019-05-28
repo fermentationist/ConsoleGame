@@ -3,7 +3,8 @@ const thesaurus = {
         "catalog",
         "catalogue",
         "book",
-        "program"
+        "program",
+        "📓"
     ],
 
     contemplate: [
@@ -84,7 +85,18 @@ const thesaurus = {
     ],
     look: [
         "see",
-        "observe"
+        "observe",
+        "status"
+    ],
+    maps: [
+        "map",
+        "plan",
+        "plans",
+        "blueprints",
+        "blueprint",
+    ],
+    matchbook: [
+        "matches"
     ],
     move: [
         "displace",
