@@ -5,13 +5,13 @@ import game from "./game.js";
 window.onload = () => {
     // console.clear();
     const prefMode = localStorage.getItem("ConsoleGame.prefMode");
-    // used 
     if (prefMode) {
         localStorage.removeItem("ConsoleGame.prefMode");
         return game._resume();
     }
     return game.intro();
 };
+window.scroll(0, 0);
 // for debugging - remove later
 // window.game = ConsoleGame;
 export default game;

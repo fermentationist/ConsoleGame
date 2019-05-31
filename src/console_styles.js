@@ -1,6 +1,6 @@
 import { primaryFont, textColor, fontSize } from "./prefs.js";
 import fonts from "./webFonts.js";
-import ransom from "./consoleRansom.js";
+import ransom from "./console_ransom.js";
 
 const customConsole = (() => {
 	const customLog = function (message, style, logType = "log") {

@@ -6,13 +6,11 @@ const thesaurus = {
         "program",
         "📓"
     ],
-
     burn: [
         "ignite",
         "incinerate",
         "torch"
     ],
-
     contemplate: [
         "consider",
         "meditate",
@@ -25,6 +23,14 @@ const thesaurus = {
         "reflect",
         "mull",
         "ruminate"
+    ],
+    disc: [
+        "record",
+        "album",
+        "forty-five",
+        "disk",
+        "recording",
+        "litany",
     ],
     drink: [
         "intake",

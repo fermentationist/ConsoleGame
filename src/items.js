@@ -379,6 +379,26 @@ const itemModule = game => {
 			description: "It is an old-timey key that appears to be made of tarnished brass"
 		},
 
+		_disc: {
+			name: "disc",
+			text: "Untitled (Litany)",
+			get description (){ 
+				return `It is a disc made of a shiny black polymer, lined with hundreds of tiny concentric grooves. It looks to be about seven inches in diameter, with a one and one-half inch hole in its center. It bears a label that says, "${this.text}".`;
+			},
+			play: function () {
+				if(game.inEnvironment)
+				return game.displayItem({
+					title: "\nUntitled (litany)",
+					artist: "Dennis Hodges",
+					year: "2010",
+					info: "Found audio recordings",
+					source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"});
+			},
+			use: function () {
+				this.play.call(this)
+			},
+		},
+
 		_matchbook: {
 			name: "matchbook",
 			get description () { 

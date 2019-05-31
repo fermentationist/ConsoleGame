@@ -201,10 +201,14 @@ const Commands = game => {
 		return console.papyracy(">poof<");
 	}
 
-	const _litany = displayItem({
-		name: "Untitled (litany)",
-		info: "Dennis Hodges, 2010\nFound audio recordings",
+	const _litany = () => {
+		displayItem({
+		title: "\nUntitled (litany)",
+		artist: "Dennis Hodges",
+		year: "2010",
+		info: "Found audio recordings",
 		source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"});
+	}
 	// const _papyracy = () => {
 	// 	const font = primaryFont;
 	// 	const color = textColor;
@@ -265,24 +269,12 @@ const Commands = game => {
 		[_act_upon, aliasString("turn", thesaurus)],
 		[_act_upon, aliasString("burn", thesaurus)],
 		[_act_upon, aliasString("light", thesaurus)],
+		[_act_upon, aliasString("play", thesaurus)],
 		[_act_upon, cases("hide")],
 
-		// this command exists as a hacky fix for bug that happens if console is in "eager evalutaion" mode. Starting to type "glove" auto-evalutes to "globalThis", which for some reason calls _act_upon("close"). This command tricks auto-evaluation because it prioritizes suggestions alphabetically.
+		// this command exists as a hacky fix for bug that happens if console is in "eager evalutaion" mode. Starting to type "glove" auto-evalutes to "globalThis", which for some reason calls _act_upon("close"). This same goes for the keyword "this". This command tricks auto-evaluation because it prioritizes suggestions alphabetically.
 		[_none, cases("globaa")],
 		[_none, cases("thia")],
-
-
-		// // Objects
-		// [_items, cases("grue_repellant", "repellant")],
-		// [_items, cases("key")],
-		// [_items, aliasString("note", thesaurus)],
-		// [_items, cases("no_tea")],
-		// [_items, cases("chain")],
-		// [_items, aliasString("glove", thesaurus)],
-		// [_items, cases("catalogue", "catalog")],
-		// [_items, cases("all")],
-
-
 
 		// Misc
 		[_inventoryTable, cases("inventoryTable", "invTable", "invt")],
@@ -309,7 +301,6 @@ const Commands = game => {
 		[_quit, cases("quit")],
 		[_quit, cases("restart")],
 		[_yes, cases("yes") + ",y,Y"],
-		[_litany, cases("litany")],
 
 	];
 	const itemNames = Object.keys(game.items).map(item => item.slice(1));

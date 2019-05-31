@@ -212,31 +212,31 @@ const ConsoleGame = {
 			.map((item) => `${item.article} ${item.name}`));
 	},
 
-	// displayItem: function (filename, type, width, height) {
-	// 	let contentDiv = document.getElementById("console-game-content");
-	// 	if (! filename){
-	// 		return contentDiv.innerHTML = "";
-	// 	}
-	// 	let objElement = document.createElement("object");
-	// 	objElement.setAttribute("data", filename);
-	// 	objElement.setAttribute("type", type);
-	// 	objElement.setAttribute("width", width || "600px");
-	// 	objElement.setAttribute("height", height || "300px");
-	// 	contentDiv.innerHTML = ""
-	// 	return contentDiv.append(objElement);
-	// },
-	displayItem: function (galleryItem = {name: "", info: "", source: ""}) {
-		console.info(`click to open ${galleryItem.name}`);
-		console.info(galleryItem.info);
+	displayItem: function (galleryItem = {title: "untitled", artist: "unknown", info: null, source: ""}) {
 		const contentDiv = document.getElementById("console-game-content");
+		contentDiv.innerHTML = "";
+		contentDiv.setAttribute("style", "background-color:#D1D1D1;")
 		const iFrame = document.createElement("iframe");
 		iFrame.src = galleryItem.source;
 		iFrame.autoplay = true;
-		iFrame.setAttribute("style", "width:100vw;")
-		// audio.autoplay = true;
-		// audio.controls = true;
-		// body.appendChild(audio);
+		iFrame.setAttribute("style", "width:100vw;background-color:gray;");
+		const p = document.createElement("p");
+		p.setAttribute("style", "text-align:center;")
+		const title = document.createElement("h2");
+		title.setAttribute("style", "color:black;");
+		const artist = title.cloneNode(true);
+		title.innerHTML = `Title: ${galleryItem.title}`;
+		artist.innerHTML = `Artist: ${galleryItem.artist}`;
+		p.appendChild(title);
+		p.appendChild(artist);
 		contentDiv.appendChild(iFrame);
+		contentDiv.appendChild(p);
+		if (galleryItem.info) {
+			const info = document.createElement("p");
+			info.innerHTML = galleryItem.info;
+			info.setAttribute("style", "color:black;font-style:italic;text-align:center;font-size:1em;padding-bottom:2em;");
+			contentDiv.appendChild(info);
+		}
 		window.scroll(0, 10000);
 	},
 
