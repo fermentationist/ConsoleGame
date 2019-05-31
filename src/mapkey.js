@@ -117,9 +117,15 @@ const mapKey = game => {
 
 		"$": {
 			name: "Broom closet",
-			hideSecrets: true,
+			hiddenSecrets: true,
 			hiddenEnv: ["glove"],
 			visibleEnv: ["chain"],
+			get hideSecrets () {
+				return game.state.fireCount > 0 ? false : this.hiddenSecrets;
+			},
+			set hideSecrets (trueOrFalse){
+				this.hiddenSecrets = trueOrFalse;
+			},
 			des1: "The small closet is dark, although you can see a small chain hanging in front of you.",
 			get des2 (){
 				const hidden = this.hiddenEnv;

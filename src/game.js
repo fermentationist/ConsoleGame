@@ -20,6 +20,7 @@ const ConsoleGame = {
 		prefMode: false,
 		confirmMode: false,
 		solveMode: false,
+		fireCount: 0,
 		inventory: [],
 		history: [],
 		turn: null,
@@ -211,18 +212,32 @@ const ConsoleGame = {
 			.map((item) => `${item.article} ${item.name}`));
 	},
 
-	displayItem: function (filename, type, width, height) {
-		let contentDiv = document.getElementById("console-game-content");
-		if (! filename){
-			return contentDiv.innerHTML = "";
-		}
-		let objElement = document.createElement("object");
-		objElement.setAttribute("data", filename);
-		objElement.setAttribute("type", type);
-		objElement.setAttribute("width", width || "600px");
-		objElement.setAttribute("height", height || "300px");
-		contentDiv.innerHTML = ""
-		return contentDiv.append(objElement);
+	// displayItem: function (filename, type, width, height) {
+	// 	let contentDiv = document.getElementById("console-game-content");
+	// 	if (! filename){
+	// 		return contentDiv.innerHTML = "";
+	// 	}
+	// 	let objElement = document.createElement("object");
+	// 	objElement.setAttribute("data", filename);
+	// 	objElement.setAttribute("type", type);
+	// 	objElement.setAttribute("width", width || "600px");
+	// 	objElement.setAttribute("height", height || "300px");
+	// 	contentDiv.innerHTML = ""
+	// 	return contentDiv.append(objElement);
+	// },
+	displayItem: function (galleryItem = {name: "", info: "", source: ""}) {
+		console.info(`click to open ${galleryItem.name}`);
+		console.info(galleryItem.info);
+		const contentDiv = document.getElementById("console-game-content");
+		const iFrame = document.createElement("iframe");
+		iFrame.src = galleryItem.source;
+		iFrame.autoplay = true;
+		iFrame.setAttribute("style", "width:100vw;")
+		// audio.autoplay = true;
+		// audio.controls = true;
+		// body.appendChild(audio);
+		contentDiv.appendChild(iFrame);
+		window.scroll(0, 10000);
 	},
 
 	timers: function () {
@@ -237,6 +252,9 @@ const ConsoleGame = {
 		}
 		if (this.state.turn >= this.timeLimit && ! this.state.gameOver) {
 			return this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.");
+		}
+		if (this.state.fireCount -- === 0 ){
+			console.p("Despite your best efforts the flame flickers out.");
 		}
 		if (this.state.solveMode === true && this.pendingAction !== "safe") {
 			this.state.solveMode = false;
@@ -480,7 +498,7 @@ const ConsoleGame = {
 		return options;
 	}, 
 	preface: function () {
-		console.p("You slowly open your eyes. Your eyelids aren't halfway open before the throbbing pain in your head asserts itself. The last thing you can remember is taking your dog for a walk after work, but you ceratinly don't remember being here before.");
+		console.p("You slowly open your eyes. Your eyelids aren't halfway open before the throbbing pain in your head asserts itself. The last thing you can remember is taking your dog for a walk after work, but you certainly don't remember being here before.");
 	},
 	stockDungeon: function (subEnvName){
 		Object.keys(this.mapKey).map((key) => {
@@ -504,7 +522,7 @@ const ConsoleGame = {
 		this.stockDungeon("visibleEnv");
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key);
-		this.addToInventory([this.items._grue_repellant, this.items._no_tea]);
+		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._matchbook]);
 	
 	},
 

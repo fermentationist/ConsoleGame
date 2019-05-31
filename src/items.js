@@ -128,11 +128,12 @@ const itemModule = game => {
 		},
 		burn: function (){
 			game.state.objectMode = false;
-			if (! game.inInventory(items._matchbook)) {
-				console.p("You don't the means to light a fire.");
+			if (! game.inInventory("matchbook")) {
+				console.p("You don't have the means to light a fire.");
 				return;
 			}
 			console.p(`The meager flame is insufficient to ignite the ${this.name}.`);
+			game.items._matchbook.closed = false;
 			return;
 		}
 	}
@@ -234,7 +235,7 @@ const itemModule = game => {
 			name: "painting",
 			takeable: true,
 			listed: false,
-			description: "The small, grimy image is of an owl, teaching a class about catching mice, to a classroom of kittens. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.",
+			description: "The small, grimy image is of an owl, teaching a class a classroom of kittens how to catch mice. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.",
 			previouslyRevealed: false,
 			location: "+",
 			take () {
@@ -381,7 +382,7 @@ const itemModule = game => {
 		_matchbook: {
 			name: "matchbook",
 			get description () { 
-				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is a faded green and says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\"" }`;
+				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\"" }`;
 			},
 			openable: true,
 			closed: true,
@@ -389,7 +390,13 @@ const itemModule = game => {
 				game.state.objectMode = false;
 				if (this.closed) {
 					this.open.call(this);
+					console.p("As you flip open the matchbook, folding back the cover, you glimpse something scrawled in pencil on the inside.")
 				}
+				console.p("You pluck out one of the paper matches. It ignites easily as you scrape its head against the red phosphorus strip, producing a tenuous flame that you are quick to guard with your cupped hand.");
+				game.state.fireCount = 2;
+			},
+			light: function () {
+				this.use.call(this);
 			}
 		},
 		_maps: {

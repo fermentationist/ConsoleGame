@@ -18,6 +18,7 @@ const Commands = game => {
 		_quit,
 		_resume,
 		mapKey,
+		displayItem,
 		cases} = game;
 	// Change player's location on the map, given a direction
 	const _movePlayer = (direction) => {
@@ -200,6 +201,10 @@ const Commands = game => {
 		return console.papyracy(">poof<");
 	}
 
+	const _litany = displayItem({
+		name: "Untitled (litany)",
+		info: "Dennis Hodges, 2010\nFound audio recordings",
+		source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"});
 	// const _papyracy = () => {
 	// 	const font = primaryFont;
 	// 	const color = textColor;
@@ -259,6 +264,7 @@ const Commands = game => {
 		[_act_upon, aliasString("lock", thesaurus)],
 		[_act_upon, aliasString("turn", thesaurus)],
 		[_act_upon, aliasString("burn", thesaurus)],
+		[_act_upon, aliasString("light", thesaurus)],
 		[_act_upon, cases("hide")],
 
 		// this command exists as a hacky fix for bug that happens if console is in "eager evalutaion" mode. Starting to type "glove" auto-evalutes to "globalThis", which for some reason calls _act_upon("close"). This command tricks auto-evaluation because it prioritizes suggestions alphabetically.
@@ -303,6 +309,8 @@ const Commands = game => {
 		[_quit, cases("quit")],
 		[_quit, cases("restart")],
 		[_yes, cases("yes") + ",y,Y"],
+		[_litany, cases("litany")],
+
 	];
 	const itemNames = Object.keys(game.items).map(item => item.slice(1));
 	const itemAliases = itemNames.map(item => [_items, aliasString(item, thesaurus)])

@@ -102,7 +102,8 @@ const thesaurus = {
         "blueprint",
     ],
     matchbook: [
-        "matches"
+        "matches",
+        "match"
     ],
     move: [
         "displace",
