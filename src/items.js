@@ -158,14 +158,6 @@ const itemModule = game => {
 				// }
 			},
 		},
-
-		// _book: {
-		// 	name: "book",
-		// 	weight: 2,
-		// 	article: "a",
-		// 	description: "A dusty, leatherbound tome"
-		// },
-
 		_booklet: {
 			name: "booklet",
 			article: "a",
@@ -179,6 +171,44 @@ const itemModule = game => {
 				// window.open("https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing", "_blank");//game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
 			}
 		},
+		_books: {
+			name: "books",
+			listed: false,
+			proto: "_bookshelves"
+		},
+		_bookshelves: {
+			name: "bookshelves",
+			takeable: false,
+			article: "some"
+		},
+		_card: {
+			name: "card",
+			text: `Survey Card \nFor each of the following questions, please circle '1' for 'strongly disagree', '2' for 'somewhat disagree', '3' for 'no opinion', '4' for 'somewhat agree' and '5' for 'strongly agree'. \n1. This is the first involuntary study I have participated in.\n2. I found the study conditions to be inadequately challenging.\n3. I would be willing to participate in additional studies.\n4. I am aware that any attempt to contact law enforcement will have adverse consequences for myself or my family, whose location of residence is known.\n`,
+			description: "It is a four by six inch card cut from off-white cardstock, on which a survey is printed.",
+			turn: function () {
+				game.state.objectMode = false;
+				console.p("Upon turning over the survey card, you notice a message, written in pencil. It says,");
+				console.note("\n\"THE OWLS ARE NOT WHAT THEY SEEM\".");
+				return;
+			}
+		},
+		_chain: {
+			name: "chain",
+			weight: 0,
+			description: "The thin ball chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \"pull\" it...",
+			takeable: false,
+			listed: false,
+			pull: function () {
+				game.state.objectMode = false;
+				let dark = game.mapKey[game.state.currentCell].hideSecrets;
+				dark ? console.p("An overhead lightbulb flickers on, faintly illuminating the room.") : console.p("The lightbulb is extinguished.");
+				game.mapKey[game.state.currentCell].hideSecrets = !dark;
+				return game.describeSurroundings();
+			},
+			use: function () {
+				return this.pull();
+			}
+		},
 		_chair: {
 			name: "chair",
 			takeable: false,
@@ -190,71 +220,37 @@ const itemModule = game => {
 				wait.call(this);
 			}
 		},
-		_table: {
-			name: "table",
-			takeable: false,
-			listed: false,
-			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
+		_crowbar: {
+			name: "crowbar",
+			weight: 5,
+			description: "It is a typical crowbar, made of hexagonal steel stock, with an unpolished black surface. It weighs about five pounds."
 		},
 		_desk: {
 			name: "desk",
 			takeable: false,
 		},
-		_books: {
-			name: "books",
-			listed: false,
-			proto: "_bookshelves"
-		},
-		_bookshelves: {
-			name: "bookshelves",
-			takeable: false,
-			article: "some"
-		},
-
-		_safe: {
-			name : "safe",
-			closed: true,
-			locked: true,
-			takeable: false,
-			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
-			contents:[],
-			open: function () {
-				this.unlock.call(this);
+		_disc: {
+			name: "disc",
+			text: "Untitled (Litany)",
+			get description() {
+				return `It is a disc made of a shiny black polymer, lined with hundreds of tiny concentric grooves. It looks to be about seven inches in diameter, with a one and one-half inch hole in its center. It bears a label that says, "${this.text}".`;
 			},
-			unlock: function (){
-				game.state.solveMode = true;
-				game.state.objectMode = false;
-				console.digi("ENTER PASSCODE:")
-			},
-			use: function (){
-				this.unlock.call(this);
-			},
-		},
-
-		_painting: {
-			name: "painting",
-			takeable: true,
-			listed: false,
-			description: "The small, grimy image is of an owl, teaching a class a classroom of kittens how to catch mice. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.",
-			previouslyRevealed: false,
-			location: "+",
-			take () {
-				Object.getPrototypeOf(this).take.call(this);
-				this.revealText("When you remove the terrible painting, ");
-			},
-			revealText (text) {
-				if (! this.previouslyRevealed) {
-					console.p(text + "a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.");
-					game.mapKey[this.location].hideSecrets = false;
-					this.previouslyRevealed = true;
+			play: function () {
+				if (!game.inEnvironment("phonograph") && !game.inInventory("phonograph")) {
+					console.p("First, you will need to find a phonograph.")
+					return;
 				}
+				return game.displayItem({
+					title: "\nUntitled (litany)",
+					artist: "Dennis Hodges",
+					year: "2010",
+					info: "Found audio recordings",
+					source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"
+				});
 			},
-			move () {
-				this.revealText("When you move the terrible painting, ");
+			use: function () {
+				this.play.call(this)
 			},
-			turn () {
-				this.move()
-			}
 		},
 		_door: {
 			name: "door",
@@ -267,96 +263,58 @@ const itemModule = game => {
 			unlockedBy: "key",
 			lockedTarget: "A",
 			closedTarget: "A",
-			get description () {
+			get description() {
 				game.state.objectMode = false;
 				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a steel deadbolt, which is ${this.locked ? "locked." : "unlocked!"}`
 			},
-			unlock (){
+			unlock() {
 				Object.getPrototypeOf(this).unlock.call(this);
 				game.mapKey[this.lockedTarget].locked = false;
 				return;
 			},
-			open () {
+			open() {
 				Object.getPrototypeOf(this).open.call(this);
 				game.mapKey[this.closedTarget].closed = false;
 				return;
 			},
-			close () {
+			close() {
 				Object.getPrototypeOf(this).close.call(this);
 				game.mapKey[this.closedTarget].closed = true;
 				return;
 			}
-			
-		},
-
-		_lock: {
-			name: "lock",
-			// weight: 0,
-			// takeable: false,
-			openable: false,
-			listed: false,
-			// locked: true,
-			// unlockedBy: "key",
-			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
-			unlock (){
-				Object.getPrototypeOf(Object.getPrototypeOf(this)).unlock.call(this);
-				game.mapKey[this.lockedTarget].locked = false;
-			},
-			proto: "_door",
 
 		},
-
-		_chain: {
-			name : "chain",
-			weight : 0,
-			description: "The thin ball chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \"pull\" it...",
-			takeable: false,
-			listed: false,
-			pull: function (){
-				game.state.objectMode = false;
-				let dark = game.mapKey[game.state.currentCell].hideSecrets;
-				dark ? console.p("An overhead lightbulb flickers on, faintly illuminating the room.") : console.p("The lightbulb is extinguished.");
-				game.mapKey[game.state.currentCell].hideSecrets = !dark;
-				return game.describeSurroundings();
-			},
-			use: function (){
-				return this.pull();
-			}
+		_filthy_note: {
+			name: "filthy note",
+			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
+			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
-
-		_crowbar: {
-			name: "crowbar",
-			weight: 5,
-			description: "It is a typical crowbar, made of hexagonal steel stock, with an unpolished black surface. It weighs about five pounds."
-		},
-
 		_glove: {
-			name : "glove",
+			name: "glove",
 			description: "It is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.",
-			contents:[],
-			examine: function (){
+			contents: [],
+			examine: function () {
 				game.state.objectMode = false;
-				if (this.contents.length){
+				if (this.contents.length) {
 					const hiddenItem = this.contents.pop();
 					console.p(`${this.description}\nAs you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);
 					game.mapKey[game.state.currentCell].addToEnv(hiddenItem.name);
 					return;
-				} 
+				}
 				return this.description;
 			}
 		},
-
-		_grue_repellant: { 
-			name : "grue_repellant",
-			defective : Math.random() < 0.03,
-			weight : 3,
+		_grue_repellant: {
+			name: "grue_repellant",
+			defective: Math.random() < 0.03,
+			weight: 3,
 			article: "some",
 			description: "A 12oz can of premium aerosol grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.",
 			use: function () {
 				game.state.objectMode = false;
-				if (!game.inInventory(this.name)){
+				if (!game.inInventory(this.name)) {
 					return inEnvironment(this.name) ? console.p("You will need to pick it up first.") : console.p("You don't see that here.");
-				} else if (this.used){
+				} else if (this.used) {
 					return console.p("Sorry, but it has already been used.");
 				} else if (this.defective) {
 					this.used = true;
@@ -373,56 +331,30 @@ const itemModule = game => {
 				game.dead("Drinking from an aerosol can is awkward at best, but still you manage to ravenously slather your chops with the foaming grue repellant. You try to enjoy the searing pain inflicted by this highly caustic (and highly toxic!) chemical as it dissolves the flesh of your mouth and throat, but to no avail. It is not delicious, and you are starting to realize that there are some non-trivial drawbacks to willingly ingesting poison. Oops.");
 			}
 		},
-
 		_key: {
-			name : "key",
+			name: "key",
 			description: "It is an old-timey key that appears to be made of tarnished brass"
 		},
+		_lock: {
+			name: "lock",
+			// weight: 0,
+			// takeable: false,
+			openable: false,
+			listed: false,
+			// locked: true,
+			// unlockedBy: "key",
+			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
+			unlock() {
+				Object.getPrototypeOf(Object.getPrototypeOf(this)).unlock.call(this);
+				game.mapKey[this.lockedTarget].locked = false;
+			},
+			proto: "_door",
 
-		_disc: {
-			name: "disc",
-			text: "Untitled (Litany)",
-			get description (){ 
-				return `It is a disc made of a shiny black polymer, lined with hundreds of tiny concentric grooves. It looks to be about seven inches in diameter, with a one and one-half inch hole in its center. It bears a label that says, "${this.text}".`;
-			},
-			play: function () {
-				if(game.inEnvironment)
-				return game.displayItem({
-					title: "\nUntitled (litany)",
-					artist: "Dennis Hodges",
-					year: "2010",
-					info: "Found audio recordings",
-					source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"});
-			},
-			use: function () {
-				this.play.call(this)
-			},
-		},
-
-		_matchbook: {
-			name: "matchbook",
-			get description () { 
-				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\"" }`;
-			},
-			openable: true,
-			closed: true,
-			use: function () {
-				game.state.objectMode = false;
-				if (this.closed) {
-					this.open.call(this);
-					console.p("As you flip open the matchbook, folding back the cover, you glimpse something scrawled in pencil on the inside.")
-				}
-				console.p("You pluck out one of the paper matches. It ignites easily as you scrape its head against the red phosphorus strip, producing a tenuous flame that you are quick to guard with your cupped hand.");
-				game.state.fireCount = 2;
-			},
-			light: function () {
-				this.use.call(this);
-			}
 		},
 		_maps: {
 			name: "maps",
 			article: "some",
-			get description () {
+			get description() {
 				this.read();
 				return `The stack of dogeared pages appear to be architectural drawings. With a quick survey of your surroundings, you confirm with reasonable certainty that they are likely floor plans for this house.`;
 			},
@@ -443,9 +375,66 @@ const itemModule = game => {
 				this.read.call(this);
 			}
 		},
-
+		_matchbook: {
+			name: "matchbook",
+			get description() {
+				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\""}`;
+			},
+			openable: true,
+			closed: true,
+			use: function () {
+				game.state.objectMode = false;
+				if (this.closed) {
+					this.open.call(this);
+					console.p("As you flip open the matchbook, folding back the cover, you glimpse something scrawled in pencil on the inside.")
+				}
+				console.p("You pluck out one of the paper matches. It ignites easily as you scrape its head against the red phosphorus strip, producing a tenuous flame that you are quick to guard with your cupped hand.");
+				game.state.fireCount = 2;
+			},
+			light: function () {
+				this.use.call(this);
+			}
+		},
+		_no_tea: {
+			name: "no_tea",
+			weight: 0,
+			article: "",
+			description: "You do not have any tea.",
+			methodCallcount: 0,
+			takeable: false,
+			no_teaMethod: function (message) {
+				this.methodCallcount++;
+				game.state.objectMode = false;
+				console.p(message);
+				if (this.methodCallcount > 1 && game.state.pendingAction !== "contemplate") {
+					console.p("Perhaps you should take a moment to contemplate that.");
+				}
+			},
+			drink: function () {
+				return this.no_teaMethod("How do you intend to drink no tea?");
+			},
+			drop: function () {
+				return this.no_teaMethod("You can't very well drop tea that you don't have.");
+			},
+			take: function () {
+				return this.no_teaMethod("No tea isn't the sort of thing you can take.");
+			},
+			examine: function () {
+				return this.no_teaMethod(this.description);
+			},
+			use: function () {
+				return this.no_teaMethod("Unsurprisingly, using the no tea has no effect.");
+			},
+			contemplate: function () {
+				if (this.methodCallcount > 2) {
+					console.p("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
+					return game.winner();
+				}
+				return this.no_teaMethod("Let's not resort to that just yet!");
+			},
+		},
 		_note: {
-			name : "note",
+			name: "note",
 			text: `We have your dog.`,
 			firstRead: true,
 			description: "The note is composed of eclectically sourced, cut-out letters, in the style of a movie ransom note. You found it lying next to you on the floor when you regained consciousness.",
@@ -461,20 +450,80 @@ const itemModule = game => {
 					console.p(`${dogName} is your best buddy! Who would do such a thing!?`);
 					this.firstRead = false;
 				}
-				
+
 			}
 		},
-
-		_card: {
-			name: "card",
-			text: `Survey Card \nFor each of the following questions, please circle '1' for 'strongly disagree', '2' for 'somewhat disagree', '3' for 'no opinion', '4' for 'somewhat agree' and '5' for 'strongly agree'. \n1. This is the first involuntary study I have participated in.\n2. I found the study conditions to be inadequately challenging.\n3. I would be willing to participate in additional studies.\n4. I am aware that any attempt to contact law enforcement will have adverse consequences for myself or my family, whose location of residence is known.\n`,
-			description: "It is a four by six inch card cut from off-white cardstock, on which a survey is printed.",
-			turn: function () {
+		_painting: {
+			name: "painting",
+			takeable: true,
+			listed: false,
+			description: "The small, grimy image is of an owl, teaching a class a classroom of kittens how to catch mice. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.",
+			previouslyRevealed: false,
+			location: "+",
+			take() {
+				Object.getPrototypeOf(this).take.call(this);
+				this.revealText("When you remove the terrible painting, ");
+			},
+		_safe: {
+			name: "safe",
+			closed: true,
+			locked: true,
+			takeable: false,
+			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
+			contents: [],
+			open: function () {
+				this.unlock.call(this);
+			},
+			unlock: function () {
+				game.state.solveMode = true;
 				game.state.objectMode = false;
-				console.p("Upon turning over the survey card, you notice a message, written in pencil. It says,");
-				console.note("\n\"THE OWLS ARE NOT WHAT THEY SEEM\".");
-				return;
+				console.digi("ENTER PASSCODE:")
+			},
+			use: function () {
+				this.unlock.call(this);
+			},
+		},
+		_table: {
+			name: "table",
+			takeable: false,
+			listed: false,
+			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
+		},
+		
+			revealText (text) {
+				if (! this.previouslyRevealed) {
+					console.p(text + "a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.");
+					game.mapKey[this.location].hideSecrets = false;
+					this.previouslyRevealed = true;
+				}
+			},
+			move () {
+				this.revealText("When you move the terrible painting, ");
+			},
+			turn () {
+				this.move()
 			}
+		},
+		_phonograph: {
+			name: "phonograph",
+			description: "The old phonograph has a built-in speaker, and looks like it might still work.",
+			play: function () {
+				if (!game.inEnvironment("disc") && !game.inInventory("disc")) {
+					console.p("First, you will need to find something to play on the phonograph.")
+					return;
+				}
+				return game.displayItem({
+					title: "\nUntitled (litany)",
+					artist: "Dennis Hodges",
+					year: "2010",
+					info: "Found audio recordings",
+					source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"
+				});
+			},
+			use: function () {
+				this.play.call(this)
+			},
+				
 		},
 		_survey: {
 			name: "survey",
@@ -491,50 +540,6 @@ const itemModule = game => {
 			takeable: false,
 			description: "The symbol on the card's reverse is printed in red ink, and is shaped like (??)",
 		},
-
-		_filthy_note: {
-			name: "filthy note",
-			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
-			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
-		},
-		_no_tea: {
-			name: "no_tea",
-			weight: 0,
-			article: "",
-			description: "You do not have any tea.",
-			methodCallcount: 0,
-			takeable: false,
-			no_teaMethod: function (message){
-					this.methodCallcount ++;
-					game.state.objectMode = false;
-					console.p(message);
-					if (this.methodCallcount > 1 && game.state.pendingAction !== "contemplate"){
-						console.p("Perhaps you should take a moment to contemplate that.");	
-					}
-			},
-			drink: function (){
-				return this.no_teaMethod("How do you intend to drink no tea?");
-			},
-			drop: function (){
-				return this.no_teaMethod("You can't very well drop tea that you don't have.");
-			},
-			take: function (){
-				return this.no_teaMethod("No tea isn't the sort of thing you can take.");
-			},
-			examine: function (){
-				return this.no_teaMethod(this.description);
-			},
-			use: function (){
-				return this.no_teaMethod("Unsurprisingly, using the no tea has no effect.");
-			},
-			contemplate: function (){
-				if (this.methodCallcount > 2){
-					console.p("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
-					return game.winner();
-				}
-				return this.no_teaMethod("Let's not resort to that just yet!");
-			},
-		}
 	}
 	
 	// Prototype-links each of the objects in items to either Item or other prototype, if defined
