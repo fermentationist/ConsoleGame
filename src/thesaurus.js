@@ -11,6 +11,12 @@ const thesaurus = {
         "incinerate",
         "torch"
     ],
+    cartridge: [
+        "movie",
+        "reel",
+        "film",
+        "film_cartridge"
+    ],
     contemplate: [
         "consider",
         "meditate",

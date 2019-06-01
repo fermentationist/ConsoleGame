@@ -66,13 +66,13 @@ const mapKey = game => {
 		"^": {
 			name: "Second floor hallway, north",
 			description: "You are at the top of a wide wooden staircase, on the second floor of the old house.",
-			visibleEnv: []
+			visibleEnv: ["projector"]
 		},
 
 		"-": {
 			name: "Second floor hallway, south",
 			description: "It looks like there are a couple of rooms on either side of the broad hallway, and a small broom closet at the south end.",
-			visibleEnv: []
+			visibleEnv: ["film"]
 		},
 
 		"+": {

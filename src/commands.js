@@ -201,14 +201,14 @@ const Commands = game => {
 		return console.papyracy(">poof<");
 	}
 
-	const _litany = () => {
-		displayItem({
-		title: "\nUntitled (litany)",
-		artist: "Dennis Hodges",
-		year: "2010",
-		info: "Found audio recordings",
-		source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"});
-	}
+	// const _litany = () => {
+	// 	displayItem({
+	// 	title: "\nUntitled (litany)",
+	// 	artist: "Dennis Hodges",
+	// 	year: "2010",
+	// 	info: "Found audio recordings",
+	// 	source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"});
+	// }
 	// const _papyracy = () => {
 	// 	const font = primaryFont;
 	// 	const color = textColor;
@@ -270,6 +270,7 @@ const Commands = game => {
 		[_act_upon, aliasString("burn", thesaurus)],
 		[_act_upon, aliasString("light", thesaurus)],
 		[_act_upon, aliasString("play", thesaurus)],
+		[_act_upon, aliasString("project", thesaurus)],
 		[_act_upon, cases("hide")],
 
 		// this command exists as a hacky fix for bug that happens if console is in "eager evalutaion" mode. Starting to type "glove" auto-evalutes to "globalThis", which for some reason calls _act_upon("close"). This same goes for the keyword "this". This command tricks auto-evaluation because it prioritizes suggestions alphabetically.

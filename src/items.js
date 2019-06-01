@@ -284,6 +284,29 @@ const itemModule = game => {
 			}
 
 		},
+		_cartridge: {
+			name: "cartridge",
+			description: "The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.",
+			play: function () {
+				if (!game.inEnvironment("projector") && !game.inInventory("projector")) {
+					console.p("First, you will need to find something to project the film with.");
+					return;
+				}
+				return game.displayItem({
+					title: "\nCanned Laughs",
+					artist: "Dennis Hodges",
+					year: "2001",
+					info: "Super 8mm film to video transfer with dubbed audio",
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
+				});
+			},
+			use: function () {
+				this.play.call(this)
+			},
+			project: function () {
+				this.play.call(this);
+			}
+		},
 		_filthy_note: {
 			name: "filthy note",
 			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
@@ -463,7 +486,52 @@ const itemModule = game => {
 			take() {
 				Object.getPrototypeOf(this).take.call(this);
 				this.revealText("When you remove the terrible painting, ");
+		},
+		_phonograph: {
+			name: "phonograph",
+			description: "The old phonograph has a built-in speaker, and looks like it might still work.",
+			play: function () {
+				if (!game.inEnvironment("disc") && !game.inInventory("disc")) {
+					console.p("First, you will need to find something to play on the phonograph.")
+					return;
+				}
+				return game.displayItem({
+					title: "\nUntitled (litany)",
+					artist: "Dennis Hodges",
+					year: "2010",
+					info: "Found audio recordings",
+					source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"
+				});
 			},
+			use: function () {
+				this.play.call(this)
+			},
+				
+		},
+		_projector: {
+			name: "projector",
+			description: "It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.",
+			play: function () {
+				if (!game.inEnvironment("cartridge") && !game.inInventory("cartridge")) {
+					console.p("First, you will need to find something to project with the projector.")
+					return;
+				}
+				return game.displayItem({
+					title: "\nCanned Laughs",
+					artist: "Dennis Hodges",
+					year: "2001",
+					info: "Super 8mm film to video transfer with dubbed audio",
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
+				});
+			},
+			use: function () {
+				this.play.call(this)
+			},
+			project: function () {
+				this.play.call(this);
+			}
+		},
+
 		_safe: {
 			name: "safe",
 			closed: true,
@@ -525,6 +593,48 @@ const itemModule = game => {
 			},
 				
 		},
+		_projector: {
+			name: "projector",
+			description: "It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.",
+			play: function () {
+				if (!game.inEnvironment("cartridge") && !game.inInventory("cartridge")) {
+					console.p("First, you will need to find something to project with the projector.")
+					return;
+				}
+				return game.displayItem({
+					title: "\nCanned Laughs",
+					artist: "Dennis Hodges",
+					year: "2001",
+					info: "Super 8mm film to video transfer with dubbed audio",
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
+				});
+			},
+			use: function () {
+				this.play.call(this)
+			},
+			project: function () {
+				this.play.call(this);
+			}
+		},
+		_safe: {
+			name: "safe",
+			closed: true,
+			locked: true,
+			takeable: false,
+			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
+			contents: [],
+			open: function () {
+				this.unlock.call(this);
+			},
+			unlock: function () {
+				game.state.solveMode = true;
+				game.state.objectMode = false;
+				console.digi("ENTER PASSCODE:")
+			},
+			use: function () {
+				this.unlock.call(this);
+			},
+		},
 		_survey: {
 			name: "survey",
 			proto: "_card",
@@ -539,6 +649,12 @@ const itemModule = game => {
 			listed: false,
 			takeable: false,
 			description: "The symbol on the card's reverse is printed in red ink, and is shaped like (??)",
+		},
+		_table: {
+			name: "table",
+			takeable: false,
+			listed: false,
+			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
 		},
 	}
 	
