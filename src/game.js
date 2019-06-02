@@ -212,14 +212,14 @@ const ConsoleGame = {
 			.map((item) => `${item.article} ${item.name}`));
 	},
 
-	displayItem: function (galleryItem = {title: "untitled", artist: "unknown", info: null, source: ""}) {
+	displayItem: function (galleryItem = {title: "untitled", artist: "unknown", info: null, source: "", dimensions: null}) {
 		const contentDiv = document.getElementById("console-game-content");
 		contentDiv.innerHTML = "";
 		contentDiv.setAttribute("style", "background-color:#D1D1D1;")
 		const iFrame = document.createElement("iframe");
 		iFrame.src = galleryItem.source;
 		iFrame.autoplay = true;
-		iFrame.setAttribute("style", "width:100vw;background-color:gray;");
+		iFrame.setAttribute("style", "width:100vw;height:100vh;background-color:gray;");
 		const p = document.createElement("p");
 		p.setAttribute("style", "text-align:center;")
 		const title = document.createElement("h2");

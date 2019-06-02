@@ -258,6 +258,7 @@ const Commands = game => {
 		[_act_upon, aliasString("examine", thesaurus) + ",x,X"],
 		[_act_upon, aliasString("drink", thesaurus)],
 		[_act_upon, aliasString("drop", thesaurus)],
+		[_act_upon, aliasString("eat", thesaurus)],
 		[_act_upon, aliasString("move", thesaurus)],
 		[_act_upon, aliasString("pull", thesaurus)],
 		[_act_upon, aliasString("spray", thesaurus)],

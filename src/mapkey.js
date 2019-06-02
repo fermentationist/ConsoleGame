@@ -72,7 +72,7 @@ const mapKey = game => {
 		"-": {
 			name: "Second floor hallway, south",
 			description: "It looks like there are a couple of rooms on either side of the broad hallway, and a small broom closet at the south end.",
-			visibleEnv: ["film"]
+			visibleEnv: ["cartridge"]
 		},
 
 		"+": {

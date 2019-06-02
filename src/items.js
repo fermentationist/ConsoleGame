@@ -15,28 +15,42 @@ const itemModule = game => {
 		locked: false,
 		article: "a",
 		listed: true,
-		take: function (){
+		burn: function () {
 			game.state.objectMode = false;
-			if(this.takeable && game.inEnvironment(this.name)){
-				game.addToInventory([this]);
-				game.mapKey[game.state.currentCell].removeFromEnv(this);
-				return console.p(`You pick up the ${this.name}.`);
-			} else {
-				return console.p(`You can't take ${this.name}`);
+			if (!game.inInventory("matchbook")) {
+				console.p("You don't have the means to light a fire.");
+				return;
 			}
+			console.p(`The meager flame is insufficient to ignite the ${this.name}.`);
+			game.items._matchbook.closed = false;
+			return;
 		},
-		takeComponent: function () {
-			const realItem = Object.getPrototypeOf(this);
-			if (! this.takeable || ! game.inEnvironment(this)) {
-				return console.p(`You can't take that.`);
-			}
-			game.addToInventory([this]);
-			game.mapKey[game.state.currentCell].removeFromEnv(this);
-			realItem.take.call(realItem);
-		},
-		drop: function (){
+		close: function () {
 			game.state.objectMode = false;
-			if (game.inInventory(this.name)){
+			if (!game.inEnvironment(this.name)) {
+				console.p(`You don't see ${this.article} ${this.name} here.`);
+				return;
+			}
+			if (!this.openable) {
+				console.p("It cannot be closed.");
+				return;
+			}
+			if (this.closed) {
+				console.p("It is already closed.");
+				return;
+			}
+			console.p(`The ${this.name} is now closed.`);
+			this.closed = true;
+			return;
+		},
+		drink: function () {
+			game.objectMode = false;
+			console.p(`You cannot drink the ${this.name}.`);
+			return;
+		},
+		drop: function () {
+			game.state.objectMode = false;
+			if (game.inInventory(this.name)) {
 				game.removeFromInventory(this);
 				game.mapKey[game.state.currentCell].env.push(this);
 				return console.p(`${this.name} dropped.`);
@@ -44,10 +58,15 @@ const itemModule = game => {
 				return console.p("You don't have that.");
 			}
 		},
-		examine: function (){
+		eat: function () {
+			game.objectMode = false;
+			console.p(`You cannot eat the ${this.name}.`);
+			return;
+		},
+		examine: function () {
 			game.state.objectMode = false;
 			return console.p(this.description);
-				
+
 		},
 		open: function () {
 			game.state.objectMode = false;
@@ -71,26 +90,6 @@ const itemModule = game => {
 			this.closed = false;
 			return;
 		},
-
-		close: function () {
-			game.state.objectMode = false;
-			if (!game.inEnvironment(this.name)) {
-				console.p(`You don't see ${this.article} ${this.name} here.`);
-				return;
-			}
-			if (!this.openable) {
-				console.p("It cannot be closed.");
-				return;
-			}
-			if (this.closed) {
-				console.p("It is already closed.");
-				return;
-			}
-			console.p(`The ${this.name} is now closed.`);
-			this.closed = true;
-			return;
-		},
-
 		read: function (){
 			game.state.objectMode = false;
 			if (!this.text){
@@ -101,6 +100,25 @@ const itemModule = game => {
 			}
 			console.p(`The text on the ${this.name} reads: \n`);
 			return console.note(this.text);
+		},
+		take: function () {
+			game.state.objectMode = false;
+			if (this.takeable && game.inEnvironment(this.name)) {
+				game.addToInventory([this]);
+				game.mapKey[game.state.currentCell].removeFromEnv(this);
+				return console.p(`You pick up the ${this.name}.`);
+			} else {
+				return console.p(`You can't take ${this.name}`);
+			}
+		},
+		takeComponent: function () {
+			const realItem = Object.getPrototypeOf(this);
+			if (!this.takeable || !game.inEnvironment(this)) {
+				return console.p(`You can't take that.`);
+			}
+			game.addToInventory([this]);
+			game.mapKey[game.state.currentCell].removeFromEnv(this);
+			realItem.take.call(realItem);
 		},
 		turn: function () {
 			game.state.objectMode = false;
@@ -121,21 +139,11 @@ const itemModule = game => {
 			console.p(`You do not have the means to unlock the ${this.name}.`)
 			return;
 		},
-
 		use: function (){
 			game.state.objectMode = false;
 			return console.p(`Try as you might, you cannot manage to use the ${this.name}`);
 		},
-		burn: function (){
-			game.state.objectMode = false;
-			if (! game.inInventory("matchbook")) {
-				console.p("You don't have the means to light a fire.");
-				return;
-			}
-			console.p(`The meager flame is insufficient to ignite the ${this.name}.`);
-			game.items._matchbook.closed = false;
-			return;
-		}
+		
 	}
 
 	const items = {
@@ -167,6 +175,13 @@ const itemModule = game => {
 				if (!game.inInventory(this.name)) {
 					return console.p(`You will need to pick up the ${this.name} first.`);
 				}
+				game.displayItem({
+					title: "Ministry of Culture",
+					artist: "Isak Berbic, Emiliano Cerna-Rios, Dennis Hodges and Zdenko Mandusic",
+					year: "2008",
+					info: "Exhibition catalog",
+					source: "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/preview?usp=sharing"
+				})
 				console.info(`[click link to read => "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing"]`)
 				// window.open("https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing", "_blank");//game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
 			}
@@ -336,7 +351,7 @@ const itemModule = game => {
 			use: function () {
 				game.state.objectMode = false;
 				if (!game.inInventory(this.name)) {
-					return inEnvironment(this.name) ? console.p("You will need to pick it up first.") : console.p("You don't see that here.");
+					return game.inEnvironment(this.name) ? console.p("You will need to pick it up first.") : console.p("You don't see that here.");
 				} else if (this.used) {
 					return console.p("Sorry, but it has already been used.");
 				} else if (this.defective) {
@@ -348,9 +363,11 @@ const itemModule = game => {
 				}
 			},
 			spray: function () {
+				game.state.objectMode = false;
 				return this.use();
 			},
 			drink: function () {
+				game.state.objectMode = false;
 				game.dead("Drinking from an aerosol can is awkward at best, but still you manage to ravenously slather your chops with the foaming grue repellant. You try to enjoy the searing pain inflicted by this highly caustic (and highly toxic!) chemical as it dissolves the flesh of your mouth and throat, but to no avail. It is not delicious, and you are starting to realize that there are some non-trivial drawbacks to willingly ingesting poison. Oops.");
 			}
 		},
@@ -521,7 +538,7 @@ const itemModule = game => {
 					artist: "Dennis Hodges",
 					year: "2001",
 					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing&output=embed"
 				});
 			},
 			use: function () {
@@ -606,7 +623,8 @@ const itemModule = game => {
 					artist: "Dennis Hodges",
 					year: "2001",
 					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview",
+					dimensions: [640, 480]
 				});
 			},
 			use: function () {

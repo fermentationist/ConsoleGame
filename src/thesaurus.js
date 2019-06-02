@@ -42,11 +42,9 @@ const thesaurus = {
         "intake",
         "uptake",
         "imbibe",
-        "consume",
-        "ingest",
-        "have",
         "chug",
-        "guzzle"
+        "guzzle",
+        "quaff"
     ],
     drop: [
         "unload",
@@ -58,6 +56,12 @@ const thesaurus = {
         "shitcan",
         "trash",
         "expel"
+    ],
+    eat: [
+        "ingest",
+        "consume",
+        "swallow",
+        "devour"
     ],
     examine: [
         "analyze",
@@ -131,7 +135,11 @@ const thesaurus = {
 	],
 	open: [
 		"unclose"
-	],
+    ],
+    phonograph: [
+        "record_player",
+        "turntable"
+    ],
     pull: [
         "tug",
         "yank",
@@ -174,6 +182,7 @@ const thesaurus = {
         "twist"
     ],
     use: [
+        "activate",
         "utilize",
         "utilise",
         "apply",
