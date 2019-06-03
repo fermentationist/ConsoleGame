@@ -69,11 +69,11 @@ const ConsoleGame = {
 			}
 			interpreterFunction(commandName);
             
-			if (this.state.solveMode === true && commandName !== "safe") {
-				this.state.solveMode = false;
-				commandName !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
-				return;
-			}
+			// if (this.state.solveMode === true && commandName !== "safe") {
+			// 	this.state.solveMode = false;
+			// 	commandName !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
+			// 	return;
+			// }
 			return;
 		}
 		catch (err){
@@ -256,11 +256,11 @@ const ConsoleGame = {
 		if (this.state.fireCount -- === 0 ){
 			console.p("Despite your best efforts the flame flickers out.");
 		}
-		if (this.state.solveMode === true && this.pendingAction !== "safe") {
-			this.state.solveMode = false;
-			this.pendingAction !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
-			return;
-		}
+		// if (this.state.solveMode === true && this.pendingAction !== "safe") {
+		// 	this.state.solveMode = false;
+		// 	this.pendingAction !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
+		// 	return;
+		// }
 	},
 
 	dead: function (text) {
@@ -448,6 +448,20 @@ const ConsoleGame = {
 		localStorage.setItem("ConsoleGame.prefMode", "true");
 		location.reload();
 	},
+	solveCode: function (value){
+		this.state.solveMode = false;
+		const puzzles = this.state.env.filter(item => item.solution);
+		if (puzzles.length < 1) {
+			return;
+		}
+		const solved = puzzles.filter(puzzle => puzzle.solution === value);
+		if (solved.length === 0){
+			puzzles.forEach(unsolved => unsolved.incorrectGuess());
+			return;
+		}
+		solved.forEach(pzl => pzl.correctGuess());
+		return;
+	},
 
 	unfinishedGame: function () {
 		return window.localStorage.getItem("ConsoleGame.history");
@@ -603,7 +617,7 @@ const ConsoleGame = {
 
 // this function enables user to set preferences
 window._ = (value) => {
-	return ConsoleGame.setPreference(value);
+	return ConsoleGame.state.solveMode ? ConsoleGame.solveCode(value) : ConsoleGame.setPreference(value);
 }
 // include imported items
 ConsoleGame.items = itemModule(ConsoleGame);

@@ -15,6 +15,7 @@ const itemModule = game => {
 		locked: false,
 		article: "a",
 		listed: true,
+		solution: null,
 		burn: function () {
 			game.state.objectMode = false;
 			if (!game.inInventory("matchbook")) {
@@ -43,6 +44,8 @@ const itemModule = game => {
 			this.closed = true;
 			return;
 		},
+		correctGuess: function () {
+		},
 		drink: function () {
 			game.objectMode = false;
 			console.p(`You cannot drink the ${this.name}.`);
@@ -67,6 +70,8 @@ const itemModule = game => {
 			game.state.objectMode = false;
 			return console.p(this.description);
 
+		},
+		incorrectGuess: function () {
 		},
 		open: function () {
 			game.state.objectMode = false;
@@ -207,6 +212,29 @@ const itemModule = game => {
 				return;
 			}
 		},
+		_cartridge: {
+			name: "cartridge",
+			description: "The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.",
+			play: function () {
+				if (!game.inEnvironment("projector") && !game.inInventory("projector")) {
+					console.p("First, you will need to find something to project the film with.");
+					return;
+				}
+				return game.displayItem({
+					title: "\nCanned Laughs",
+					artist: "Dennis Hodges",
+					year: "2001",
+					info: "Super 8mm film to video transfer with dubbed audio",
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
+				});
+			},
+			use: function () {
+				this.play.call(this)
+			},
+			project: function () {
+				this.play.call(this);
+			}
+		},
 		_chain: {
 			name: "chain",
 			weight: 0,
@@ -303,29 +331,6 @@ const itemModule = game => {
 				return;
 			}
 
-		},
-		_cartridge: {
-			name: "cartridge",
-			description: "The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.",
-			play: function () {
-				if (!game.inEnvironment("projector") && !game.inInventory("projector")) {
-					console.p("First, you will need to find something to project the film with.");
-					return;
-				}
-				return game.displayItem({
-					title: "\nCanned Laughs",
-					artist: "Dennis Hodges",
-					year: "2001",
-					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
-				});
-			},
-			use: function () {
-				this.play.call(this)
-			},
-			project: function () {
-				this.play.call(this);
-			}
 		},
 		_filthy_note: {
 			name: "filthy note",
@@ -508,6 +513,20 @@ const itemModule = game => {
 			take() {
 				Object.getPrototypeOf(this).take.call(this);
 				this.revealText("When you remove the terrible painting, ");
+			},
+			revealText(text) {
+				if (!this.previouslyRevealed) {
+					console.p(text + "a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.");
+					game.mapKey[this.location].hideSecrets = false;
+					this.previouslyRevealed = true;
+				}
+			},
+			move() {
+				this.revealText("When you move the terrible painting, ");
+			},
+			turn() {
+				this.move()
+			}
 		},
 		_phonograph: {
 			name: "phonograph",
@@ -528,7 +547,7 @@ const itemModule = game => {
 			use: function () {
 				this.play.call(this)
 			},
-				
+
 		},
 		_projector: {
 			name: "projector",
@@ -553,107 +572,39 @@ const itemModule = game => {
 				this.play.call(this);
 			}
 		},
-
 		_safe: {
 			name: "safe",
 			closed: true,
 			locked: true,
 			takeable: false,
+			solution: 112358,
 			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.",
 			contents: [],
+			correctGuess: function () {
+				game.state.objectMode = false;
+				this.locked = false;
+				this.closed = false;
+				console.digi("PASSCODE ACCEPTED.");
+				console.p("Upon entering the correct passcode, the bolt inside the safe's door slides back, and the door pops open gently.");
+				if (this.contents.length > 0) {
+					console.p(`Inside the safe is ${game.formatList(this.contents.map(item => `${item.article} ${item.name}`))}.`);
+					this.contents.forEach(item => game.mapKey[game.state.currentCell].addToEnv(item.name));
+				}
+			},
+			incorrectGuess: function () {
+				game.state.objectMode = false;
+				console.digi("!!!PASSCODE INCORRECT!!!");
+				return;
+			},
 			open: function () {
 				this.unlock.call(this);
 			},
 			unlock: function () {
 				game.state.solveMode = true;
 				game.state.objectMode = false;
-				console.info("To enter the ")
+				console.codeInline([`To enter the numerical passcode, you must type an underscore `, `_`, `, followed by the value enclosed in parentheses.`]);
+				console.codeInline([`For example: `, `_(0123456789)`]);
 				console.digi("ENTER PASSCODE:");
-			},
-			use: function () {
-				this.unlock.call(this);
-			},
-		},
-		_table: {
-			name: "table",
-			takeable: false,
-			listed: false,
-			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
-		},
-		
-			revealText (text) {
-				if (! this.previouslyRevealed) {
-					console.p(text + "a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.");
-					game.mapKey[this.location].hideSecrets = false;
-					this.previouslyRevealed = true;
-				}
-			},
-			move () {
-				this.revealText("When you move the terrible painting, ");
-			},
-			turn () {
-				this.move()
-			}
-		},
-		_phonograph: {
-			name: "phonograph",
-			description: "The old phonograph has a built-in speaker, and looks like it might still work.",
-			play: function () {
-				if (!game.inEnvironment("disc") && !game.inInventory("disc")) {
-					console.p("First, you will need to find something to play on the phonograph.")
-					return;
-				}
-				return game.displayItem({
-					title: "\nUntitled (litany)",
-					artist: "Dennis Hodges",
-					year: "2010",
-					info: "Found audio recordings",
-					source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"
-				});
-			},
-			use: function () {
-				this.play.call(this)
-			},
-				
-		},
-		_projector: {
-			name: "projector",
-			description: "It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.",
-			play: function () {
-				if (!game.inEnvironment("cartridge") && !game.inInventory("cartridge")) {
-					console.p("First, you will need to find something to project with the projector.")
-					return;
-				}
-				return game.displayItem({
-					title: "\nCanned Laughs",
-					artist: "Dennis Hodges",
-					year: "2001",
-					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview",
-					dimensions: [640, 480]
-				});
-			},
-			use: function () {
-				this.play.call(this)
-			},
-			project: function () {
-				this.play.call(this);
-			}
-		},
-		_safe: {
-			name: "safe",
-			closed: true,
-			locked: true,
-			takeable: false,
-			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
-			contents: [],
-			open: function () {
-				this.unlock.call(this);
-			},
-			unlock: function () {
-				game.state.solveMode = true;
-				game.state.objectMode = false;
-				console.digi("ENTER PASSCODE:")
 			},
 			use: function () {
 				this.unlock.call(this);
@@ -665,7 +616,7 @@ const itemModule = game => {
 			listed: false,
 			takeable: true,
 			take: function () {
-				 this.takeComponent.call(this)
+				this.takeComponent.call(this)
 			}
 		},
 		_symbol: {
@@ -680,6 +631,92 @@ const itemModule = game => {
 			listed: false,
 			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
 		},
+		
+		// 	revealText (text) {
+		// 		if (! this.previouslyRevealed) {
+		// 			console.p(text + "a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.");
+		// 			game.mapKey[this.location].hideSecrets = false;
+		// 			this.previouslyRevealed = true;
+		// 		}
+		// 	},
+		// 	move () {
+		// 		this.revealText("When you move the terrible painting, ");
+		// 	},
+		// 	turn () {
+		// 		this.move()
+		// 	}
+		// // },
+		// _phonograph: {
+		// 	name: "phonograph",
+		// 	description: "The old phonograph has a built-in speaker, and looks like it might still work.",
+		// 	play: function () {
+		// 		if (!game.inEnvironment("disc") && !game.inInventory("disc")) {
+		// 			console.p("First, you will need to find something to play on the phonograph.")
+		// 			return;
+		// 		}
+		// 		return game.displayItem({
+		// 			title: "\nUntitled (litany)",
+		// 			artist: "Dennis Hodges",
+		// 			year: "2010",
+		// 			info: "Found audio recordings",
+		// 			source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"
+		// 		});
+		// 	},
+		// 	use: function () {
+		// 		this.play.call(this)
+		// 	},
+				
+		// },
+		// _projector: {
+		// 	name: "projector",
+		// 	description: "It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.",
+		// 	play: function () {
+		// 		if (!game.inEnvironment("cartridge") && !game.inInventory("cartridge")) {
+		// 			console.p("First, you will need to find something to project with the projector.")
+		// 			return;
+		// 		}
+		// 		return game.displayItem({
+		// 			title: "\nCanned Laughs",
+		// 			artist: "Dennis Hodges",
+		// 			year: "2001",
+		// 			info: "Super 8mm film to video transfer with dubbed audio",
+		// 			source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview",
+		// 			dimensions: [640, 480]
+		// 		});
+		// 	},
+		// 	use: function () {
+		// 		this.play.call(this)
+		// 	},
+		// 	project: function () {
+		// 		this.play.call(this);
+		// 	}
+		// },
+		// _safe: {
+		// 	name: "safe",
+		// 	closed: true,
+		// 	locked: true,
+		// 	takeable: false,
+		// 	description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
+		// 	contents: [],
+		// 	open: function () {
+		// 		this.unlock.call(this);
+		// 	},
+		// 	unlock: function () {
+		// 		game.state.solveMode = true;
+		// 		game.state.objectMode = false;
+		// 		console.digi("ENTER PASSCODE:")
+		// 	},
+		// 	use: function () {
+		// 		this.unlock.call(this);
+		// 	},
+		// },
+		
+		// _table: {
+		// 	name: "table",
+		// 	takeable: false,
+		// 	listed: false,
+		// 	description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
+		// },
 	}
 	
 	// Prototype-links each of the objects in items to either Item or other prototype, if defined
