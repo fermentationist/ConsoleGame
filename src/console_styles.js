@@ -66,11 +66,18 @@ const customConsole = (() => {
 	console.digi = message => {
 		const spacedText = message.split("").join(" ").split("");
 		const styles = spacedText.map(char => {
-			return `font-family:'courier new';color:rgb(${255 + Math.floor(Math.random() * 10)}, ${68 + Math.floor(Math.random() * 10)}, ${0 + Math.floor(Math.random() * 10)});font-size:${2 + (Math.random() / 2)}em;`
+			return `font-family:'courier new';color:rgb(${255 + Math.floor(Math.random() * 10)}, ${68 + Math.floor(Math.random() * 10)}, ${0 + Math.floor(Math.random() * 10)});font-size:${1.5 + (Math.random() / 4)}em;opacity:${1 - Math.random() / 2}`
 		});
 		console.inline(spacedText, styles);
 	}
-	console.map = floorMap => console.table(floorMap.map(row => row.join("")))
+	console.map = floorMap => console.table(floorMap.map(row => row.join("")));
+	console.scream = message => {
+		const splitText = message.split("");
+		const styles = splitText.map((char, index) => {
+			return `font-family:'courier new';color:rgb(${255 + Math.floor(Math.random() * 10)}, ${33 + Math.floor(Math.random() * 10)}, ${33 + Math.floor(Math.random() * 10)});font-size:${2 + index/3}em;`
+		});
+		console.inline(splitText, styles);
+	}
 })();
 
 export default customConsole;

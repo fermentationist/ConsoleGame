@@ -20,7 +20,8 @@ const ConsoleGame = {
 		prefMode: false,
 		confirmMode: false,
 		solveMode: false,
-		fireCount: 0,
+		verbose: false,
+		fireCount: NaN,
 		inventory: [],
 		history: [],
 		turn: null,
@@ -50,7 +51,7 @@ const ConsoleGame = {
 	set mapKey (value) {
 		this.key = value;
 	},
-	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
+	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "verbose", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
 	// This function runs at the start of each turn\\
@@ -74,6 +75,9 @@ const ConsoleGame = {
 			// 	commandName !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
 			// 	return;
 			// }
+			if (this.state.verbose) {
+				this.describeSurroundings();
+			}
 			return;
 		}
 		catch (err){
@@ -119,6 +123,8 @@ const ConsoleGame = {
 		this.state.prefMode = false;
 		this.state.confirmMode = false;
 		this.state.solveMode = false;
+		this.state.verbose = false;
+		this.state.fireCount = NaN;
 		this.state.inventory = [];
 		this.state.history = [];
 		this.state.turn = 0;
@@ -254,6 +260,7 @@ const ConsoleGame = {
 			return this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.");
 		}
 		if (this.state.fireCount -- === 0 ){
+			
 			console.p("Despite your best efforts the flame flickers out.");
 		}
 		// if (this.state.solveMode === true && this.pendingAction !== "safe") {
@@ -599,7 +606,15 @@ const ConsoleGame = {
 		console.codeInline(text_3, baseStyle, codeStyle);
 		console.codeInline(this.introOptions(this.state.turn));
 	},
-
+	toggleVerbosity: function () {
+		if (this.state.verbose) {
+			this.state.verbose = false;
+			console.p("Verbose mode off.");
+			return;
+		}
+		this.state.verbose = true;
+		console.p("Maximum verbosity.");
+	},
 	_commands: function () {
 		const commands = this.commands.map(cmd => {
 			const [fn, aliases] = cmd
@@ -613,12 +628,16 @@ const ConsoleGame = {
 		});
 		console.table(commandTable);
 	},
+	setValue: function (value) {
+		return this.state.solveMode ? this.solveCode(value) : this.state.prefMode ? this.setPreference(value) : console.invalid("setValue (_) called out of context.");
+	}
 }
 
 // this function enables user to set preferences
-window._ = (value) => {
-	return ConsoleGame.state.solveMode ? ConsoleGame.solveCode(value) : ConsoleGame.setPreference(value);
-}
+window._ = ConsoleGame.setValue.bind(ConsoleGame);
+// window._ = (value) => {
+// 	return ConsoleGame.state.solveMode ? ConsoleGame.solveCode(value) : ConsoleGame.state.prefMode ? ConsoleGame.setPreference(value) : console.invalid("setValue (_) called out of context.");
+// }
 // include imported items
 ConsoleGame.items = itemModule(ConsoleGame);
 // include imported commands

@@ -6,6 +6,11 @@ const thesaurus = {
         "program",
         "📓"
     ],
+    bookshelves : [
+        "bookshelf",
+        "shelf",
+        "shelves"
+    ],
     burn: [
         "ignite",
         "incinerate",
@@ -212,7 +217,12 @@ const thesaurus = {
         "hesitate",
         "procrastinate",
         "sit"
-    ]
+    ],
+    yell: [
+        "shout",
+        "scream",
+        "cry",
+    ],
 }
 const allWords = Object.entries(thesaurus).reduce((accum, entry) => [accum, ...entry]);
 const duplicates = allWords.filter((word, currentIndex) => allWords.indexOf(word) !== currentIndex)

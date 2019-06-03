@@ -26,6 +26,10 @@ const itemModule = game => {
 			game.items._matchbook.closed = false;
 			return;
 		},
+		climb: function () {
+			game.objectMode = false;
+			console.p(`You attempt to scale the ${this.name}, but quickly slip, landing painfully on your back. That was pointless.`)
+		},
 		close: function () {
 			game.state.objectMode = false;
 			if (!game.inEnvironment(this.name)) {
@@ -73,6 +77,9 @@ const itemModule = game => {
 		},
 		incorrectGuess: function () {
 		},
+		move: function () {
+			console.p(`You cannot move the ${this.name}`);
+		},
 		open: function () {
 			game.state.objectMode = false;
 			if (!game.inEnvironment(this.name) && !game.inInventory(this.name)) {
@@ -113,7 +120,7 @@ const itemModule = game => {
 				game.mapKey[game.state.currentCell].removeFromEnv(this);
 				return console.p(`You pick up the ${this.name}.`);
 			} else {
-				return console.p(`You can't take ${this.name}`);
+				return console.p(`You cannot take the ${this.name}.`);
 			}
 		},
 		takeComponent: function () {
@@ -194,12 +201,18 @@ const itemModule = game => {
 		_books: {
 			name: "books",
 			listed: false,
-			proto: "_bookshelves"
+			description: "While you notice many of the titles as familiar works of classic literature, nothing stands out as being of particular interest.",
+			read: function () {
+				console.p("You cannot possibly read all of these books, and considering you have been abducted by persons unknown and are trapped in a strange house, you have neither the presence of mind, nor the time to sit down with a good book right now.");
+			},
+			proto: "_bookshelves",
 		},
 		_bookshelves: {
 			name: "bookshelves",
+			listed: false,
 			takeable: false,
-			article: "some"
+			article: "some",
+			description: "Wooden bookshelves line one wall of the study, reaching from floor to ceiling. There are hundreds of moldering, hardcover books lining the shelves."
 		},
 		_card: {
 			name: "card",
@@ -631,92 +644,6 @@ const itemModule = game => {
 			listed: false,
 			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
 		},
-		
-		// 	revealText (text) {
-		// 		if (! this.previouslyRevealed) {
-		// 			console.p(text + "a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.");
-		// 			game.mapKey[this.location].hideSecrets = false;
-		// 			this.previouslyRevealed = true;
-		// 		}
-		// 	},
-		// 	move () {
-		// 		this.revealText("When you move the terrible painting, ");
-		// 	},
-		// 	turn () {
-		// 		this.move()
-		// 	}
-		// // },
-		// _phonograph: {
-		// 	name: "phonograph",
-		// 	description: "The old phonograph has a built-in speaker, and looks like it might still work.",
-		// 	play: function () {
-		// 		if (!game.inEnvironment("disc") && !game.inInventory("disc")) {
-		// 			console.p("First, you will need to find something to play on the phonograph.")
-		// 			return;
-		// 		}
-		// 		return game.displayItem({
-		// 			title: "\nUntitled (litany)",
-		// 			artist: "Dennis Hodges",
-		// 			year: "2010",
-		// 			info: "Found audio recordings",
-		// 			source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"
-		// 		});
-		// 	},
-		// 	use: function () {
-		// 		this.play.call(this)
-		// 	},
-				
-		// },
-		// _projector: {
-		// 	name: "projector",
-		// 	description: "It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.",
-		// 	play: function () {
-		// 		if (!game.inEnvironment("cartridge") && !game.inInventory("cartridge")) {
-		// 			console.p("First, you will need to find something to project with the projector.")
-		// 			return;
-		// 		}
-		// 		return game.displayItem({
-		// 			title: "\nCanned Laughs",
-		// 			artist: "Dennis Hodges",
-		// 			year: "2001",
-		// 			info: "Super 8mm film to video transfer with dubbed audio",
-		// 			source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview",
-		// 			dimensions: [640, 480]
-		// 		});
-		// 	},
-		// 	use: function () {
-		// 		this.play.call(this)
-		// 	},
-		// 	project: function () {
-		// 		this.play.call(this);
-		// 	}
-		// },
-		// _safe: {
-		// 	name: "safe",
-		// 	closed: true,
-		// 	locked: true,
-		// 	takeable: false,
-		// 	description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
-		// 	contents: [],
-		// 	open: function () {
-		// 		this.unlock.call(this);
-		// 	},
-		// 	unlock: function () {
-		// 		game.state.solveMode = true;
-		// 		game.state.objectMode = false;
-		// 		console.digi("ENTER PASSCODE:")
-		// 	},
-		// 	use: function () {
-		// 		this.unlock.call(this);
-		// 	},
-		// },
-		
-		// _table: {
-		// 	name: "table",
-		// 	takeable: false,
-		// 	listed: false,
-		// 	description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
-		// },
 	}
 	
 	// Prototype-links each of the objects in items to either Item or other prototype, if defined

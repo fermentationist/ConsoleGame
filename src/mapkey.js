@@ -80,7 +80,7 @@ const mapKey = game => {
 			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
-			visibleEnv: ["desk", "painting", "chair", "bookshelves", "booklet"],
+			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books"],
 			hiddenEnv: ["safe"],
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove housing a wall safe.",
 			get description (){

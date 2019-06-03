@@ -20,6 +20,7 @@ const Commands = game => {
 		mapKey,
 		displayItem,
 		cases} = game;
+	const toggleVerbosity = game.toggleVerbosity.bind(game);
 	// Change player's location on the map, given a direction
 	const _movePlayer = (direction) => {
 		let newPosition = {
@@ -172,7 +173,10 @@ const Commands = game => {
 		return item[action]();
 	}
 
-		
+	const _yell = () => {
+		console.scream("Aaaarrgh!!!!");
+	}
+
 	const _yes = () => {
 		if (! game.state.confirmMode) {
 			console.p("nope.");
@@ -245,6 +249,7 @@ const Commands = game => {
 		[_movePlayer, cases("down") + ",d,D"],
 
 		// Actions
+		
 		[_go, aliasString("go", thesaurus)],
 		[_wait, aliasString("wait", thesaurus) + ",z,Z,zzz,ZZZ,Zzz"],
 		[_look, aliasString("look", thesaurus) + ",l,L"],
@@ -252,6 +257,7 @@ const Commands = game => {
 		[_listen, aliasString("listen", thesaurus)],
 		[_inventory, aliasString("inventory", thesaurus) + ",i,I"],
 		[_rezrov, aliasString("rezrov", thesaurus)],
+		[_yell, aliasString("yell", thesaurus)],
 		[_act_upon, aliasString("use", thesaurus)],
 		[_act_upon, aliasString("take", thesaurus)],
 		[_act_upon, aliasString("read", thesaurus)],
@@ -265,6 +271,7 @@ const Commands = game => {
 		[_act_upon, aliasString("contemplate", thesaurus)],
 		[_act_upon, aliasString("unlock", thesaurus)],
 		[_act_upon, aliasString("open", thesaurus)],
+		[_act_upon, aliasString("climb", thesaurus)],
 		[_act_upon, aliasString("close", thesaurus)],
 		[_act_upon, aliasString("lock", thesaurus)],
 		[_act_upon, aliasString("turn", thesaurus)],
@@ -303,6 +310,7 @@ const Commands = game => {
 		[_quit, cases("quit")],
 		[_quit, cases("restart")],
 		[_yes, cases("yes") + ",y,Y"],
+		[toggleVerbosity, cases("verbose")],
 
 	];
 	const itemNames = Object.keys(game.items).map(item => item.slice(1));
