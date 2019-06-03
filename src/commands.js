@@ -247,7 +247,7 @@ const Commands = game => {
 		// Actions
 		[_go, aliasString("go", thesaurus)],
 		[_wait, aliasString("wait", thesaurus) + ",z,Z,zzz,ZZZ,Zzz"],
-		[_look, cases("look", "see", "observe") + ",l,L"],
+		[_look, aliasString("look", thesaurus) + ",l,L"],
 		[_smell, aliasString("smell", thesaurus)],
 		[_listen, aliasString("listen", thesaurus)],
 		[_inventory, aliasString("inventory", thesaurus) + ",i,I"],

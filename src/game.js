@@ -219,7 +219,7 @@ const ConsoleGame = {
 		const iFrame = document.createElement("iframe");
 		iFrame.src = galleryItem.source;
 		iFrame.autoplay = true;
-		iFrame.setAttribute("style", "width:100vw;height:100vh;background-color:gray;");
+		iFrame.setAttribute("style", "width:100vw;height:80vh;background-color:gray;top:0;position:sticky;");
 		const p = document.createElement("p");
 		p.setAttribute("style", "text-align:center;")
 		const title = document.createElement("h2");

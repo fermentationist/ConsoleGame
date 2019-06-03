@@ -8,7 +8,7 @@ const mapKey = game => {
 		hideSecrets: false, // used to toggle room description and whether player has access to hiddenEnv
 		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing is happening, nor is anything of interest is likely to happen here in the future.", // the default text displayed when player enters or "looks" at room
 		smell: "Your nose is unable to detect anything unusual, beyond the smell of mildew and rot that permeates the entirety of the decrepit building.", // text displayed in response to smell command
-		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creaking of sagging floorboards underfoot.", // text displayed in response to listen command
+		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creak of sagging floorboards underfoot.", // text displayed in response to listen command
 		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
 		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
 		get env (){ // accessor property returns an array containing the names (as strngs) of the items in present environment
@@ -77,7 +77,7 @@ const mapKey = game => {
 
 		"+": {
 			name: "Study",
-			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair, upholstered in worn mahogany leather.",
+			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
 			visibleEnv: ["desk", "painting", "chair", "bookshelves", "booklet"],

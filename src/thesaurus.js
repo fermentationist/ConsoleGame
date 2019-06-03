@@ -30,6 +30,10 @@ const thesaurus = {
         "mull",
         "ruminate"
     ],
+    cup: [
+        "chalice",
+        "goblet"
+    ],
     disc: [
         "record",
         "album",
@@ -69,7 +73,8 @@ const thesaurus = {
         "study",
         "investigate",
         "inspect",
-        "scan"
+        "scan",
+        "search"
     ],
     glove: [
         "mitt",
