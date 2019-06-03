@@ -240,6 +240,11 @@ const itemModule = game => {
 			weight: 5,
 			description: "It is a typical crowbar, made of hexagonal steel stock, with an unpolished black surface. It weighs about five pounds."
 		},
+		_cup : {
+			name: "cup",
+			weight: 2,
+			description: "It is a small, golden cup with two finely wrought handles.",
+		},
 		_desk: {
 			name: "desk",
 			takeable: false,
@@ -554,7 +559,7 @@ const itemModule = game => {
 			closed: true,
 			locked: true,
 			takeable: false,
-			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a complete alphanumeric keypad resides beneath what looks like a small digital readout.",
+			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.",
 			contents: [],
 			open: function () {
 				this.unlock.call(this);
@@ -562,7 +567,8 @@ const itemModule = game => {
 			unlock: function () {
 				game.state.solveMode = true;
 				game.state.objectMode = false;
-				console.digi("ENTER PASSCODE:")
+				console.info("To enter the ")
+				console.digi("ENTER PASSCODE:");
 			},
 			use: function () {
 				this.unlock.call(this);
