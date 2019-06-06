@@ -115,7 +115,7 @@ const itemModule = game => {
 		},
 		take: function () {
 			game.state.objectMode = false;
-			if (this.takeable && game.inEnvironment(this.name)) {
+			if (this.takeable && (game.inEnvironment(this.name) || game.inOpenContainers(this.name)) ) {
 				game.addToInventory([this]);
 				game.mapKey[game.state.currentCell].removeFromEnv(this);
 				return console.p(`You pick up the ${this.name}.`);
@@ -289,6 +289,10 @@ const itemModule = game => {
 		_desk: {
 			name: "desk",
 			takeable: false,
+			openable: true,
+			closed: true,
+			contents: [],
+			description: "The antique writing desk is six feet in length, and blanketed with dust. It has a single drawer on one side."
 		},
 		_disc: {
 			name: "disc",
@@ -344,6 +348,28 @@ const itemModule = game => {
 				return;
 			}
 
+		},
+		_drawer: {
+			name: "drawer",
+			listed: false,
+			contents: [],
+			proto: "_desk",
+			get description () {
+				if (this.closed) {
+					return "The drawer is closed.";
+				}
+				return `The drawer is open. There is ${this.contents.length < 1 ? "nothing": game.formatList(this.contents.map(item => `${item.article} ${item.name}`))} inside.`
+			},
+			// open: function () {
+			// 	Object.getPrototypeOf(this).open.call(this);
+			// 	if (this.contents.length < 1){
+			// 		return;
+			// 	}
+			// 	this.contents.forEach(item => {
+			// 		game.mapKey[game.state.currentCell].addToEnv(item.name);
+			// 	});
+			// 	this.contents = [];
+			// }
 		},
 		_filthy_note: {
 			name: "filthy note",

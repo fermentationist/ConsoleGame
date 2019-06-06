@@ -185,6 +185,7 @@ const ConsoleGame = {
 		const itemStr = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
 		const moveOptions = `You can go ${this.movementOptions()}.`;
 		console.header(this.currentHeader());
+		console.invalid("this.itemsWithOpenContainers", this.itemsWithOpenContainers());
 		return console.p(description + "\n" + moveOptions + "\n" + itemStr + "\n");
 	},
 
@@ -208,12 +209,30 @@ const ConsoleGame = {
 		}
 		const environment = this.mapKey[this.state.currentCell].env;
 		const envIndex = environment.map((item) => item.name).indexOf(itemName);
-		const objectFromEnvironment = (envIndex !== -1) && this.mapKey[`${this.state.currentCell}`].env[envIndex];
+		const objectFromEnvironment = (envIndex !== -1) && this.mapKey[this.state.currentCell].env[envIndex];
 		return objectFromEnvironment;
+	},
+
+	inOpenContainers: function (itemName){
+		const [objectFromContainer] = this.itemsWithOpenContainers.filter(openContainer => openContainer.name = itemName);
+		return objectFromContainer;
+	},
+
+	itemsWithOpenContainers: function () {
+		const itemsWithContainers = this.mapKey[this.state.currentCell].env.filter(item => item.contents && item.contents.length > 0);
+		// console.log("+TCL: itemsWithContainers", itemsWithContainers)
+		const openContainerItems = itemsWithContainers.filter(containerItem => {
+			// console.log("TCL: containerItem", containerItem)
+			// console.log("TCL: containerItem.closed", containerItem.closed)
+			return containerItem.closed === false;
+			
+		});
+		return openContainerItems;
 	},
 
 	itemsInEnvironment: function () {
 		const listedItems = this.state.env.filter(item => item.listed);
+		// const listedItemsInContainers = this.
 		return listedItems.length && this.formatList(this.state.env.filter(item => item.listed)
 			.map((item) => `${item.article} ${item.name}`));
 	},
@@ -543,6 +562,8 @@ const ConsoleGame = {
 		this.stockDungeon("visibleEnv");
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key);
+		this.items._drawer.contents.push(this.items._card);
+		this.items._drawer.contents.push(this.items._matchbook);
 		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._matchbook]);
 	
 	},
@@ -574,33 +595,12 @@ const ConsoleGame = {
 		// Greeting to be displayed at the beginning of the game
 		const baseStyle = `font-family:${primaryFont};color:pink;font-size:105%;line-height:1.5;`;
 		const italicCodeStyle = "font-family:courier;color:#29E616;font-size:115%;font-style:italic;line-height:2;";
-		const codeStyle = "font-family:courier;color:#29E616;font-size:115%;line-height:1.5;";/*
-		const text_0 = ["Due to the limitations of the browser console as a medium, the commands you may enter can only be one-word long, with no spaces. "];
-		console.codeInline(text_0, baseStyle, null);
-		const text_1 = [
-			"However, two-word commands may be constructed on two separate lines. For example, if you wanted to examine the glove, you would first type ",
-			"examine ",
-			"to which the game would respond ",
-			"What would you like to examine? ",
-			"Then you would type the object of your intended action, ",
-			"glove",
-			", to complete the command."
-		];
-		console.codeInline(text_1, baseStyle, codeStyle)
-		const text_2 = [
-			"Alternately, you may enter both words on the same line, provided they are separated with a semicolon and no spaces, i.e ",
-			"examine;glove"
-		]
-		console.codeInline(text_2, baseStyle, codeStyle);*/
-	
+		const codeStyle = "font-family:courier;color:#29E616;font-size:115%;line-height:1.5;";
 		const text = ["Valid commands are one word long, with no spaces. Compound commands consist of at most two commands, separated by a carriage return or a semicolon. For example:\n", "get\n", "What would you like to take?\n", "lamp\n", "You pick up the lamp.\n","or,\n", "get;lamp\n", "What would you like to take?\nYou pick up the lamp."];
 		const styles = [baseStyle, codeStyle, italicCodeStyle, codeStyle, italicCodeStyle, baseStyle, codeStyle, italicCodeStyle];
 		console.inline(text, styles);
-
 		const text_2 = ["Typing ", "inventory ", "or ", "i ", "will display a list of any items the player is carrying. \nTyping ", "look ", "or ", "l ", "will give you a description of your current environs in the game. \nCommands with prepositions are not presently supported, and ", "look ", "can only be used to \"look around\", and not to \"look at\" something. Please instead use ", "examine ", "or its shortcut ", "x ", "to investigate an item's properties. \nThe player may move in the cardinal directions– ", "north", ", ", "south", ", ", "east", " and ", "west ", "as well as ", "up ", "and ", "down. ", "Simply type the direction you want to move. These may be abbreviated as ", "n", ", ", "s", ", ", "e", ", ", "w", ", ", "u ", "and ", "d ", ", respectively."];
-		
 		console.codeInline(text_2, baseStyle, codeStyle);
-
 		const text_3 = ["You may save your game progress (it will be saved to localStorage) by typing ", "save", ". You will then be asked to select a save slot, ", "_0 ", "through ", "_9 ", "(remember, user input can't begin with a number). Typing ", "help ", "will display the in-game help text."];
 	
 		console.codeInline(text_3, baseStyle, codeStyle);

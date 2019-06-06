@@ -16,7 +16,19 @@ const mapKey = game => {
 			// 	return this.visibleEnv;
 			// }
 			// return [...this.visibleEnv, ...this.hiddenEnv]; // include the items in hiddenEnv
-			if (this.hideSecrets){
+			
+			// const itemsInContainers = game.itemsWithOpenContainers().reduce((accum, contents) => accum.concat(contents));
+			// const itemsWithContainers = this.visibleEnv.filter(item => item.contents && item.contents.length > 0);
+			// const openContainerItems = itemsWithContainers.filter(containerItem => {
+			// 	return containerItem.closed === false;
+			// });
+			// const containedItems = openContainerItems.length > 0 ? openContainerItems.map(item => {
+			// 	return {[item.name]: item.contents};
+			// }) : false;
+			// console.log("TCL: getenv -> containedItems", containedItems)
+			const containedItems = this.containedEnv()//.map(obj => Object.entries(obj))
+			console.log("øTCL: getenv -> containedItems", containedItems)
+			if (this.hideSecrets) {
 				return this.visibleEnv;
 			}
 			this.visibleEnv = this.visibleEnv.concat(this.hiddenEnv);
@@ -26,10 +38,20 @@ const mapKey = game => {
 		set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
 			return this.visibleEnv = newEnv;
 		},
+		containedEnv: function () {
+			const itemsWithContainers = this.visibleEnv.filter(item => item.contents && item.contents.length > 0);
+			const openContainerItems = itemsWithContainers.filter(containerItem => {
+				return containerItem.closed === false;
+			});
+			const containedItems = openContainerItems.length > 0 ? openContainerItems.map(item => {
+				return { [item.name]: item.contents };
+			}) : false;
+			console.log("TCL: getenv -> containedItems", containedItems)
+			return containedItems;
+		},
 		removeFromEnv: function (item) {
 			const newEnv =  this.env.filter(it => it.name !== item.name);
 			return this.env = newEnv;
-			
 		},
 		addToEnv: function (itemName) { 
 			// const itemObj = game.items[`_${itemName}`];
@@ -80,7 +102,7 @@ const mapKey = game => {
 			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
-			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books"],
+			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books", "drawer"],
 			hiddenEnv: ["safe"],
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove housing a wall safe.",
 			get description (){
