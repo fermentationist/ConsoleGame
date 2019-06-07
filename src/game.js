@@ -232,7 +232,7 @@ const ConsoleGame = {
 
 	itemsInEnvironment: function () {
 		const listedItems = this.state.env.filter(item => item.listed);
-		// const listedItemsInContainers = this.
+		// const nestedItems = 
 		return listedItems.length && this.formatList(this.state.env.filter(item => item.listed)
 			.map((item) => `${item.article} ${item.name}`));
 	},

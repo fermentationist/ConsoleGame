@@ -12,42 +12,42 @@ const mapKey = game => {
 		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
 		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
 		get env (){ // accessor property returns an array containing the names (as strngs) of the items in present environment
-			// if (this.hideSecrets){ //do not include items in hiddenEnv
-			// 	return this.visibleEnv;
-			// }
-			// return [...this.visibleEnv, ...this.hiddenEnv]; // include the items in hiddenEnv
-			
-			// const itemsInContainers = game.itemsWithOpenContainers().reduce((accum, contents) => accum.concat(contents));
-			// const itemsWithContainers = this.visibleEnv.filter(item => item.contents && item.contents.length > 0);
-			// const openContainerItems = itemsWithContainers.filter(containerItem => {
-			// 	return containerItem.closed === false;
-			// });
-			// const containedItems = openContainerItems.length > 0 ? openContainerItems.map(item => {
-			// 	return {[item.name]: item.contents};
-			// }) : false;
-			// console.log("TCL: getenv -> containedItems", containedItems)
-			const containedItems = this.containedEnv()//.map(obj => Object.entries(obj))
-			console.log("øTCL: getenv -> containedItems", containedItems)
+			const visibleAndNestedEnv = this.visibleEnv.concat(this.containedEnv)
 			if (this.hideSecrets) {
-				return this.visibleEnv;
+				return visibleAndNestedEnv;
 			}
-			this.visibleEnv = this.visibleEnv.concat(this.hiddenEnv);
-			this.hiddenEnv = [];
-			return this.visibleEnv;
+			const environment = visibleAndNestedEnv.concat(this.hiddenEnv);
+            console.log("TCL: getenv -> environment", environment)
+			// this.hiddenEnv = [];
+			// return this.visibleEnv;
+			return environment;//this.visibleEnv + this.hiddenEnv + this.containedEnv;
 		},
 		set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
 			return this.visibleEnv = newEnv;
 		},
-		containedEnv: function () {
+		get openContainers () {
 			const itemsWithContainers = this.visibleEnv.filter(item => item.contents && item.contents.length > 0);
 			const openContainerItems = itemsWithContainers.filter(containerItem => {
 				return containerItem.closed === false;
 			});
-			const containedItems = openContainerItems.length > 0 ? openContainerItems.map(item => {
-				return { [item.name]: item.contents };
-			}) : false;
-			console.log("TCL: getenv -> containedItems", containedItems)
-			return containedItems;
+			return openContainerItems;
+		},
+		get containedEnv () {
+			const containedItems = this.openContainers.length > 0 ? this.openContainers.map(item => {
+				return item.contents.map(nestedItem => nestedItem.name);
+			}) : [];
+			return containedItems.flat();
+		},
+		nestedItemString: function () {
+			const containedItems = this.containedEnv.map(obj => {
+				const name = Object.keys(obj)[0];
+				const objectNames = obj[name].map(item => `${item.article} ${item.name}`);
+				return {[name]: game.formatList(objectNames)};
+			});
+			const containedString = containedItems.map(container => {
+				return `There is ${Object.keys(container)}, containing ${Object.values(container)}.`
+			});
+            return containedString.join("\n");
 		},
 		removeFromEnv: function (item) {
 			const newEnv =  this.env.filter(it => it.name !== item.name);
@@ -102,7 +102,7 @@ const mapKey = game => {
 			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
-			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books", "drawer"],
+			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books", "drawer", "drawer"],
 			hiddenEnv: ["safe"],
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove housing a wall safe.",
 			get description (){
