@@ -157,16 +157,21 @@ const Commands = game => {
 
 	// Handles commands that are item names.
 	const _items = (itemName) => {
+        console.log("TCL: _items called")
 		// Exit function with error message if previous command does not require an object
 		
 		if (!game.state.objectMode && itemName !== "maps"){
-			return console.invalid("Invalid command");
+			console.invalid("Invalid command");
+			return;
 		}
 		// Exit function with error message if item is not available in player inventory or current location.
-		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
+		console.info("did we make it this far?")
+		const item = game.inEnvironment(itemName)// || game.inInventory(itemName);
+        console.log("TCL: _items -> item", item)
 		if (!item){
 			game.state.objectMode = false;
-			return console.p(`${itemName} is not available`);
+			console.p(`${itemName} is not available`);
+			return;
 		}
 		const action = game.state.pendingAction;
 		// invoke the item's method that corresponds to the selected action

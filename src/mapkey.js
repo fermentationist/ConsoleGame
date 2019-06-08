@@ -12,46 +12,86 @@ const mapKey = game => {
 		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
 		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
 		get env (){ // accessor property returns an array containing the names (as strngs) of the items in present environment
-			const visibleAndNestedEnv = this.visibleEnv.concat(this.containedEnv)
-			if (this.hideSecrets) {
-				return visibleAndNestedEnv;
+			// if (this.hideSecrets) {
+			// 	return this.visibleEnv;
+			// }
+			// // this.hiddenEnv = [];
+			// // return this.visibleEnv;
+			// return this.visibleEnv.concat(this.hiddenEnv);
+			// eslint-disable-next-line getter-return
+			return {
+				visibleEnv: this.visibleEnv,
+				containedEnv: this.containedEnv,
+				hiddenEnv: this.hideSecrets ? [] : this.hiddenEnv
 			}
-			const environment = visibleAndNestedEnv.concat(this.hiddenEnv);
-            console.log("TCL: getenv -> environment", environment)
-			// this.hiddenEnv = [];
-			// return this.visibleEnv;
-			return environment;//this.visibleEnv + this.hiddenEnv + this.containedEnv;
 		},
-		set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
-			return this.visibleEnv = newEnv;
-		},
+		// set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
+		// 	return this.visibleEnv = newEnv;
+		// },
+
+		// returns any items in the environment that contain other items and are open, as an array of the item objects
 		get openContainers () {
-			const itemsWithContainers = this.visibleEnv.filter(item => item.contents && item.contents.length > 0);
+			const itemsInEnv = this.hideSecrets ? this.visibleEnv : this.visibleEnv.concat(this.hiddenEnv);
+            console.log("TCL: getopenContainers -> itemsInEnv", itemsInEnv)
+			const itemsWithContainers = itemsInEnv.filter(item => item.contents && item.contents.length > 0);
+            console.log("TCL: getopenContainers -> itemsWithContainers", itemsWithContainers)
 			const openContainerItems = itemsWithContainers.filter(containerItem => {
 				return containerItem.closed === false;
 			});
+            console.trace("TCL: getopenContainers -> openContainerItems", openContainerItems)
 			return openContainerItems;
 		},
+
+		// returns the items available in the environment that are nested inside other objects
 		get containedEnv () {
 			const containedItems = this.openContainers.length > 0 ? this.openContainers.map(item => {
-				return item.contents.map(nestedItem => nestedItem.name);
+				return item.contents;
 			}) : [];
 			return containedItems.flat();
 		},
-		nestedItemString: function () {
-			const containedItems = this.containedEnv.map(obj => {
-				const name = Object.keys(obj)[0];
-				const objectNames = obj[name].map(item => `${item.article} ${item.name}`);
-				return {[name]: game.formatList(objectNames)};
-			});
-			const containedString = containedItems.map(container => {
-				return `There is ${Object.keys(container)}, containing ${Object.values(container)}.`
-			});
-            return containedString.join("\n");
+
+		set containedEnv (newEnv) {
+
 		},
+
+		// nestedItemString: function () {
+		// 	const containedItems = this.containedEnv.map(obj => {
+		// 		const name = Object.keys(obj)[0];
+		// 		const objectNames = obj[name].map(item => `${item.article} ${item.name}`);
+		// 		return {[name]: game.formatList(objectNames)};
+		// 	});
+		// 	const containedString = containedItems.map(container => {
+		// 		return `There is ${Object.keys(container)}, containing ${Object.values(container)}.`
+		// 	});
+        //     return containedString.join("\n");
+		// },
 		removeFromEnv: function (item) {
-			const newEnv =  this.env.filter(it => it.name !== item.name);
-			return this.env = newEnv;
+			const envName = game.fromWhichEnv(item.name);
+			if (envName === "containedEnv") {
+				return this.removeFromContainer(item);
+			}
+			const thisEnv = this[game.fromWhichEnv(item.name)];
+			const indexOfItem = thisEnv.map(i => i.name).indexOf(item.name)
+			const newEnv = thisEnv.splice(indexOfItem, 1);
+			// const newEnv =  this.env.filter(it => it.name !== item.name);
+			return this[game.fromWhichEnv(item.name)] = newEnv;
+		},
+		removeFromContainer: function (item) {
+			const [container] =  this.openContainers.filter(thing => thing.contents.includes(item));
+            console.trace("TCL: container", container);
+			const filteredContainer = container.contents.filter(thingy => {
+                console.log("TCL: thingy", thingy)
+				return thingy !== item
+			});
+			// wrong! don't attempt to put into this.containerEnv, put in either this.hiddenEnv or this.visibleEnv
+			console.log("TCL: filteredContainer", filteredContainer)
+			const visibleOrHidden = game.fromWhichEnv(container.name)
+            console.log("TCL: visibleOrHidden", visibleOrHidden)
+			const containerIndex = this[visibleOrHidden].map(thang => thang.name).indexOf(container.name);
+			console.log("TCL: this[visibleOrHidden][containerIndex].contents", this[visibleOrHidden][containerIndex].contents)
+			return this[visibleOrHidden][containerIndex].contents = filteredContainer;
+            
+			// return filteredContainer;
 		},
 		addToEnv: function (itemName) { 
 			// const itemObj = game.items[`_${itemName}`];
@@ -102,11 +142,11 @@ const mapKey = game => {
 			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
-			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books", "drawer", "drawer"],
+			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books", "drawer"],
 			hiddenEnv: ["safe"],
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove housing a wall safe.",
 			get description (){
-				const catalogLocation = this.env.map(x=>x.name).includes("booklet") ? "There is a booklet on the desk" : "";
+				const catalogLocation = Object.values(this.env).flat().map(x=>x.name).includes("booklet") ? "There is a booklet on the desk" : "";
 				if (this.hideSecrets) {
 					return this.visibleDescription + "\n" + "On the wall behind the chair hangs an ornately framed painting.";
 				}

@@ -37,11 +37,17 @@ const ConsoleGame = {
 			y: 13,
 			x: 7
 		},
-		get currentCell (){ 
+		get currentCellCode (){ 
 			return ConsoleGame.maps[this.position.z][this.position.y][this.position.x]
 		},
+		get currentMapCell () {
+			return ConsoleGame.mapKey[this.currentCellCode]
+		},
 		get env (){
-			return ConsoleGame.mapKey[this.currentCell].env;
+			return this.currentMapCell.env;
+		},
+		get combinedEnv () {
+			return Object.values(this.env).flat();
 		},
 		
 	},
@@ -54,6 +60,8 @@ const ConsoleGame = {
 	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "verbose", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
+    console.log("TCL: commandName", commandName)
+    console.log("TCL: interpreterFunction", interpreterFunction)
 	// This function runs at the start of each turn\\
 		this.timers();
 		if (this.state.gameOver) {
@@ -69,12 +77,6 @@ const ConsoleGame = {
 				}
 			}
 			interpreterFunction(commandName);
-            
-			// if (this.state.solveMode === true && commandName !== "safe") {
-			// 	this.state.solveMode = false;
-			// 	commandName !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
-			// 	return;
-			// }
 			if (this.state.verbose) {
 				this.describeSurroundings();
 			}
@@ -179,22 +181,23 @@ const ConsoleGame = {
 	},
 
 	describeSurroundings: function (){
-		const name = this.mapKey[this.state.currentCell].name;
-		const turn = this.state.turn;
-		const description = this.mapKey[this.state.currentCell].description;
+		// const name = this.state.currentMapCell.name;
+		// const turn = this.state.turn;
+		const description = this.state.currentMapCell.description;
 		const itemStr = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
+		const nestedItemStr = this.itemsInOpenContainers(); 
+        console.log("TCL: nestedItemStr", nestedItemStr)
 		const moveOptions = `You can go ${this.movementOptions()}.`;
 		console.header(this.currentHeader());
-		console.invalid("this.itemsWithOpenContainers", this.itemsWithOpenContainers());
-		return console.p(description + "\n" + moveOptions + "\n" + itemStr + "\n");
+		return console.p(description + "\n" + moveOptions + "\n" + itemStr + "\n" + nestedItemStr);
 	},
 
 	currentHeader: function (columnWidth = 80){
-		const roomName = this.mapKey[this.state.currentCell].name;
+		const roomName = this.state.currentMapCell.name;
 		const turn = `Turn : ${this.state.turn}`;
 		const gapSize = columnWidth - roomName.length - turn.length;
 		const gap = " ".repeat(gapSize);
-		return `\n${roomName}${gap}${turn}`;
+		return `\n${roomName}${gap}${turn}\n`;
 	},
 
 	inInventory: function (itemName){
@@ -204,37 +207,71 @@ const ConsoleGame = {
 	},
 
 	inEnvironment: function (itemName){
+        console.trace("TCL: inEnvironment called.")
 		if (itemName === "all") {
 			return this.items._all;
 		}
-		const environment = this.mapKey[this.state.currentCell].env;
-		const envIndex = environment.map((item) => item.name).indexOf(itemName);
-		const objectFromEnvironment = (envIndex !== -1) && this.mapKey[this.state.currentCell].env[envIndex];
+		const whichEnv = this.fromWhichEnv(itemName);
+        console.log("TCL: whichEnv", whichEnv)
+		const objectFromEnvironment = whichEnv ?  this.state.env[whichEnv].filter(item => item.name === itemName)[0] : false;
+		console.trace("TCL: objectFromEnvironment", objectFromEnvironment)
 		return objectFromEnvironment;
 	},
 
-	inOpenContainers: function (itemName){
-		const [objectFromContainer] = this.itemsWithOpenContainers.filter(openContainer => openContainer.name = itemName);
-		return objectFromContainer;
-	},
-
-	itemsWithOpenContainers: function () {
-		const itemsWithContainers = this.mapKey[this.state.currentCell].env.filter(item => item.contents && item.contents.length > 0);
-		// console.log("+TCL: itemsWithContainers", itemsWithContainers)
-		const openContainerItems = itemsWithContainers.filter(containerItem => {
-			// console.log("TCL: containerItem", containerItem)
-			// console.log("TCL: containerItem.closed", containerItem.closed)
-			return containerItem.closed === false;
-			
+	fromWhichEnv: function (itemName) {
+		const itemsInEnvironment = this.state.combinedEnv.map(item => item.name);
+        console.log("TCL: itemsInEnvironment", itemsInEnvironment)
+		if (!itemsInEnvironment.includes(itemName)){
+            console.log("TCL: !itemsInEnvironment.includes(itemName)", !itemsInEnvironment.includes(itemName))
+			return false;
+		}
+		const environments = Object.entries(this.state.env).map(entry => {
+			const names = entry[1].length ? entry[1].map(item => item.name) : [];
+			return [entry[0], names]
 		});
-		return openContainerItems;
+        console.log("TCL: environments", environments)
+		const theEnv = environments.filter(env => env[1].includes(itemName));
+		return theEnv.length > 0 ? theEnv[0][0] : "containedEnv";
 	},
 
+	// inOpenContainers: function (itemName){
+	// 	const [objectFromContainer] = this.itemsWithOpenContainers.filter(openContainer => openContainer.name = itemName);
+	// 	return objectFromContainer;
+	// },
+
+	// itemsWithOpenContainers: function () {
+	// 	const itemsWithContainers = this.state.currentMapCell.env.filter(item => item.contents && item.contents.length > 0);
+	// 	// console.log("+TCL: itemsWithContainers", itemsWithContainers)
+	// 	const openContainerItems = itemsWithContainers.filter(containerItem => {
+	// 		// console.log("TCL: containerItem", containerItem)
+	// 		// console.log("TCL: containerItem.closed", containerItem.closed)
+	// 		return containerItem.closed === false;
+			
+	// 	});
+	// 	return openContainerItems;
+	// },
+
+	// returns a list of items available in the environment, as a formatted string
 	itemsInEnvironment: function () {
-		const listedItems = this.state.env.filter(item => item.listed);
-		// const nestedItems = 
-		return listedItems.length && this.formatList(this.state.env.filter(item => item.listed)
-			.map((item) => `${item.article} ${item.name}`));
+		const env = this.state.currentMapCell.hideSecrets ? this.state.env.visibleEnv : this.state.env.visibleEnv.concat(this.state.env.hiddenEnv);
+		const listedItems = env.filter(item => item.listed);
+		return listedItems.length && this.formatList(listedItems.map((item) => `${item.article} ${item.name}`));
+	},
+
+	// returns a list of items available in the environment that are nested inside other objects, as a formatted string
+	itemsInOpenContainers: function () {
+		const openContainers = this.state.currentMapCell.openContainers;
+        console.log("TCL: openContainers", openContainers)
+		const containedItems = openContainers.map(obj => {
+			const name = `${obj.article} ${obj.name}`;// the name of the container
+			const objectNames = obj.contents.map(item => `${item.article} ${item.name}`);// array of names of the objects inside the container (with articles)
+			return [name, this.formatList(objectNames)];// returns an object with a single property, the name of the container, 
+		});
+        console.log("TCL: containedItems", containedItems)
+		const containedString = containedItems.map(container => {
+			return `There is ${container[0]}, containing ${container[1]}.`
+		});
+		return containedString.join("\n");
 	},
 
 	displayItem: function (galleryItem = {title: "untitled", artist: "unknown", info: null, source: "", dimensions: null}) {
@@ -476,7 +513,7 @@ const ConsoleGame = {
 	},
 	solveCode: function (value){
 		this.state.solveMode = false;
-		const puzzles = this.state.env.filter(item => item.solution);
+		const puzzles = this.state.combinedEnv.filter(item => item.solution);
 		if (puzzles.length < 1) {
 			return;
 		}
@@ -562,9 +599,8 @@ const ConsoleGame = {
 		this.stockDungeon("visibleEnv");
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key);
-		this.items._drawer.contents.push(this.items._card);
-		this.items._drawer.contents.push(this.items._matchbook);
-		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._matchbook]);
+		this.items._drawer.contents.push(this.items._card, this.items._key);
+		this.addToInventory([this.items._grue_repellant, this.items._no_tea]);
 	
 	},
 

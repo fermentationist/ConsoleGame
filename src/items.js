@@ -59,7 +59,7 @@ const itemModule = game => {
 			game.state.objectMode = false;
 			if (game.inInventory(this.name)) {
 				game.removeFromInventory(this);
-				game.mapKey[game.state.currentCell].env.push(this);
+				game.state.currentMapCell.env.push(this);
 				return console.p(`${this.name} dropped.`);
 			} else {
 				return console.p("You don't have that.");
@@ -115,12 +115,14 @@ const itemModule = game => {
 		},
 		take: function () {
 			game.state.objectMode = false;
-			if (this.takeable && (game.inEnvironment(this.name) || game.inOpenContainers(this.name)) ) {
+			if (this.takeable && game.inEnvironment(this.name) ) {
 				game.addToInventory([this]);
-				game.mapKey[game.state.currentCell].removeFromEnv(this);
-				return console.p(`You pick up the ${this.name}.`);
+				game.state.currentMapCell.removeFromEnv(this);
+				console.p(`You pick up the ${this.name}.`);
+				return;
 			} else {
-				return console.p(`You cannot take the ${this.name}.`);
+				console.p(`You cannot take the ${this.name}.`);
+				return;
 			}
 		},
 		takeComponent: function () {
@@ -129,7 +131,7 @@ const itemModule = game => {
 				return console.p(`You can't take that.`);
 			}
 			game.addToInventory([this]);
-			game.mapKey[game.state.currentCell].removeFromEnv(this);
+			game.state.currentMapCell.removeFromEnv(this);
 			realItem.take.call(realItem);
 		},
 		turn: function () {
@@ -164,14 +166,14 @@ const itemModule = game => {
 			listed: false,
 			takeable: false,
 			take: function () {
-				const all = game.state.env;
+				const all = game.state.combinedEnv;
 				all.map(item => {
 					return item.takeable ? item.take() : null;
 				});
 				// game.state.objectMode = false;
 				// if (this.takeable && game.inEnvironment(this.name)) {
 				// 	game.addToInventory([this]);
-				// 	game.mapKey[game.state.currentCell].removeFromEnv(this);
+				// 	game.state.currentMapCell.removeFromEnv(this);
 				// 	return console.p(`You pick up the ${this.name}`);
 				// } else {
 				// 	return console.p("You can't take that.");
@@ -256,9 +258,9 @@ const itemModule = game => {
 			listed: false,
 			pull: function () {
 				game.state.objectMode = false;
-				let dark = game.mapKey[game.state.currentCell].hideSecrets;
+				let dark = game.state.currentMapCell.hideSecrets;
 				dark ? console.p("An overhead lightbulb flickers on, faintly illuminating the room.") : console.p("The lightbulb is extinguished.");
-				game.mapKey[game.state.currentCell].hideSecrets = !dark;
+				game.state.currentMapCell.hideSecrets = !dark;
 				return game.describeSurroundings();
 			},
 			use: function () {
@@ -366,7 +368,7 @@ const itemModule = game => {
 			// 		return;
 			// 	}
 			// 	this.contents.forEach(item => {
-			// 		game.mapKey[game.state.currentCell].addToEnv(item.name);
+			// 		game.state.currentMapCell.addToEnv(item.name);
 			// 	});
 			// 	this.contents = [];
 			// }
@@ -385,7 +387,7 @@ const itemModule = game => {
 				if (this.contents.length) {
 					const hiddenItem = this.contents.pop();
 					console.p(`${this.description}\nAs you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);
-					game.mapKey[game.state.currentCell].addToEnv(hiddenItem.name);
+					game.state.currentMapCell.addToEnv(hiddenItem.name);
 					return;
 				}
 				return this.description;
@@ -615,6 +617,7 @@ const itemModule = game => {
 			name: "safe",
 			closed: true,
 			locked: true,
+			listed: false,
 			takeable: false,
 			solution: 112358,
 			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.",
@@ -627,7 +630,7 @@ const itemModule = game => {
 				console.p("Upon entering the correct passcode, the bolt inside the safe's door slides back, and the door pops open gently.");
 				if (this.contents.length > 0) {
 					console.p(`Inside the safe is ${game.formatList(this.contents.map(item => `${item.article} ${item.name}`))}.`);
-					this.contents.forEach(item => game.mapKey[game.state.currentCell].addToEnv(item.name));
+					// this.contents.forEach(item => game.state.currentMapCell.addToEnv(item.name));
 				}
 			},
 			incorrectGuess: function () {
