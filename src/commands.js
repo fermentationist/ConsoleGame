@@ -127,7 +127,7 @@ const Commands = game => {
 		});
 		
 		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ");
-		// console.log("TCL: segments", segments)
+		
 		let itemStyle = `font-size:120%;color:cyan;font-style:italic;`;
 
 		let styles = segments.map((word) => {
@@ -157,7 +157,7 @@ const Commands = game => {
 
 	// Handles commands that are item names.
 	const _items = (itemName) => {
-        console.log("TCL: _items called")
+        
 		// Exit function with error message if previous command does not require an object
 		
 		if (!game.state.objectMode && itemName !== "maps"){
@@ -165,12 +165,10 @@ const Commands = game => {
 			return;
 		}
 		// Exit function with error message if item is not available in player inventory or current location.
-		console.info("did we make it this far?")
-		const item = game.inEnvironment(itemName)// || game.inInventory(itemName);
-        console.log("TCL: _items -> item", item)
+		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
 		if (!item){
 			game.state.objectMode = false;
-			console.p(`${itemName} is not available`);
+			console.invalid(`${itemName} is not available.`);
 			return;
 		}
 		const action = game.state.pendingAction;

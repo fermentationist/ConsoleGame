@@ -57,9 +57,10 @@ const itemModule = game => {
 		},
 		drop: function () {
 			game.state.objectMode = false;
+			
 			if (game.inInventory(this.name)) {
 				game.removeFromInventory(this);
-				game.state.currentMapCell.env.push(this);
+				game.state.currentMapCell.visibleEnv.push(this);
 				return console.p(`${this.name} dropped.`);
 			} else {
 				return console.p("You don't have that.");
@@ -76,6 +77,20 @@ const itemModule = game => {
 
 		},
 		incorrectGuess: function () {
+		},
+		lock: function () {
+			game.state.objectMode = false;
+			if (this.locked){
+				console.p(`The ${this.name} is already locked.`);
+				return;
+			}
+			if (game.inInventory(this.unlockedBy)){
+				this.locked = true;
+				console.p(`Using the ${this.unlockedBy}, you lock the ${this.name}`);
+				return;
+			}
+			console.p(`You do not have the means to lock the ${this.name}.`)
+			return;
 		},
 		move: function () {
 			console.p(`You cannot move the ${this.name}`);
@@ -294,7 +309,19 @@ const itemModule = game => {
 			openable: true,
 			closed: true,
 			contents: [],
-			description: "The antique writing desk is six feet in length, and blanketed with dust. It has a single drawer on one side."
+			description: "The antique writing desk is six feet in length, and blanketed with dust. It has a single drawer on one side.",
+			open: function () {
+				Object.getPrototypeOf(this).open.call(this);
+				if (game.items._drawer.closed){
+					Object.getPrototypeOf(game.items._drawer).open.call(game.items._drawer);
+				}
+			},
+			close: function () {
+				Object.getPrototypeOf(this).close.call(this);
+				if (!game.items._desk.closed){
+					Object.getPrototypeOf(game.items._desk).close.call(game.items._desk);
+				}
+			}
 		},
 		_disc: {
 			name: "disc",
@@ -334,6 +361,11 @@ const itemModule = game => {
 				game.state.objectMode = false;
 				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a steel deadbolt, which is ${this.locked ? "locked." : "unlocked!"}`
 			},
+			lock() {
+				Object.getPrototypeOf(this).lock.call(this);
+				game.mapKey[this.lockedTarget].locked = true;
+				return;
+			},
 			unlock() {
 				Object.getPrototypeOf(this).unlock.call(this);
 				game.mapKey[this.lockedTarget].locked = false;
@@ -354,27 +386,31 @@ const itemModule = game => {
 		_drawer: {
 			name: "drawer",
 			listed: false,
+			openable: true,
+			closed: true,
 			contents: [],
-			proto: "_desk",
+			// proto: "_desk",
 			get description () {
 				if (this.closed) {
 					return "The drawer is closed.";
 				}
 				return `The drawer is open. There is ${this.contents.length < 1 ? "nothing": game.formatList(this.contents.map(item => `${item.article} ${item.name}`))} inside.`
 			},
-			// open: function () {
-			// 	Object.getPrototypeOf(this).open.call(this);
-			// 	if (this.contents.length < 1){
-			// 		return;
-			// 	}
-			// 	this.contents.forEach(item => {
-			// 		game.state.currentMapCell.addToEnv(item.name);
-			// 	});
-			// 	this.contents = [];
-			// }
+			open: function () {
+				Object.getPrototypeOf(this).open.call(this);
+				if (game.items._desk.closed){
+					Object.getPrototypeOf(game.items._desk).open.call(game.items._desk);
+				}
+			},
+			close: function () {
+				Object.getPrototypeOf(this).close.call(this);
+				if (!game.items._desk.closed){
+					Object.getPrototypeOf(game.items._desk).close.call(game.items._desk);
+				}
+			}
 		},
 		_filthy_note: {
-			name: "filthy note",
+			name: "filthy_note",
 			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
 			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
@@ -567,7 +603,24 @@ const itemModule = game => {
 			},
 			turn() {
 				this.move()
-			}
+			},
+			burn() {
+				game.state.objectMode = false;
+				if (!game.inInventory("matchbook")) {// check for matchbook, exit if not in inventory
+					console.p("You don't have the means to light a fire.");
+					return;
+				}
+				// update the description of the painting to reflect the fact that it has been burned.
+				this.description = "The painting is lying broken upon the floor. It is so badly burned now, that its subject has become indecipherable. What remains of the canvas is a carbonized black. You can't help but think that it is still an improvement compared to the original work.";
+				game.items._matchbook.closed = false;// matchbook remains open after use, if not already opened.
+				if (game.state.currentMapCell.hideSecrets) {// if painting still on wall
+					this.revealText("Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. Thinking it unwise to burn down the house you are trapped in, you remove the painting from the wall, and stomp out the fire before they can spread any further. \nWhen you look back at the wall that formerly held the burning painting, ");
+					return;
+				}
+				// if painting already removed from wall
+				this.revealText("Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. You are suddenly inspired to end your ill-considered, if brief flirtation with pyromania, and promptly stomp out the fire before they can spread any further.");
+				return;
+			},
 		},
 		_phonograph: {
 			name: "phonograph",
@@ -616,6 +669,7 @@ const itemModule = game => {
 		_safe: {
 			name: "safe",
 			closed: true,
+			openable: true,
 			locked: true,
 			listed: false,
 			takeable: false,

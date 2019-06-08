@@ -159,6 +159,12 @@ const thesaurus = {
         "skim",
         "peruse"
     ],
+    safe: [
+        "alcove",//location of safe in game
+        "strongbox",
+        "vault",
+        "wall_safe"
+    ],
     smell: [
         "sniff"
     ],

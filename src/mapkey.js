@@ -32,13 +32,13 @@ const mapKey = game => {
 		// returns any items in the environment that contain other items and are open, as an array of the item objects
 		get openContainers () {
 			const itemsInEnv = this.hideSecrets ? this.visibleEnv : this.visibleEnv.concat(this.hiddenEnv);
-            console.log("TCL: getopenContainers -> itemsInEnv", itemsInEnv)
+            
 			const itemsWithContainers = itemsInEnv.filter(item => item.contents && item.contents.length > 0);
-            console.log("TCL: getopenContainers -> itemsWithContainers", itemsWithContainers)
+            
 			const openContainerItems = itemsWithContainers.filter(containerItem => {
 				return containerItem.closed === false;
 			});
-            console.trace("TCL: getopenContainers -> openContainerItems", openContainerItems)
+            
 			return openContainerItems;
 		},
 
@@ -78,17 +78,17 @@ const mapKey = game => {
 		},
 		removeFromContainer: function (item) {
 			const [container] =  this.openContainers.filter(thing => thing.contents.includes(item));
-            console.trace("TCL: container", container);
+            
 			const filteredContainer = container.contents.filter(thingy => {
-                console.log("TCL: thingy", thingy)
+                
 				return thingy !== item
 			});
-			// wrong! don't attempt to put into this.containerEnv, put in either this.hiddenEnv or this.visibleEnv
-			console.log("TCL: filteredContainer", filteredContainer)
+
+			
 			const visibleOrHidden = game.fromWhichEnv(container.name)
-            console.log("TCL: visibleOrHidden", visibleOrHidden)
+            
 			const containerIndex = this[visibleOrHidden].map(thang => thang.name).indexOf(container.name);
-			console.log("TCL: this[visibleOrHidden][containerIndex].contents", this[visibleOrHidden][containerIndex].contents)
+			
 			return this[visibleOrHidden][containerIndex].contents = filteredContainer;
             
 			// return filteredContainer;

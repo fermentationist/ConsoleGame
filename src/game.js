@@ -60,8 +60,8 @@ const ConsoleGame = {
 	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "verbose", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
-    console.log("TCL: commandName", commandName)
-    console.log("TCL: interpreterFunction", interpreterFunction)
+    
+    
 	// This function runs at the start of each turn\\
 		this.timers();
 		if (this.state.gameOver) {
@@ -181,12 +181,9 @@ const ConsoleGame = {
 	},
 
 	describeSurroundings: function (){
-		// const name = this.state.currentMapCell.name;
-		// const turn = this.state.turn;
 		const description = this.state.currentMapCell.description;
 		const itemStr = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
-		const nestedItemStr = this.itemsInOpenContainers(); 
-        console.log("TCL: nestedItemStr", nestedItemStr)
+		const nestedItemStr = this.nestedItemString(); 
 		const moveOptions = `You can go ${this.movementOptions()}.`;
 		console.header(this.currentHeader());
 		return console.p(description + "\n" + moveOptions + "\n" + itemStr + "\n" + nestedItemStr);
@@ -207,49 +204,29 @@ const ConsoleGame = {
 	},
 
 	inEnvironment: function (itemName){
-        console.trace("TCL: inEnvironment called.")
 		if (itemName === "all") {
 			return this.items._all;
 		}
 		const whichEnv = this.fromWhichEnv(itemName);
-        console.log("TCL: whichEnv", whichEnv)
 		const objectFromEnvironment = whichEnv ?  this.state.env[whichEnv].filter(item => item.name === itemName)[0] : false;
-		console.trace("TCL: objectFromEnvironment", objectFromEnvironment)
 		return objectFromEnvironment;
 	},
 
 	fromWhichEnv: function (itemName) {
 		const itemsInEnvironment = this.state.combinedEnv.map(item => item.name);
-        console.log("TCL: itemsInEnvironment", itemsInEnvironment)
+        
 		if (!itemsInEnvironment.includes(itemName)){
-            console.log("TCL: !itemsInEnvironment.includes(itemName)", !itemsInEnvironment.includes(itemName))
+            
 			return false;
 		}
 		const environments = Object.entries(this.state.env).map(entry => {
 			const names = entry[1].length ? entry[1].map(item => item.name) : [];
 			return [entry[0], names]
 		});
-        console.log("TCL: environments", environments)
+        
 		const theEnv = environments.filter(env => env[1].includes(itemName));
 		return theEnv.length > 0 ? theEnv[0][0] : "containedEnv";
 	},
-
-	// inOpenContainers: function (itemName){
-	// 	const [objectFromContainer] = this.itemsWithOpenContainers.filter(openContainer => openContainer.name = itemName);
-	// 	return objectFromContainer;
-	// },
-
-	// itemsWithOpenContainers: function () {
-	// 	const itemsWithContainers = this.state.currentMapCell.env.filter(item => item.contents && item.contents.length > 0);
-	// 	// console.log("+TCL: itemsWithContainers", itemsWithContainers)
-	// 	const openContainerItems = itemsWithContainers.filter(containerItem => {
-	// 		// console.log("TCL: containerItem", containerItem)
-	// 		// console.log("TCL: containerItem.closed", containerItem.closed)
-	// 		return containerItem.closed === false;
-			
-	// 	});
-	// 	return openContainerItems;
-	// },
 
 	// returns a list of items available in the environment, as a formatted string
 	itemsInEnvironment: function () {
@@ -259,15 +236,15 @@ const ConsoleGame = {
 	},
 
 	// returns a list of items available in the environment that are nested inside other objects, as a formatted string
-	itemsInOpenContainers: function () {
+	nestedItemString: function () {
 		const openContainers = this.state.currentMapCell.openContainers;
-        console.log("TCL: openContainers", openContainers)
+        
 		const containedItems = openContainers.map(obj => {
 			const name = `${obj.article} ${obj.name}`;// the name of the container
 			const objectNames = obj.contents.map(item => `${item.article} ${item.name}`);// array of names of the objects inside the container (with articles)
 			return [name, this.formatList(objectNames)];// returns an object with a single property, the name of the container, 
 		});
-        console.log("TCL: containedItems", containedItems)
+        
 		const containedString = containedItems.map(container => {
 			return `There is ${container[0]}, containing ${container[1]}.`
 		});
@@ -600,7 +577,7 @@ const ConsoleGame = {
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key);
 		this.items._drawer.contents.push(this.items._card, this.items._key);
-		this.addToInventory([this.items._grue_repellant, this.items._no_tea]);
+		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._matchbook]);
 	
 	},
 
