@@ -576,7 +576,7 @@ const ConsoleGame = {
 		this.stockDungeon("visibleEnv");
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key);
-		this.items._drawer.contents.push(this.items._card, this.items._key);
+		this.items._drawer.contents.push(this.items._card);
 		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._matchbook]);
 	
 	},

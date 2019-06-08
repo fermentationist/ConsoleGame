@@ -11,19 +11,43 @@ const itemModule = game => {
 		},
 		takeable: true,
 		openable: false,
+		burnable: false,
 		closed: false,
 		locked: false,
 		article: "a",
 		listed: true,
 		solution: null,
+		// burn: function () {
+		// 	game.state.objectMode = false;
+		// 	if (!game.inInventory("matchbook")) {
+		// 		console.p("You don't have the means to light a fire.");
+		// 		return;
+		// 	}
+		// 	console.p(`The meager flame is insufficient to ignite the ${this.name}.`);
+		// 	game.items._matchbook.closed = false;
+		// 	return;
+		// },
 		burn: function () {
 			game.state.objectMode = false;
 			if (!game.inInventory("matchbook")) {
 				console.p("You don't have the means to light a fire.");
 				return;
 			}
-			console.p(`The meager flame is insufficient to ignite the ${this.name}.`);
 			game.items._matchbook.closed = false;
+			if (!this.flammable){
+				console.p(`The meager flame is inadequate to ignite the ${this.name}.`);
+				return;
+			}
+			console.p(`The match's flame proves to be enough to ignite the ${this.name}. You watch as the ${this.name} is quickly transformed into little more than a pile of ash`);
+
+			if (game.inEnvironment(this.name)) {
+				game.removeFromEnv(this);
+				return;
+			}
+			if (game.inInventory(this.name)) {
+				game.removeFromInventory(this);
+				return;
+			}
 			return;
 		},
 		climb: function () {
@@ -460,7 +484,7 @@ const itemModule = game => {
 		},
 		_key: {
 			name: "key",
-			description: "It is an old-timey key that appears to be made of tarnished brass"
+			description: "The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday."
 		},
 		_lock: {
 			name: "lock",
@@ -563,6 +587,7 @@ const itemModule = game => {
 		_note: {
 			name: "note",
 			text: `We have your dog.`,
+			flammable: true,
 			firstRead: true,
 			description: "The note is composed of eclectically sourced, cut-out letters, in the style of a movie ransom note. You found it lying next to you on the floor when you regained consciousness.",
 			read: function () {
@@ -578,7 +603,7 @@ const itemModule = game => {
 					this.firstRead = false;
 				}
 
-			}
+			},
 		},
 		_painting: {
 			name: "painting",
