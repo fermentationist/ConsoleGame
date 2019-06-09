@@ -128,7 +128,13 @@ const mapKey = game => {
 		"B": {
 			name: "Basement",
 			description: "A single dim bulb, dangling on a cord from the low, unfinished ceiling, is barely enough to illuminate the room. The floors appear to be composed of compressed earth, left unfinished since the space was initially excavated more than a century ago.  ",
-			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rat feces."
+			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces."
+		},
+
+		"C": {
+			name: "Dark room",
+			description: "A single dim bulb, dangling on a cord from the low, unfinished ceiling, is barely enough to illuminate the room. The floors appear to be composed of compressed earth, left unfinished since the space was initially excavated more than a century ago.  ",
+			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces."
 		},
 
 		"^": {
@@ -193,7 +199,7 @@ const mapKey = game => {
 		")": {
 			name: "Stone staircase, bottom",
 			description: "You are standing on a stone staircase leading upwards to the first floor.",
-			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rat feces."
+			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces."
 		},
 
 		"$": {
