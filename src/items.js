@@ -308,6 +308,13 @@ const itemModule = game => {
 				wait.call(this);
 			}
 		},
+		_collar: {
+			name: "collar",
+			description: `It is ${game.state.dogName}'s collar! Whoever assaulted you and took your dog must have come this way!"`,
+			smell: function () {
+				console.p("The collar smells like leather and scared doggie!");
+			}
+		},
 		_crowbar: {
 			name: "crowbar",
 			weight: 5,

@@ -5,7 +5,13 @@ const mapKey = game => {
 		locked: false, 
 		lockText: "", // text to be displayed when player attempts to enter the locked area (but is prevented)
 		unlockText: "", // text to be displayed when area becomes unlocked
-		hideSecrets: false, // used to toggle room description and whether player has access to hiddenEnv
+		hiddenSecrets: false, // used to toggle room description and whether player has access to hiddenEnv
+		get hideSecrets () {
+			return game.state.fireCount > 0 ? false : this.hiddenSecrets;
+		},
+		set hideSecrets (trueOrFalse){
+			this.hiddenSecrets = trueOrFalse;
+		},
 		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing is happening, nor is anything of interest is likely to happen here in the future.", // the default text displayed when player enters or "looks" at room
 		smell: "Your nose is unable to detect anything unusual, beyond the smell of mildew and rot that permeates the entirety of the decrepit building.", // text displayed in response to smell command
 		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creak of sagging floorboards underfoot.", // text displayed in response to listen command
@@ -133,8 +139,16 @@ const mapKey = game => {
 
 		"C": {
 			name: "Dark room",
-			description: "A single dim bulb, dangling on a cord from the low, unfinished ceiling, is barely enough to illuminate the room. The floors appear to be composed of compressed earth, left unfinished since the space was initially excavated more than a century ago.  ",
-			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces."
+			hiddenSecrets: true,
+			des1: "As you walk into the dark room, it feels as if the increasingly uneven floor is sloping downward, though you can see nothing. \nIt is pitch black. You are likely to be eaten by a grue.",
+			get des2 () {
+
+			},
+			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of grue feces.",
+			get description () {
+				return this.hideSecrets ? this.des1 : this.des2;
+			},
+			hiddenEnv: ["collar"],
 		},
 
 		"^": {
@@ -207,12 +221,12 @@ const mapKey = game => {
 			hiddenSecrets: true,
 			hiddenEnv: ["glove"],
 			visibleEnv: ["chain"],
-			get hideSecrets () {
-				return game.state.fireCount > 0 ? false : this.hiddenSecrets;
-			},
-			set hideSecrets (trueOrFalse){
-				this.hiddenSecrets = trueOrFalse;
-			},
+			// get hideSecrets () {
+			// 	return game.state.fireCount > 0 ? false : this.hiddenSecrets;
+			// },
+			// set hideSecrets (trueOrFalse){
+			// 	this.hiddenSecrets = trueOrFalse;
+			// },
 			des1: "The small closet is dark, although you can see a small chain hanging in front of you.",
 			get des2 (){
 				const hidden = this.hiddenEnv;
