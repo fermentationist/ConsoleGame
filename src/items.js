@@ -209,14 +209,6 @@ const itemModule = game => {
 				all.map(item => {
 					return item.takeable ? item.take() : null;
 				});
-				// game.state.objectMode = false;
-				// if (this.takeable && game.inEnvironment(this.name)) {
-				// 	game.addToInventory([this]);
-				// 	game.state.currentMapCell.removeFromEnv(this);
-				// 	return console.p(`You pick up the ${this.name}`);
-				// } else {
-				// 	return console.p("You can't take that.");
-				// }
 			},
 		},
 		_booklet: {
@@ -234,9 +226,8 @@ const itemModule = game => {
 					year: "2008",
 					info: "Exhibition catalog",
 					source: "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/preview?usp=sharing"
-				})
-				console.info(`[click link to read => "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing"]`)
-				// window.open("https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing", "_blank");//game.displayItem("assets/2008_Ministry_of_Culture.pdf", "application/pdf", "1440px", "960px");
+				});
+				console.info(`[click link to read => "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing"]`);
 			}
 		},
 		_books: {
@@ -486,22 +477,22 @@ const itemModule = game => {
 			name: "key",
 			description: "The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday."
 		},
-		_lock: {
-			name: "lock",
-			// weight: 0,
-			// takeable: false,
-			openable: false,
-			listed: false,
-			// locked: true,
-			// unlockedBy: "key",
-			description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
-			unlock() {
-				Object.getPrototypeOf(Object.getPrototypeOf(this)).unlock.call(this);
-				game.mapKey[this.lockedTarget].locked = false;
-			},
-			proto: "_door",
+		// _lock: {
+		// 	name: "lock",
+		// 	// weight: 0,
+		// 	// takeable: false,
+		// 	openable: false,
+		// 	listed: false,
+		// 	// locked: true,
+		// 	// unlockedBy: "key",
+		// 	description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
+		// 	unlock() {
+		// 		Object.getPrototypeOf(Object.getPrototypeOf(this)).unlock.call(this);
+		// 		game.mapKey[this.lockedTarget].locked = false;
+		// 	},
+		// 	proto: "_door",
 
-		},
+		// },
 		_maps: {
 			name: "maps",
 			article: "some",
@@ -528,6 +519,7 @@ const itemModule = game => {
 		},
 		_matchbook: {
 			name: "matchbook",
+			flammable: true,
 			get description() {
 				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\""}`;
 			},

@@ -157,9 +157,7 @@ const Commands = game => {
 
 	// Handles commands that are item names.
 	const _items = (itemName) => {
-        
 		// Exit function with error message if previous command does not require an object
-		
 		if (!game.state.objectMode && itemName !== "maps"){
 			console.invalid("Invalid command");
 			return;
@@ -168,7 +166,7 @@ const Commands = game => {
 		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
 		if (!item){
 			game.state.objectMode = false;
-			console.invalid(`${itemName} is not available.`);
+			console.p(`${itemName} is not available.`);
 			return;
 		}
 		const action = game.state.pendingAction;
