@@ -23,6 +23,7 @@ const Commands = game => {
 	const toggleVerbosity = game.toggleVerbosity.bind(game);
 	// Change player's location on the map, given a direction
 	const _movePlayer = (direction) => {
+		game.objectMode = false;
 		let newPosition = {
 			x: game.state.position.x,
 			y: game.state.position.y,
@@ -54,6 +55,8 @@ const Commands = game => {
 		// Exit function if movement in given direction is not possible due to map boundary
 		if (newCell === "*"){
 			console.p("You can't go that direction");
+			// game.state.turn --;// undo automatic turn counter increment if player cannot move in the chosen direction
+			// game.lightSources.forEach(source => source.incrementCounter());// undo automatic lightSource timer decrement if player cannot move in the chosen direction
 			return;
 		}
 		// Display message and exit function if path to next space is blocked by a locked or closed door or analagous item
@@ -79,14 +82,12 @@ const Commands = game => {
 	}
  
 	const _smell = command => {
-		const currentCell = game.state.currentCell;
-		console.p(game.mapKey[currentCell].smell);
+		console.p(game.state.currentMapCell.smell);
 		return;
 	}
 
 	const _listen = command => {
-		const currentCell = game.state.currentCell;
-		console.p(game.mapKey[currentCell].sound);
+		console.p(game.state.currentMapCell.sound);
 		return;
 	}
 	// Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.                               
@@ -166,7 +167,7 @@ const Commands = game => {
 		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
 		if (!item){
 			game.state.objectMode = false;
-			console.p(`${itemName} is not available.`);
+			console.invalid(`${itemName} is not available.`);
 			return;
 		}
 		const action = game.state.pendingAction;
@@ -278,6 +279,7 @@ const Commands = game => {
 		[_act_upon, aliasString("turn", thesaurus)],
 		[_act_upon, aliasString("burn", thesaurus)],
 		[_act_upon, aliasString("light", thesaurus)],
+		[_act_upon, aliasString("extinguish", thesaurus)],
 		[_act_upon, aliasString("play", thesaurus)],
 		[_act_upon, aliasString("project", thesaurus)],
 		[_act_upon, cases("hide")],

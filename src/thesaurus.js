@@ -14,13 +14,17 @@ const thesaurus = {
     burn: [
         "ignite",
         "incinerate",
-        "torch"
+        "immolate"
     ],
     cartridge: [
         "movie",
         "reel",
         "film",
         "film_cartridge"
+    ],
+    collar: [
+        "dog_collar",
+        "leash"
     ],
     contemplate: [
         "consider",
@@ -64,7 +68,9 @@ const thesaurus = {
         "release",
         "shitcan",
         "trash",
-        "expel"
+        "expel",
+        "abandon",
+        "forsake"
     ],
     eat: [
         "ingest",
@@ -80,6 +86,9 @@ const thesaurus = {
         "inspect",
         "scan",
         "search"
+    ],
+    extinguish: [
+        "douse",
     ],
     glove: [
         "mitt",
@@ -108,6 +117,10 @@ const thesaurus = {
         "hoard",
         "possessions",
         "belongings"
+    ],
+    lantern: [
+        "lamp",
+        "torch",
     ],
     listen: [
         "hear"

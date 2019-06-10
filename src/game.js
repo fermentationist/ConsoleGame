@@ -11,7 +11,7 @@ import spells from "./spells.js";
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
-	timeLimit: 100,
+	timeLimit: 250,
 	// weightLimit: 20,
 	state: {
 		objectMode : false,
@@ -21,7 +21,6 @@ const ConsoleGame = {
 		confirmMode: false,
 		solveMode: false,
 		verbose: false,
-		fireCount: NaN,
 		inventory: [],
 		history: [],
 		turn: null,
@@ -49,7 +48,6 @@ const ConsoleGame = {
 		get combinedEnv () {
 			return Object.values(this.env).flat();
 		},
-		
 	},
 	get mapKey (){
 		return this.key;
@@ -57,28 +55,37 @@ const ConsoleGame = {
 	set mapKey (value) {
 		this.key = value;
 	},
+	get lightSources() {
+		return Object.values(this.items).filter(it => it.proto === "_matchbook" || it.name === "matchbook");
+	},
 	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "verbose", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
 	//===========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
-    
-    
 	// This function runs at the start of each turn\\
-		this.timers();
+		// this.timers();
 		if (this.state.gameOver) {
 			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 		}
 		try {
 			let dontCountTurn = this.immuneCommands.includes(commandName);
-			if (!dontCountTurn) {
-				this.addToHistory(commandName);
-				if (!this.state.objectMode) {
-					this.state.turn++;
-				}
-			}
+			// if (!dontCountTurn) {
+			// 	this.addToHistory(commandName);
+			// 	// if (!this.state.objectMode) {
+			// 	// 	this.timers();
+			// 	// 	this.state.turn++;
+			// 	// }
+			// }
 			interpreterFunction(commandName);
 			if (this.state.verbose) {
 				this.describeSurroundings();
+			}
+			if (!dontCountTurn) {
+				this.addToHistory(commandName);
+				if (!this.state.objectMode) {
+					this.timers();
+					this.state.turn++;
+				}
 			}
 			return;
 		}
@@ -126,7 +133,6 @@ const ConsoleGame = {
 		this.state.confirmMode = false;
 		this.state.solveMode = false;
 		this.state.verbose = false;
-		this.state.fireCount = NaN;
 		this.state.inventory = [];
 		this.state.history = [];
 		this.state.turn = 0;
@@ -214,16 +220,13 @@ const ConsoleGame = {
 
 	fromWhichEnv: function (itemName) {
 		const itemsInEnvironment = this.state.combinedEnv.map(item => item.name);
-        
-		if (!itemsInEnvironment.includes(itemName)){
-            
+		if (!itemsInEnvironment.includes(itemName)){            
 			return false;
 		}
 		const environments = Object.entries(this.state.env).map(entry => {
 			const names = entry[1].length ? entry[1].map(item => item.name) : [];
 			return [entry[0], names]
 		});
-        
 		const theEnv = environments.filter(env => env[1].includes(itemName));
 		return theEnv.length > 0 ? theEnv[0][0] : "containedEnv";
 	},
@@ -255,8 +258,9 @@ const ConsoleGame = {
 		const contentDiv = document.getElementById("console-game-content");
 		contentDiv.innerHTML = "";
 		contentDiv.setAttribute("style", "background-color:#D1D1D1;")
-		const iFrame = document.createElement("iframe");
+		const iFrame = document.createElement("iframe")
 		iFrame.src = galleryItem.source;
+		
 		iFrame.autoplay = true;
 		iFrame.setAttribute("style", "width:100vw;height:80vh;background-color:gray;top:0;position:sticky;");
 		const p = document.createElement("p");
@@ -292,24 +296,14 @@ const ConsoleGame = {
 		if (this.state.turn >= this.timeLimit && ! this.state.gameOver) {
 			return this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.");
 		}
-		if (this.state.fireCount -- === 0 ){
-			
-			console.p("Despite your best efforts the flame flickers out.");
-		}
-		// if (this.state.solveMode === true && this.pendingAction !== "safe") {
-		// 	this.state.solveMode = false;
-		// 	this.pendingAction !== "rezrov" ? console.digi("INCORRECT PASSCODE"): null;
-		// 	return;
-		// }
+		this.lightSources.forEach(source => source.decrementCounter());
 	},
-
 	dead: function (text) {
 		console.p(text);
 		console.p("You have died. Of course, being dead, you are unaware of this unfortunate turn of events. In fact, you are no longer aware of anything at all.");
 		window.localStorage.removeItem("ConsoleGame.history");
 		this.state.gameOver = true;
 	},
-
 	captured: function () {
 		console.p("As you step out onto the front porch, you struggle to see in the bright midday sun, your eyes having adjusted to the dimly lit interior of the house. You hear a surprised voice say, \"Hey! How did you get out here?!\" You spin around to see the source of the voice, but something blunt and heavy has other plans for you and your still aching skull. You descend back into the darkness of sleep.");
 		this.state.position = this.state.startPosition;
@@ -322,7 +316,6 @@ const ConsoleGame = {
 		this.mapKey[this.items._door.lockedTarget].locked = true;
 		this.mapKey[this.items._door.closedTarget].closed = true;
 		console.p("Groggily, you lift yourself from the floor, your hands probing the fresh bump on the back of your head.");
-		// return;
 	},
 	winner: function (text) {
 		text ? console.p(text) : null;

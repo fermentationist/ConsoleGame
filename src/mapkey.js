@@ -7,7 +7,15 @@ const mapKey = game => {
 		unlockText: "", // text to be displayed when area becomes unlocked
 		hiddenSecrets: false, // used to toggle room description and whether player has access to hiddenEnv
 		get hideSecrets () {
-			return game.state.fireCount > 0 ? false : this.hiddenSecrets;
+			const cond2 = this.visibleEnv.includes(game.items._lantern) || game.inInventory("lantern");
+			const cond3 = this.visibleEnv.includes(game.items._matchbook) || game.inInventory("matchbook");
+			const cond2b = game.items._lantern.fireCount > 0;
+			const cond3b = game.items._matchbook.fireCount > 0;
+			if ( (cond2 && cond2b)||(cond3 && cond3b) ) {
+				return false;
+			}
+			return this.hiddenSecrets;//game.state.fireCount > 0 ? false : this.hiddenSecrets;
+			
 		},
 		set hideSecrets (trueOrFalse){
 			this.hiddenSecrets = trueOrFalse;
@@ -18,33 +26,20 @@ const mapKey = game => {
 		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
 		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
 		get env (){ // accessor property returns an array containing the names (as strngs) of the items in present environment
-			// if (this.hideSecrets) {
-			// 	return this.visibleEnv;
-			// }
-			// // this.hiddenEnv = [];
-			// // return this.visibleEnv;
-			// return this.visibleEnv.concat(this.hiddenEnv);
-			// eslint-disable-next-line getter-return
 			return {
 				visibleEnv: this.visibleEnv,
 				containedEnv: this.containedEnv,
 				hiddenEnv: this.hideSecrets ? [] : this.hiddenEnv
 			}
 		},
-		// set env (newEnv){ // sets accessor property to an array (of strings) of the names of the items in present environment
-		// 	return this.visibleEnv = newEnv;
-		// },
 
 		// returns any items in the environment that contain other items and are open, as an array of the item objects
 		get openContainers () {
 			const itemsInEnv = this.hideSecrets ? this.visibleEnv : this.visibleEnv.concat(this.hiddenEnv);
-            
 			const itemsWithContainers = itemsInEnv.filter(item => item.contents && item.contents.length > 0);
-            
 			const openContainerItems = itemsWithContainers.filter(containerItem => {
 				return containerItem.closed === false;
 			});
-            
 			return openContainerItems;
 		},
 
@@ -56,21 +51,6 @@ const mapKey = game => {
 			return containedItems.flat();
 		},
 
-		set containedEnv (newEnv) {
-
-		},
-
-		// nestedItemString: function () {
-		// 	const containedItems = this.containedEnv.map(obj => {
-		// 		const name = Object.keys(obj)[0];
-		// 		const objectNames = obj[name].map(item => `${item.article} ${item.name}`);
-		// 		return {[name]: game.formatList(objectNames)};
-		// 	});
-		// 	const containedString = containedItems.map(container => {
-		// 		return `There is ${Object.keys(container)}, containing ${Object.values(container)}.`
-		// 	});
-        //     return containedString.join("\n");
-		// },
 		removeFromEnv: function (item) {
 			const envName = game.fromWhichEnv(item.name);
 			if (envName === "containedEnv") {
@@ -84,25 +64,14 @@ const mapKey = game => {
 		},
 		removeFromContainer: function (item) {
 			const [container] =  this.openContainers.filter(thing => thing.contents.includes(item));
-            
 			const filteredContainer = container.contents.filter(thingy => {
-                
 				return thingy !== item
 			});
-
-			
 			const visibleOrHidden = game.fromWhichEnv(container.name)
-            
 			const containerIndex = this[visibleOrHidden].map(thang => thang.name).indexOf(container.name);
-			
 			return this[visibleOrHidden][containerIndex].contents = filteredContainer;
-            
-			// return filteredContainer;
 		},
 		addToEnv: function (itemName) { 
-			// const itemObj = game.items[`_${itemName}`];
-			// const newEnv = this.env.concat(itemObj)
-			// return this.env = newEnv;
 			const itemObj = game.items[`_${itemName}`];
 			return this.visibleEnv.push(itemObj);
 
@@ -142,13 +111,14 @@ const mapKey = game => {
 			hiddenSecrets: true,
 			des1: "As you walk into the dark room, it feels as if the increasingly uneven floor is sloping downward, though you can see nothing. \nIt is pitch black. You are likely to be eaten by a grue.",
 			get des2 () {
-
+				return `By the flickering light of the flame, you can see that the floor becomes rougher and more irregular, sloping down toward the north.`;
 			},
 			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of grue feces.",
 			get description () {
 				return this.hideSecrets ? this.des1 : this.des2;
 			},
-			hiddenEnv: ["collar"],
+			hiddenEnv: ["collar", "lantern"],
+			visibleEnv: ["key"]
 		},
 
 		"^": {

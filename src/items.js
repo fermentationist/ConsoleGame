@@ -11,7 +11,8 @@ const itemModule = game => {
 		},
 		takeable: true,
 		openable: false,
-		burnable: false,
+		flammable: false,
+		activated: false,
 		closed: false,
 		locked: false,
 		article: "a",
@@ -99,6 +100,16 @@ const itemModule = game => {
 			game.state.objectMode = false;
 			return console.p(this.description);
 
+		},
+		extinguish: function () {
+			game.state.objectMode = false;
+			if (this.fireCount > 0) {
+				this.activated = false;
+				this.count = 0;
+				console.p(`You extinguish the ${this.name}.`);
+				return;
+			}
+			console.p(`The ${this.name} is not lit.`);
 		},
 		incorrectGuess: function () {
 		},
@@ -227,7 +238,6 @@ const itemModule = game => {
 					info: "Exhibition catalog",
 					source: "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/preview?usp=sharing"
 				});
-				console.info(`[click link to read => "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/view?usp=sharing"]`);
 			}
 		},
 		_books: {
@@ -270,7 +280,7 @@ const itemModule = game => {
 					artist: "Dennis Hodges",
 					year: "2001",
 					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing"
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview"
 				});
 			},
 			use: function () {
@@ -438,6 +448,7 @@ const itemModule = game => {
 		},
 		_glove: {
 			name: "glove",
+			closed: true,
 			description: "It is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.",
 			contents: [],
 			examine: function () {
@@ -500,6 +511,32 @@ const itemModule = game => {
 		// 	proto: "_door",
 
 		// },
+		_lantern: {
+			name: "lantern",
+			flammable: false,
+			proto: "_matchbook",
+			get description() {
+				return `The old brass lantern is the quaint sort that burns hydrocarbons to produce light. It is currently ${this.activated ? "lit." : "extinguished."}`;
+			},
+			use: function () {
+				game.state.objectMode = false;
+				if (!game.inInventory("matchbook")) {
+					console.p("You don't have the means to light a fire.");
+					return;
+				}
+				game.items._matchbook.closed = false;
+				this.activated = true;
+				this.count = 250;
+				console.p("Lighting the lantern with the match produces a brighter, longer lasting source of light.");
+			},
+			light: function () {
+				this.use.call(this);
+			},
+			burn: function () {
+				this.use.call(this);
+			}
+		},
+		
 		_maps: {
 			name: "maps",
 			article: "some",
@@ -526,12 +563,29 @@ const itemModule = game => {
 		},
 		_matchbook: {
 			name: "matchbook",
+			openable: true,
+			closed: true,
+			count: 3,
 			flammable: true,
 			get description() {
 				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\""}`;
 			},
-			openable: true,
-			closed: true,
+			get fireCount () {
+				return this.activated ? this.count : 0;
+			},
+			decrementCounter: function () {
+				if (this.activated && this.count > 0) {
+					this.count --;
+					if (this.count === 0){
+						console.p("Despite your best efforts the flame flickers out.");
+						this.activated = false;
+						return;
+					}
+				}
+			},
+			incrementCounter: function () {
+				this.count ++;
+			},
 			use: function () {
 				game.state.objectMode = false;
 				if (this.closed) {
@@ -539,8 +593,9 @@ const itemModule = game => {
 					console.p("As you flip open the matchbook, folding back the cover, you glimpse something scrawled in pencil on the inside.")
 				}
 				console.p("You pluck out one of the paper matches. It ignites easily as you scrape its head against the red phosphorus strip, producing a tenuous flame that you are quick to guard with your cupped hand.");
-				game.state.fireCount = 2;
-			},
+				this.count = 3;
+				this.activated = true;
+			},  
 			light: function () {
 				this.use.call(this);
 			}
@@ -654,13 +709,7 @@ const itemModule = game => {
 					console.p("First, you will need to find something to play on the phonograph.")
 					return;
 				}
-				return game.displayItem({
-					title: "\nUntitled (litany)",
-					artist: "Dennis Hodges",
-					year: "2010",
-					info: "Found audio recordings",
-					source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"
-				});
+				return game.items._disc.play.call(this);
 			},
 			use: function () {
 				this.play.call(this)
@@ -675,13 +724,7 @@ const itemModule = game => {
 					console.p("First, you will need to find something to project with the projector.")
 					return;
 				}
-				return game.displayItem({
-					title: "\nCanned Laughs",
-					artist: "Dennis Hodges",
-					year: "2001",
-					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/view?usp=sharing&output=embed"
-				});
+				return game.items._cartridge.play.call(this);
 			},
 			use: function () {
 				this.play.call(this)
