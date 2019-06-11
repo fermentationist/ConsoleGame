@@ -15,10 +15,10 @@ const customConsole = (() => {
 	console.intro = message => {
 		customLog(message, `font-size:calc(1.25 * ${fontSize});color:orange;font-family:${primaryFont};padding:0 1em;line-height:1.5;`);
 	}
-	console.note = message => {
+	console.cursive = message => {
 		customLog(message, `font-size:calc(1.2 * ${fontSize});font-family:cursive;font-weight:bold;color:lightgray;background-color:black;line-spacing:2em;padding:1em;margin:0 auto  0 0;white-space:pre-wrap;text-align:center;`);
 	}
-	console.type = message => {
+	console.note = message => {
 		customLog(message, `font-size:calc(1.2 * ${fontSize});font-family:courier new;font-weight:bold;color:#75715E;background-color:white;line-spacing:2em;padding:0 1em 1em;margin:0 auto  0 0;white-space:pre-wrap;`);
 	}
 	console.warning = message => {

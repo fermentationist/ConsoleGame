@@ -82,7 +82,6 @@ const itemModule = game => {
 		},
 		drop: function () {
 			game.state.objectMode = false;
-			
 			if (game.inInventory(this.name)) {
 				game.removeFromInventory(this);
 				game.state.currentMapCell.visibleEnv.push(this);
@@ -152,7 +151,7 @@ const itemModule = game => {
 			this.closed = false;
 			return;
 		},
-		read: function (){
+		read: function () {
 			game.state.objectMode = false;
 			if (!this.text){
 				return console.p("There is nothing to read.");
@@ -162,6 +161,27 @@ const itemModule = game => {
 			}
 			console.p(`The text on the ${this.name} reads: \n`);
 			return console.note(this.text);
+		},
+		rezrov: function () {
+			game.state.objectMode = false;
+			if (!game.inInventory("scroll") && !game.inEnvironment("scroll")){
+				console.p("You are incapable of wielding such powerful magic unassisted.");
+				return;
+			}
+			this.locked = false;
+			this.closed = false;
+			game.mapKey[this.lockedTarget].locked = false;
+			game.mapKey[this.closedTarget].closed = false;
+			console.p("Once the rezrov spell is cast, the magic scroll disappears with a sudden flash, and a loud \"WHOMP!\"");
+			console.p(`When the smoke has cleared, the ${this.name} has been magically unlocked and opened!`);
+			if (game.inEnvironment("scroll")) {
+				game.removeFromEnv(game.items._scroll);
+				return;
+			}
+			if (game.inInventory("scroll")) {
+				game.removeFromInventory(game.items._scroll);
+				return;
+			}
 		},
 		take: function () {
 			game.state.objectMode = false;
@@ -216,9 +236,18 @@ const itemModule = game => {
 			listed: false,
 			takeable: false,
 			take: function () {
+				game.state.objectMode = false;
 				const all = game.state.combinedEnv;
-				all.map(item => {
+				all.forEach(item => {
 					return item.takeable ? item.take() : null;
+				});
+			},
+			drop: function () {
+				game.state.objectMode = false;
+				const all = game.state.inventory.filter(it => it.name !== "no_tea");// filter out "no_tea" (you can't drop it)
+				all.forEach(item => {
+					item.drop();
+					return;
 				});
 			},
 		},
@@ -391,7 +420,7 @@ const itemModule = game => {
 			closedTarget: "A",
 			get description() {
 				game.state.objectMode = false;
-				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a steel deadbolt, which is ${this.locked ? "locked." : "unlocked!"}`
+				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a sturdy new deadbolt, which is ${this.locked ? "locked." : "unlocked!"}`
 			},
 			lock() {
 				Object.getPrototypeOf(this).lock.call(this);
@@ -495,22 +524,6 @@ const itemModule = game => {
 			name: "key",
 			description: "The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday."
 		},
-		// _lock: {
-		// 	name: "lock",
-		// 	// weight: 0,
-		// 	// takeable: false,
-		// 	openable: false,
-		// 	listed: false,
-		// 	// locked: true,
-		// 	// unlockedBy: "key",
-		// 	description: "The brushed steel surface of the lock is virtually unscratched, its brightness in stark contrast to the dark and grimy wood of the heavy front door. It seems certain that this deadbolt was installed very recently. It is a very sturdy-looking lock and without the key that fits its currently vacant keyhole, you will not be able to open it.",
-		// 	unlock() {
-		// 		Object.getPrototypeOf(Object.getPrototypeOf(this)).unlock.call(this);
-		// 		game.mapKey[this.lockedTarget].locked = false;
-		// 	},
-		// 	proto: "_door",
-
-		// },
 		_lantern: {
 			name: "lantern",
 			flammable: false,
@@ -650,7 +663,7 @@ const itemModule = game => {
 				if (this.firstRead) {
 					const dogName = randomDogName()
 					game.state.dogName = dogName;
-					console.p(`${dogName} is your best buddy! Who would do such a thing!?`);
+					console.p(`Who would do such a thing to sweet little ${dogName}!?`);
 					this.firstRead = false;
 				}
 
@@ -660,6 +673,7 @@ const itemModule = game => {
 			name: "painting",
 			takeable: true,
 			listed: false,
+			flammable: true,
 			description: "The small, grimy image is of an owl, teaching a class a classroom of kittens how to catch mice. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.",
 			previouslyRevealed: false,
 			location: "+",
@@ -690,7 +704,7 @@ const itemModule = game => {
 				this.description = "The painting is lying broken upon the floor. It is so badly burned now, that its subject has become indecipherable. What remains of the canvas is a carbonized black. You can't help but think that it is still an improvement compared to the original work.";
 				game.items._matchbook.closed = false;// matchbook remains open after use, if not already opened.
 				if (game.state.currentMapCell.hideSecrets) {// if painting still on wall
-					this.revealText("Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. Thinking it unwise to burn down the house you are trapped in, you remove the painting from the wall, and stomp out the fire before they can spread any further. \nWhen you look back at the wall that formerly held the burning painting, ");
+					this.revealText("Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. Thinking it unwise to burn down the house you are trapped in, you remove the painting from the wall, and stomp out the fire before it can spread any further. \nWhen you look back at the wall that formerly held the burning painting, ");
 					return;
 				}
 				// if painting already removed from wall
@@ -713,15 +727,19 @@ const itemModule = game => {
 			},
 
 		},
-		_photograph: {
-			name: "photograph",
-			description: "The four by six inch photograph is in a cheap frame made of painted fiberboard. It's a portrait of a very old, and probably infirm black poodle, eyes clouded by cataracts.",
-			turn: function () {
+		_photo: {
+			name: "photo",
+			description: "The four by six inch photograph is in a cheap frame made of painted fiberboard. It's a portrait of a very old, and probably infirm black poodle, bluish cataracts clouding its eyes.",
+			reverseDescription: "There is a handwritten inscription on the back of the frame.",
+			text: "My Precious Muffin's 18th Birthday - 10/28/17",
+			read: function (){
 				game.state.objectMode = false;
-				console.p("Upon turning over the survey card, you notice a message, written in pencil. It says,");
-				console.note("\n\"THE OWLS ARE NOT WHAT THEY SEEM\".");
-				return;
-			}
+				if (!game.inInventory(this.name)){
+					return console.p(`You will need to pick up the ${this.name} first.`);
+				}
+				console.p(`The text on the ${this.name} reads: \n`);
+				return console.cursive(this.text);
+			},
 		},
 		_projector: {
 			name: "projector",
@@ -747,7 +765,7 @@ const itemModule = game => {
 			locked: true,
 			listed: false,
 			takeable: false,
-			solution: 112358,
+			solution: 10281999,
 			description: "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.",
 			contents: [],
 			correctGuess: function () {
@@ -767,17 +785,39 @@ const itemModule = game => {
 				return;
 			},
 			open: function () {
-				this.unlock.call(this);
+				if (this.locked){
+					this.unlock.call(this);
+					return;
+				}
+				Object.getPrototypeOf(this).open.call(this);
+			},
+			lock: function () {
+				game.state.objectMode = false;
+				this.closed = true;
+				this.locked = true;
+				console.p("You lock the wall safe.");
 			},
 			unlock: function () {
 				game.state.solveMode = true;
 				game.state.objectMode = false;
-				console.codeInline([`To enter the numerical passcode, you must type an underscore `, `_`, `, followed by the value enclosed in parentheses.`]);
-				console.codeInline([`For example: `, `_(0123456789)`]);
+				if (! this.locked) {
+					console.p("The safe is already unlocked.");
+					return;
+				}
+				console.codeInline([`To enter the 8-digit numerical passcode, you must type an underscore `, `_`, `, followed by the value enclosed in parentheses.`]);
+				console.codeInline([`For example: `, `_(01234567)`]);
 				console.digi("ENTER PASSCODE:");
 			},
 			use: function () {
 				this.unlock.call(this);
+			},
+		},
+		_scroll: {
+			name: "scroll",
+			description: "There is some small text, printed on the fastener that was used to bind the rolled up scroll. It says, \"rezrov: Open even locked or enchanted objects\". As you unfurl the scroll, there appears to be some writing on the inside surface of the parchment, but each line of text seems to disappear as soon as it is revealed.",
+			text: "rezrov: Open even locked or enchanted objects",
+			use: function (){
+				return window.rezrov;
 			},
 		},
 		_survey: {

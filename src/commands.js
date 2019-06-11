@@ -153,7 +153,7 @@ const Commands = game => {
 			return {name, description};
 		})
 		return console.table(table, ["name", "description"]);
-}
+	}
 
 	// Handles commands that are item names.
 	const _items = (itemName) => {
@@ -188,39 +188,20 @@ const Commands = game => {
 		}
 	}
 
-	const _rezrov = () => {
-		const safe = game.items._safe;
-		if (game.state.solveMode){
-			safe.locked = false;
-			console.digi("PASSCODE ACCEPTED");
-			console.p(`With a sudden 'thunk', a bolt moves inside the door of the safe, which gently pops open. ${safe.contents.length > 0 ? "Inside, you see " + game.formatList(safe.contents) + "." : ""}`);
-			return;
-		}
-		console.invalid("Invalid command");
-		return;
-	}
-
 	const _poof = () => {
 		const body = document.querySelector("body");
 		body.parentNode.removeChild(body);
 		return console.papyracy(">poof<");
 	}
 
-	// const _litany = () => {
-	// 	displayItem({
-	// 	title: "\nUntitled (litany)",
-	// 	artist: "Dennis Hodges",
-	// 	year: "2010",
-	// 	info: "Found audio recordings",
-	// 	source: "https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing"});
-	// }
 	// const _papyracy = () => {
-	// 	const font = primaryFont;
-	// 	const color = textColor;
-	// 	return function papyracy () {
-	// 		primaryFont = primaryFont === "Papyrus" ? "";
-	// 		textColor = "chartreuse";
-	// 	}
+	// 	// game.state.pendingAction = "font"
+	// 	game.state.prefMode = true;
+	// 	// game.setPreference("papyrus");
+	// 	localStorage.setItem("ConsoleGame.prefs.font", "papyrus");
+	// 	localStorage.setItem("ConsoleGame.prefMode", "true");
+	// 	// game.state.prefMode = false;
+	// 	location.reload();
 	// }
 
 	const aliasString = (word, thesaurus = null, optionalString = "") => {
@@ -257,7 +238,6 @@ const Commands = game => {
 		[_smell, aliasString("smell", thesaurus)],
 		[_listen, aliasString("listen", thesaurus)],
 		[_inventory, aliasString("inventory", thesaurus) + ",i,I"],
-		[_rezrov, aliasString("rezrov", thesaurus)],
 		[_yell, aliasString("yell", thesaurus)],
 		[_act_upon, aliasString("use", thesaurus)],
 		[_act_upon, aliasString("take", thesaurus)],
@@ -281,6 +261,7 @@ const Commands = game => {
 		[_act_upon, aliasString("extinguish", thesaurus)],
 		[_act_upon, aliasString("play", thesaurus)],
 		[_act_upon, aliasString("project", thesaurus)],
+		[_act_upon, aliasString("rezrov", thesaurus)],
 		[_act_upon, cases("hide")],
 
 		// this command exists as a hacky fix for bug that happens if console is in "eager evalutaion" mode. Starting to type "glove" auto-evalutes to "globalThis", which for some reason calls _act_upon("close"). This same goes for the keyword "this". This command tricks auto-evaluation because it prioritizes suggestions alphabetically.
@@ -309,6 +290,7 @@ const Commands = game => {
 		[_pref, cases("color")],
 		[_pref, cases("size")],
 		[_poof, cases("poof")],
+		// [_papyracy, cases("papyracy")],
 		[_quit, cases("quit")],
 		[_quit, cases("restart")],
 		[_yes, cases("yes") + ",y,Y"],

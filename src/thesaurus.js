@@ -163,6 +163,14 @@ const thesaurus = {
         "record_player",
         "turntable"
     ],
+    photo: [
+        "photograph",
+        "picture",
+        "pic",
+        "portrait",
+        "frame",
+        "picture_frame"
+    ],
     pull: [
         "tug",
         "yank",

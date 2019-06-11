@@ -59,80 +59,71 @@ const ConsoleGame = {
 	get lightSources() {
 		return Object.values(this.items).filter(it => it.proto === "_matchbook" || it.name === "matchbook");
 	},
-	immuneCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "verbose", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
-	//===========================================\\
+	exemptCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "verbose", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
+	   
+	  //=========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
 	// This function runs at the start of each turn\\
-		// this.timers();
 		if (this.state.gameOver) {
 			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 		}
 		try {
-			let dontCountTurn = this.immuneCommands.includes(commandName);
-			// if (!dontCountTurn) {
-			// 	this.addToHistory(commandName);
-			// 	// if (!this.state.objectMode) {
-			// 	// 	this.timers();
-			// 	// 	this.state.turn++;
-			// 	// }
-			// }
-			if (dontCountTurn) {
-				interpreterFunction(commandName);
+			let dontCountTurn = this.exemptCommands.includes(commandName);
+			if (dontCountTurn) {// execute exempt commands without incrementing turn counter or timers, and without recording in history
+				interpreterFunction(commandName);// execute the command and exit function
 				return this.state.verbose ? this.describeSurroundings(): null;
 			}
-			interpreterFunction(commandName);
-			// if (!dontCountTurn) {
-				this.addToHistory(commandName);
-				if (!this.state.objectMode && !this.state.abortMode) {
-					this.timers();
-					this.state.turn++;
-					console.log("TCL: this.state.abortMode", this.state.abortMode)				
-				}
-			// }
-			this.state.abortMode = false;
+
+			interpreterFunction(commandName);// execute the command
+			this.addToHistory(commandName);// record command in history
+
+			if (!this.state.objectMode && !this.state.abortMode) {// only increment turn and timers if not in objectMode (prevents two-word commands from taking up two turns), and if not in abortMode (prevent a failed movement attempt, i.e. trying to move 'up' when you are only able to move 'east' or 'west', from consuming a turn)
+				this.timers();
+				this.state.turn++;
+			}
+
+			this.state.abortMode = false;// reset abortMode
 			if (this.state.verbose) {
 				this.describeSurroundings();
 			}
 			return;
 		}
 		catch (err){
-			console.invalid(err)
+			console.invalid(err)// recognized command word used incorrectly
 			return console.p(`That's not going to work. Please try something else.`);
 		}
 	},
 	
-	addToHistory: function (commandName){
-	// Method adds executed command to history and increments turn counter.
+	addToHistory: function (commandName){// Method adds executed command to history and increments turn counter.
 		this.state.history.push(commandName);
 		window.localStorage.setItem("ConsoleGame.history", this.state.history);
 	},
 
-	replayHistory: function (commandList){
+	replayHistory: function (commandList){// Used to load saved games
 		this.state.restoreMode = false;
 		this.initializeNewGame();
-		console.groupCollapsed("Game loading...");
-		commandList.split(",").map((command) =>{
-			(Function(`${command}`))();
+		console.groupCollapsed("Game loading...");// This conveniently hides all of the console output that is generated when the history is replayed, by nesting it in a group that will be displayed collapsed by default
+		commandList.split(",").map((command) =>{// replay each command in order
+			(Function(`${command}`))();// execute the command
 		});
-		return console.groupEnd("Game loaded.");
+		return console.groupEnd("Game loaded.");// text displayed in place of collapsed group
 	},
 	
-	addToInventory: function (itemArray){
-	// Method adds item to player inventory
+	addToInventory: function (itemArray){// add one of more items to player inventory
 		itemArray.map((item) => {
-			if (item instanceof String){
+			if (item instanceof String){// accepts a string argument for a single item
 				return this.state.inventory.push(this.items[`_${item}`]);
 			}
-			return this.state.inventory.push(item);
+			return this.state.inventory.push(item);// accepts an array for multiple items
 		});
 	},
 
-	removeFromInventory: function (item){
+	removeFromInventory: function (item){// remove item from player inventory
 		this.state.inventory.splice(this.state.inventory.indexOf(item), 1);
 	},
 
-	resetGame: function (){
+	resetGame: function (){// reset game state and delete game data stored in localStorage
 		this.state.objectMode = false;
 		this.state.saveMode = false;
 		this.state.restoreMode = false;
@@ -150,8 +141,8 @@ const ConsoleGame = {
 		window.localStorage.removeItem("ConsoleGame.history");
 		return;
 	},
-	// // Utility function formats a given list of terms (directions) as a string, separating them with commas, and a conjunction ("and"), or a disjunction ("or"), before the final term.
-	formatList: function (itemArray, disjunction = false){
+	
+	formatList: function (itemArray, disjunction = false){// Utility function formats a given list of terms (directions) as a string, separating them with commas, and a conjunction ("and"), or a disjunction ("or"), before the final term.
 		const length = itemArray.length;
 		const conjunction = disjunction ? "or" : "and";
 		if (length === 0) {
@@ -167,34 +158,33 @@ const ConsoleGame = {
 		return `${itemArray[0]}, ${this.formatList(itemArray.slice(1), disjunction)}`
 	},
 
-	cases: function (...wordArgs) {
+	cases: function (...wordArgs) {// utility function accepts one or multiple string arguments, and returns [all lowercase], [Capitalized first letter], and [ALL CAPS] variations
 		let lc, cases;
 		const casesArray = wordArgs.map((word) =>{
 			lc = word.toLowerCase();
 			cases = [lc, `${lc.charAt(0).toUpperCase()}${lc.slice(1)}`, lc.toUpperCase()];
 			return word.length ? cases: "";
 		});
-		return casesArray.join(",");
+		return casesArray.join(",");// output is a single string, with variations separated by commas
 	},
-	// Returns an array of directions (as strings) that player can move in from present location.
-	possibleMoves: function (z, y, x){
-		const n = ["north", maps[z][y - 1] !== undefined && maps[z][y - 1][x] !== "*"];
-		const s = ["south", maps[z][y + 1] !== undefined && maps[z][y + 1][x] !== "*"];
-		const e = ["east", maps[z][y][x + 1] !== undefined && maps[z][y][x + 1] !== "*"];
-		const w = ["west", maps[z][y][x - 1] !== undefined && maps[z][y][x - 1] !== "*"];
-		const u = ["up", maps[z + 1] !== undefined && maps[z + 1][y][x] !== "*"];
-		const d = ["down", maps[z - 1] !== undefined && maps[z - 1][y][x] !== "*"];
+	
+	possibleMoves: function (z, y, x){// Returns an array of directions (as strings) that player can move in from present location.
+		const n = (maps[z][y - 1] !== undefined && maps[z][y - 1][x] !== "*") ? "north" : false;// will equal the string "north" if it is possible to move one cell north, otherwise false
+		const s = (maps[z][y + 1] !== undefined && maps[z][y + 1][x] !== "*") ? "south" : false;
+		const e = (maps[z][y][x + 1] !== undefined && maps[z][y][x + 1] !== "*") ? "east" : false;
+		const w = (maps[z][y][x - 1] !== undefined && maps[z][y][x - 1] !== "*") ? "west" : false;
+		const u = (maps[z + 1] !== undefined && maps[z + 1][y][x] !== "*") ? "up" : false;
+		const d = (maps[z - 1] !== undefined && maps[z - 1][y][x] !== "*") ? "down" : false;
 		let options = [n, s, e, w, u, d];
-		let result = options.filter(elt => elt[1]).map(dir => dir[0]);
+		let result = options.filter(dir => dir);
 		return result;
 	},
 
-	// Applies this.formatList() utility function to the result of possibleMoves() function to return a formatted string listing the possible directions of player movement.
-	movementOptions: function (){
+	movementOptions: function (){// Applies this.formatList() utility function to the result of possibleMoves() function to return a formatted string listing the possible directions of player movement.
 		return this.formatList(this.possibleMoves(this.state.position.z, this.state.position.y, this.state.position.x), true);
 	},
 
-	describeSurroundings: function (){
+	describeSurroundings: function (){// function puts together various parts of game description, and outputs it as a single string
 		const description = this.state.currentMapCell.description;
 		const itemStr = this.itemsInEnvironment() ? `You see ${this.itemsInEnvironment()} here.` : "";
 		const nestedItemStr = this.nestedItemString(); 
@@ -212,6 +202,9 @@ const ConsoleGame = {
 	},
 
 	inInventory: function (itemName){
+		if (itemName === "all") {
+			return this.items._all;
+		}
 		const invIndex = this.state.inventory.map((item) => item.name).indexOf(itemName);
 		const objectFromInventory = invIndex !== -1 && this.state.inventory[invIndex];
 		return objectFromInventory;
@@ -294,7 +287,7 @@ const ConsoleGame = {
 	timers: function () {
 		//add any timer logic here
 		if (this.state.turn === 2 && ! this.items._door.locked) {
-			console.p("You hear a short metallic scraping punctuated by a dull \"thunk\". It sounds a lot like a deadbolt sliding into place.\n");
+			console.p("You hear a short metallic scraping sound, ending in a click. It sounds like the front door being locked from the outside.\n");
 
 			this.items._door.closed = true;
 			this.items._door.locked = true;
@@ -649,9 +642,7 @@ const ConsoleGame = {
 
 // this function enables user to set preferences
 window._ = ConsoleGame.setValue.bind(ConsoleGame);
-// window._ = (value) => {
-// 	return ConsoleGame.state.solveMode ? ConsoleGame.solveCode(value) : ConsoleGame.state.prefMode ? ConsoleGame.setPreference(value) : console.invalid("setValue (_) called out of context.");
-// }
+
 // include imported items
 ConsoleGame.items = itemModule(ConsoleGame);
 // include imported commands
