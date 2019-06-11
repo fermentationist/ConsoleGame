@@ -55,8 +55,7 @@ const Commands = game => {
 		// Exit function if movement in given direction is not possible due to map boundary
 		if (newCell === "*"){
 			console.p("You can't go that direction");
-			// game.state.turn --;// undo automatic turn counter increment if player cannot move in the chosen direction
-			// game.lightSources.forEach(source => source.incrementCounter());// undo automatic lightSource timer decrement if player cannot move in the chosen direction
+			game.state.abortMode = true;// don't count failed move as a turn; don't increment timers
 			return;
 		}
 		// Display message and exit function if path to next space is blocked by a locked or closed door or analagous item

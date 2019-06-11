@@ -20,6 +20,7 @@ const ConsoleGame = {
 		prefMode: false,
 		confirmMode: false,
 		solveMode: false,
+		abortMode: false,
 		verbose: false,
 		inventory: [],
 		history: [],
@@ -76,16 +77,22 @@ const ConsoleGame = {
 			// 	// 	this.state.turn++;
 			// 	// }
 			// }
-			interpreterFunction(commandName);
-			if (this.state.verbose) {
-				this.describeSurroundings();
+			if (dontCountTurn) {
+				interpreterFunction(commandName);
+				return this.state.verbose ? this.describeSurroundings(): null;
 			}
-			if (!dontCountTurn) {
+			interpreterFunction(commandName);
+			// if (!dontCountTurn) {
 				this.addToHistory(commandName);
-				if (!this.state.objectMode) {
+				if (!this.state.objectMode && !this.state.abortMode) {
 					this.timers();
 					this.state.turn++;
+					console.log("TCL: this.state.abortMode", this.state.abortMode)				
 				}
+			// }
+			this.state.abortMode = false;
+			if (this.state.verbose) {
+				this.describeSurroundings();
 			}
 			return;
 		}
@@ -132,6 +139,7 @@ const ConsoleGame = {
 		this.state.prefMode = false;
 		this.state.confirmMode = false;
 		this.state.solveMode = false;
+		this.state.abortMode = false;
 		this.state.verbose = false;
 		this.state.inventory = [];
 		this.state.history = [];

@@ -186,7 +186,7 @@ const itemModule = game => {
 		},
 		turn: function () {
 			game.state.objectMode = false;
-			console.p(`Turning the ${this.name} has no noticeable effect.`);
+			console.p(this.reverseDescription ? this.reverseDescription : `Turning the ${this.name} has no noticeable effect.`);
 			return;
 		},
 		unlock: function () {
@@ -575,16 +575,13 @@ const itemModule = game => {
 			},
 			decrementCounter: function () {
 				if (this.activated && this.count > 0) {
-					this.count --;
+					-- this.count;
 					if (this.count === 0){
 						console.p("Despite your best efforts the flame flickers out.");
 						this.activated = false;
 						return;
 					}
 				}
-			},
-			incrementCounter: function () {
-				this.count ++;
 			},
 			use: function () {
 				game.state.objectMode = false;
@@ -715,6 +712,16 @@ const itemModule = game => {
 				this.play.call(this)
 			},
 
+		},
+		_photograph: {
+			name: "photograph",
+			description: "The four by six inch photograph is in a cheap frame made of painted fiberboard. It's a portrait of a very old, and probably infirm black poodle, eyes clouded by cataracts.",
+			turn: function () {
+				game.state.objectMode = false;
+				console.p("Upon turning over the survey card, you notice a message, written in pencil. It says,");
+				console.note("\n\"THE OWLS ARE NOT WHAT THEY SEEM\".");
+				return;
+			}
 		},
 		_projector: {
 			name: "projector",
