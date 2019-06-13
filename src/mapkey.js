@@ -121,6 +121,32 @@ const mapKey = game => {
 			visibleEnv: ["key"]
 		},
 
+		"D": {
+			name: "Bathroom",
+			description: "The bathroom is tiled with hundreds of tiny, white, hexagonal tiles. It features the usual bathroom amenities, like a sink, a tub and a commode.",
+			visibleEnv: ["sink", "bathtub", "toilet"]
+		},
+		"E": {
+			name: "Guest Room",
+			description: "",
+		},
+		"F": {
+			name: "Sitting room",
+			description: "",
+			visibleEnv: ["chair", "sofa", "coffee_table"]
+			
+		},
+		"G": {
+			name: "Master bedroom",
+			get description () {
+				return `The master bedroom is `;
+			},
+			visibleEnv: ["photo", "bed", "nightstand", "dresser"]
+		},
+		"H": {
+			name: "Master bathroom",
+			description: "",
+		},
 		"^": {
 			name: "Second floor hallway, north",
 			description: "You are at the top of a wide wooden staircase, on the second floor of the old house.",
@@ -138,15 +164,14 @@ const mapKey = game => {
 			visibleDescription: "The walls of the dark, wood-panelled study are lined with bookshelves, containing countless dusty tomes. Behind an imposing walnut desk is a tall-backed desk chair.",
 			smell: "The pleasantly musty smell of old books emanates from the bookshelves that line the wall.",
 			hideSecrets: true,
-			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books", "drawer"],
+			visibleEnv: ["desk", "painting", "chair", "bookshelves", "books", "drawer", "booklet"],
 			hiddenEnv: ["safe"],
 			hiddenDescription: "In space where a painting formerly hung there is a small alcove housing a wall safe.",
 			get description (){
-				const catalogLocation = Object.values(this.env).flat().map(x=>x.name).includes("booklet") ? "There is a booklet on the desk" : "";
 				if (this.hideSecrets) {
 					return this.visibleDescription + "\n" + "On the wall behind the chair hangs an ornately framed painting.";
 				}
-				return this.visibleDescription + "\n" + "\n" + this.hiddenDescription + "\n" + catalogLocation;
+				return this.visibleDescription + "\n" + "\n" + this.hiddenDescription;
 			}
 		},
 
@@ -159,13 +184,13 @@ const mapKey = game => {
 		"%": {
 			name: "Entrance hall, south",
 			description: "You are in the main entrance hall of a seemingly abandoned house. There are two doors on either side of the hall. The front door is to the south. At the north end of the hall is a wide oak staircase that connects the first and second floors of the old house.",
-			visibleEnv: ["door", "note", "disc", "photo", "scroll"]
+			visibleEnv: ["door", "note"]
 		},
 
 		"=": {
 			name: "Entrance hall, north",
 			description: "You are in the main entrance hall of a seemingly abandoned house. There are two doors on either side of the hall. The front door is to the south. At the rear of the hall is a wide oak staircase that connects the first and second floors of the old house.",
-			visibleEnv: ["phonograph"]
+			visibleEnv: []
 		},
 
 		"@": {
@@ -191,12 +216,6 @@ const mapKey = game => {
 			hiddenSecrets: true,
 			hiddenEnv: ["glove"],
 			visibleEnv: ["chain"],
-			// get hideSecrets () {
-			// 	return game.state.fireCount > 0 ? false : this.hiddenSecrets;
-			// },
-			// set hideSecrets (trueOrFalse){
-			// 	this.hiddenSecrets = trueOrFalse;
-			// },
 			des1: "The small closet is dark, although you can see a small chain hanging in front of you.",
 			get des2 (){
 				const hidden = this.hiddenEnv;
@@ -215,7 +234,7 @@ const mapKey = game => {
 		},
 		"Z": {
 			name: "Kitchen",
-			visibleEnv: ["maps"],
+			visibleEnv: ["maps", "door"],
 			description: "It is quite large for a residential kitchen. While only a few of the original appliances remain, gritty outlines on the walls and floor suggest it was once well appointed. Now it is an echoing tile cavern.",
 			smell: "It smells like a dusty abandoned building. And chicken soup."
 		},

@@ -90,7 +90,7 @@ const ConsoleGame = {
 			return;
 		}
 		catch (err){
-			console.invalid(err)// recognized command word used incorrectly
+			console.trace(err)// recognized command word used incorrectly
 			return console.p(`That's not going to work. Please try something else.`);
 		}
 	},
@@ -304,6 +304,7 @@ const ConsoleGame = {
 		console.p("You have died. Of course, being dead, you are unaware of this unfortunate turn of events. In fact, you are no longer aware of anything at all.");
 		window.localStorage.removeItem("ConsoleGame.history");
 		this.state.gameOver = true;
+		console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 	},
 	captured: function () {
 		console.p("As you step out onto the front porch, you struggle to see in the bright midday sun, your eyes having adjusted to the dimly lit interior of the house. You hear a surprised voice say, \"Hey! How did you get out here?!\" You spin around to see the source of the voice, but something blunt and heavy has other plans for you and your still aching skull. You descend back into the darkness of sleep.");
@@ -319,7 +320,9 @@ const ConsoleGame = {
 		console.p("Groggily, you lift yourself from the floor, your hands probing the fresh bump on the back of your head.");
 	},
 	winner: function (text) {
-		text ? console.p(text) : null;
+		if (text) {
+			console.p(text);
+		}
 		console.win("You win!! Congratulations and thanks for playing!");
 		window.localStorage.removeItem("ConsoleGame.history");
 		this.state.gameOver = true;
@@ -553,9 +556,15 @@ const ConsoleGame = {
 			let roomEnv = this.mapKey[key][subEnvName];
 			let newEnv = [];
 			if (roomEnv.length){
-				roomEnv.map((item) => {
+				roomEnv.forEach((item) => {
 					let itemObj = typeof item === "string" ? this.items[`_${item}`] : item;
-					itemObj ? newEnv.push(itemObj) : console.log(`Cannot stock ${item}. No such item.`);;
+					if (itemObj) {
+						const newObj = Object.assign(itemObj);
+						console.log("TCL: newObj", newObj)
+						newEnv.push(newObj);
+						return;
+					}
+					console.log(`Cannot stock ${item}. No such item.`);
 				});
 			}
 			this.mapKey[key][subEnvName] = newEnv;
@@ -569,9 +578,9 @@ const ConsoleGame = {
 		this.stockDungeon("hiddenEnv");
 		this.stockDungeon("visibleEnv");
 		this.items._glove.contents.push(this.items._matchbook);
-		this.items._safe.contents.push(this.items._key);
-		this.items._drawer.contents.push(this.items._card);
-		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._matchbook]);
+		this.items._safe.contents.push(this.items._key, this.items._scroll);
+		this.items._drawer.contents.push(this.items._cartridge);
+		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._key]);
 	
 	},
 

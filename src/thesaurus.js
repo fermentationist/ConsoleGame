@@ -1,4 +1,8 @@
 const thesaurus = {
+    bed: [
+        "bedframe",
+        "mattress"
+    ],
     booklet: [
         "catalog",
         "catalogue",
@@ -159,6 +163,10 @@ const thesaurus = {
 	open: [
 		"unclose"
     ],
+    painting: [
+        "canvas",
+        "artwork",
+    ],
     phonograph: [
         "record_player",
         "turntable"
@@ -186,6 +194,11 @@ const thesaurus = {
         "vault",
         "wall_safe"
     ],
+    scroll: [
+        "strap",// the strap binding the scroll
+        "parchment",
+        "spell"
+    ],
     smell: [
         "sniff"
     ],
@@ -211,6 +224,12 @@ const thesaurus = {
         "confiscate",
         "retrieve",
         "remove"
+    ],
+    toilet: [
+        "commode",
+        "crapper",
+        "loo",
+        "head",
     ],
     turn: [
         "flip",

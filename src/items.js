@@ -18,16 +18,6 @@ const itemModule = game => {
 		article: "a",
 		listed: true,
 		solution: null,
-		// burn: function () {
-		// 	game.state.objectMode = false;
-		// 	if (!game.inInventory("matchbook")) {
-		// 		console.p("You don't have the means to light a fire.");
-		// 		return;
-		// 	}
-		// 	console.p(`The meager flame is insufficient to ignite the ${this.name}.`);
-		// 	game.items._matchbook.closed = false;
-		// 	return;
-		// },
 		burn: function () {
 			game.state.objectMode = false;
 			if (!game.inInventory("matchbook")) {
@@ -39,10 +29,10 @@ const itemModule = game => {
 				console.p(`The meager flame is inadequate to ignite the ${this.name}.`);
 				return;
 			}
-			console.p(`The match's flame proves to be enough to ignite the ${this.name}. You watch as the ${this.name} is quickly transformed into little more than a pile of ash`);
+			console.p(`The match's flame proves to be enough to ignite the ${this.name}. You watch as the ${this.name} is quickly transformed into little more than a pile of ash.`);
 
 			if (game.inEnvironment(this.name)) {
-				game.removeFromEnv(this);
+				game.state.currentMapCell.removeFromEnv(this);
 				return;
 			}
 			if (game.inInventory(this.name)) {
@@ -50,6 +40,10 @@ const itemModule = game => {
 				return;
 			}
 			return;
+		},
+		burnDown: function () {
+			Object.getPrototypeOf(this).burn.call(this);
+			game.dead(`Unsatisfied after having consumed the ${this.name}, the fire quickly moves on to bigger and better things, like turning you and the house you are trapped in to a pile of smoldering embers.`);
 		},
 		climb: function () {
 			game.objectMode = false;
@@ -110,6 +104,9 @@ const itemModule = game => {
 			}
 			console.p(`The ${this.name} is not lit.`);
 		},
+		flush: function () {
+			game.state.objectMode = false;
+		},
 		incorrectGuess: function () {
 		},
 		lock: function () {
@@ -168,14 +165,20 @@ const itemModule = game => {
 				console.p("You are incapable of wielding such powerful magic unassisted.");
 				return;
 			}
+			
+			console.log("TCL: this.locked", this.locked)
 			this.locked = false;
 			this.closed = false;
-			game.mapKey[this.lockedTarget].locked = false;
-			game.mapKey[this.closedTarget].closed = false;
+			if (this.lockedTarget) {
+				game.mapKey[this.lockedTarget].locked = false;
+			}
+			if (this.closedTarget) {
+				game.mapKey[this.closedTarget].closed = false;
+			}
 			console.p("Once the rezrov spell is cast, the magic scroll disappears with a sudden flash, and a loud \"WHOMP!\"");
 			console.p(`When the smoke has cleared, the ${this.name} has been magically unlocked and opened!`);
 			if (game.inEnvironment("scroll")) {
-				game.removeFromEnv(game.items._scroll);
+				game.state.currentMapCell.removeFromEnv(game.items._scroll);
 				return;
 			}
 			if (game.inInventory("scroll")) {
@@ -251,9 +254,24 @@ const itemModule = game => {
 				});
 			},
 		},
+		_bathtub: {
+			name: "bathtub",
+			takeable: false,
+			description: ""
+		},
+		_bed: {
+			name: "bed",
+			flammable: true,
+			takeable: false,
+			description: "The antique bedframe is made of tubular bronze. There are not any sheets or blankets or pillows on the old, stained, queen-sized mattress that rests atop it.",
+			burn: function () {
+				Object.getPrototypeOf(this).burnDown.call(this);
+			},
+		},
 		_booklet: {
 			name: "booklet",
 			article: "a",
+			flammable: true,
 			description: "This booklet appears to be the exhibition catalogue for some fancy art show. ",
 			read: function (){
 				game.state.objectMode = false;
@@ -272,6 +290,7 @@ const itemModule = game => {
 		_books: {
 			name: "books",
 			listed: false,
+			takeable: false,
 			description: "While you notice many of the titles as familiar works of classic literature, nothing stands out as being of particular interest.",
 			read: function () {
 				console.p("You cannot possibly read all of these books, and considering you have been abducted by persons unknown and are trapped in a strange house, you have neither the presence of mind, nor the time to sit down with a good book right now.");
@@ -347,6 +366,14 @@ const itemModule = game => {
 				wait.call(this);
 			}
 		},
+		_coffee_table: {
+			name: "coffee_table",
+			listed: false,
+			takeable: false,
+			description: function (){
+				return `The low, four-legged table has nothing on it${game.state.env.visibleEnv.includes("photo") ? " except for a small, framed photo.": "."}`
+			},
+		},
 		_collar: {
 			name: "collar",
 			description: `It is ${game.state.dogName}'s collar! Whoever assaulted you and took your dog must have come this way!"`,
@@ -374,13 +401,13 @@ const itemModule = game => {
 			open: function () {
 				Object.getPrototypeOf(this).open.call(this);
 				if (game.items._drawer.closed){
-					Object.getPrototypeOf(game.items._drawer).open.call(game.items._drawer);
+					game.items._drawer.closed = false;
 				}
 			},
 			close: function () {
 				Object.getPrototypeOf(this).close.call(this);
 				if (!game.items._desk.closed){
-					Object.getPrototypeOf(game.items._desk).close.call(game.items._desk);
+					game.items._drawer.closed = true;
 				}
 			}
 		},
@@ -411,7 +438,7 @@ const itemModule = game => {
 			name: "door",
 			article: "a",
 			openable: true,
-			locked: false,
+			locked: true,
 			closed: true,
 			takeable: false,
 			listed: false,
@@ -420,7 +447,7 @@ const itemModule = game => {
 			closedTarget: "A",
 			get description() {
 				game.state.objectMode = false;
-				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a sturdy new deadbolt, which is ${this.locked ? "locked." : "unlocked!"}`
+				return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a sturdy new deadbolt, which is ${!this.closed ? "open!" : !this.locked ? "unlocked!" : "locked."}`
 			},
 			lock() {
 				Object.getPrototypeOf(this).lock.call(this);
@@ -449,6 +476,7 @@ const itemModule = game => {
 			listed: false,
 			openable: true,
 			closed: true,
+			takeable: false,
 			contents: [],
 			// proto: "_desk",
 			get description () {
@@ -460,13 +488,13 @@ const itemModule = game => {
 			open: function () {
 				Object.getPrototypeOf(this).open.call(this);
 				if (game.items._desk.closed){
-					Object.getPrototypeOf(game.items._desk).open.call(game.items._desk);
+					game.items.desk.closed = false;
 				}
 			},
 			close: function () {
 				Object.getPrototypeOf(this).close.call(this);
 				if (!game.items._desk.closed){
-					Object.getPrototypeOf(game.items._desk).close.call(game.items._desk);
+					game.items.desk.closed = true;
 				}
 			}
 		},
@@ -776,12 +804,11 @@ const itemModule = game => {
 				console.p("Upon entering the correct passcode, the bolt inside the safe's door slides back, and the door pops open gently.");
 				if (this.contents.length > 0) {
 					console.p(`Inside the safe is ${game.formatList(this.contents.map(item => `${item.article} ${item.name}`))}.`);
-					// this.contents.forEach(item => game.state.currentMapCell.addToEnv(item.name));
 				}
 			},
 			incorrectGuess: function () {
 				game.state.objectMode = false;
-				console.digi("!!!PASSCODE INCORRECT!!!");
+				console.digi("PASSCODE INCORRECT");
 				return;
 			},
 			open: function () {
@@ -814,11 +841,27 @@ const itemModule = game => {
 		},
 		_scroll: {
 			name: "scroll",
-			description: "There is some small text, printed on the fastener that was used to bind the rolled up scroll. It says, \"rezrov: Open even locked or enchanted objects\". As you unfurl the scroll, there appears to be some writing on the inside surface of the parchment, but each line of text seems to disappear as soon as it is revealed.",
+			flammable: true,
+			description: "There is some small text, printed on a thin leather strap that was used to bind the rolled up scroll. It says, \"rezrov: Open even locked or enchanted objects\". As you unfurl the scroll, there appears to be some writing on the inside surface of the parchment, but each line of text seems to disappear as soon as it is revealed.",
 			text: "rezrov: Open even locked or enchanted objects",
 			use: function (){
 				return window.rezrov;
 			},
+		},
+		_sink: {
+			name: "sink",
+			listed: false,
+			description: "",
+			 
+		},
+		_sofa: {
+			name: "sofa",
+			flammable: true,
+			listed: false,
+			description: "The well-worn sitting room sofa is upholstered brown cowhide.",
+			burn: function () {
+				Object.getPrototypeOf(this).burnDown.call(this);
+			}
 		},
 		_survey: {
 			name: "survey",
@@ -841,6 +884,16 @@ const itemModule = game => {
 			listed: false,
 			description: "The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair."
 		},
+		_toilet: {
+			name: "toilet",
+			listed: false,
+			description: "It is a very old porcelain toilet",
+			text: "Thomas Crapper % Co.",
+			flush: function () {
+				game.state.objectMode = false;
+				console.p("Having pushed the lever, and watched the water exit the bowl, you can personally verify that the toilet works as expected.");
+			}
+		}
 	}
 	
 	// Prototype-links each of the objects in items to either Item or other prototype, if defined
