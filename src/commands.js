@@ -313,6 +313,6 @@ const Commands = game => {
 
 	// ALIASES = aliases;
 	return aliases;
-};//)();
+};
 
 export default Commands;

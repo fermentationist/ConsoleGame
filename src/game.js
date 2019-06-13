@@ -559,7 +559,9 @@ const ConsoleGame = {
 				roomEnv.forEach((item) => {
 					let itemObj = typeof item === "string" ? this.items[`_${item}`] : item;
 					if (itemObj) {
-						const newObj = Object.assign(itemObj);
+						const ItemProto = Object.getPrototypeOf(this.items._all);
+						const newObj = {...itemObj};
+						Object.setPrototypeOf(newObj, ItemProto)
 						console.log("TCL: newObj", newObj)
 						newEnv.push(newObj);
 						return;
