@@ -65,7 +65,8 @@ const ConsoleGame = {
 	   
 	  //=========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
-	// This function runs at the start of each turn\\
+    // This function runs at the start of each turn\\
+        // this.state.pendingAction = commandName;
 		if (this.state.gameOver) {
 			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
@@ -562,14 +563,7 @@ const ConsoleGame = {
 				roomEnv.forEach((item) => {
 					let itemObj = typeof item === "string" ? this.items[`_${item}`] : item;
 					if (itemObj) {
-						// const newObj = JSON.parse(JSON.stringify(itemObj));
-                        const proto = Object.getPrototypeOf(itemObj);
-                        const created = Object.create(proto);
-						const newObj = Object.assign(created, itemObj)
-						console.log("TCL: proto", proto)
-						console.log("TCL: newObj", newObj)
-						// newEnv.push(itemObj);
-						newEnv.push(newObj);
+						newEnv.push(itemObj);
 						return;
 					}// working on object copying problem
 					console.log(`Cannot stock ${item}. No such item.`);

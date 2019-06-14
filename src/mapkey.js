@@ -234,7 +234,7 @@ const mapKey = game => {
 		},
 		"Z": {
 			name: "Kitchen",
-			visibleEnv: ["maps", "door"],
+			visibleEnv: ["maps", "backdoor"],
 			description: "It is quite large for a residential kitchen. While only a few of the original appliances remain, gritty outlines on the walls and floor suggest it was once well appointed. Now it is an echoing tile cavern.",
 			smell: "It smells like a dusty abandoned building. And chicken soup."
 		},

@@ -170,9 +170,8 @@ const Commands = game => {
 			return;
 		}
 		const action = game.state.pendingAction;
-        console.log("TCL: _items -> action", action)
 		// invoke the item's method that corresponds to the selected action
-		return item[action]();
+		item[action]();
 	}
 
 	const _yell = () => {
@@ -187,6 +186,15 @@ const Commands = game => {
 		if (game.confirmationCallback){
 			return game.confirmationCallback();
 		}
+	}
+
+	const _again = () => {
+		console.log("TCL: _again -> game.state.pendingAction", game.state.pendingAction)
+		
+		console.log("TCL: _again -> game.state.history", game.state.history)
+		const lastCommand = game.state.history[game.state.history.length - 1];
+        console.log("TCL: _again -> lastCommand", lastCommand)
+
 	}
 
 	const _poof = () => {
@@ -238,6 +246,8 @@ const Commands = game => {
 		[_smell, aliasString("smell", thesaurus)],
 		[_wait, aliasString("wait", thesaurus) + ",z,Z,zzz,ZZZ,Zzz"],
 		[_yell, aliasString("yell", thesaurus)],
+		[_again, aliasString("again", thesaurus) + ",g,G"],
+
 
 		// Item methods
 		[_act_upon, aliasString("burn", thesaurus)],

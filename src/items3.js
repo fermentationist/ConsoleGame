@@ -2,7 +2,7 @@ import consoleGame from "./game.js";
 import {randomDogName} from "./dogNames.js";
 // ===========//ItemModule//===========
 const itemModule = game => {
-	const Item = {
+	const ItemProto = {
 		name : "Item",
 		used : false,
 		weight : 1,
@@ -497,7 +497,11 @@ const itemModule = game => {
 					game.items.desk.closed = true;
 				}
 			}
-		},
+        },
+        _dresser: {
+            name: "dresser",
+            proto: "_table"
+        },
 		_filthy_note: {
 			name: "filthy_note",
 			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
@@ -637,7 +641,10 @@ const itemModule = game => {
 			light: function () {
 				this.use.call(this);
 			}
-		},
+        },
+        _nightstand: {
+            proto: "_table"
+        },
 		_no_tea: {
 			name: "no_tea",
 			weight: 0,
@@ -905,19 +912,32 @@ const itemModule = game => {
 	// 	const prototype = protoProperty ? items[protoProperty] : Item
 	// 	Object.setPrototypeOf(items[item], prototype);
     // }
-    const NewItem = itemName => {
+    // const NewItem = itemName => {
+    //     const newItem = {...items[itemName]};
+    //     const protoProperty = items[itemName].proto;
+	// 	const prototype = protoProperty ? items[protoProperty] : Item
+    //     Object.setPrototypeOf(newItem, prototype);
+    //     return newItem;
+    // }
+    // for (let item in items) {
+    //     const finishedItem = new NewItem(item);
+    //     console.log("TCL: finishedItem", finishedItem);
+    //     return finishedItem;
+    // }
+    // return items;
+    
+    function Item (itemName) {
+        console.log("TCL: Item -> itemName", itemName)
         const newItem = {...items[itemName]};
         const protoProperty = items[itemName].proto;
-		const prototype = protoProperty ? items[protoProperty] : Item
+        console.log("TCL: Item -> newItem", newItem)
+		const prototype = protoProperty ? items[protoProperty] : ItemProto;
+        console.log("TCL: Item -> prototype", prototype)
         Object.setPrototypeOf(newItem, prototype);
         return newItem;
     }
-    for (let item in items) {
-        const finishedItem = new NewItem(item);
-        console.log("TCL: finishedItem", finishedItem);
-        return finishedItem;
-    }
-	return items;
+    
+    return {Item, items}
 };
 
 export default itemModule;

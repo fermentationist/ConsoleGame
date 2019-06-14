@@ -1,6 +1,3 @@
-import consoleGame from "./game.js";
-import {randomDogName} from "./dogNames.js";
-// ===========//ItemModule//===========
 const itemModule = game => {
 	const Item = {
 		name : "Item",
@@ -254,6 +251,14 @@ const itemModule = game => {
 				});
 			},
 		},
+		_backdoor: {
+			name: "door",
+			locked: true,
+			proto: "_door",
+			unlock: function () {
+				Object.getPrototypeOf(this).unlock(this)
+			}
+		},
 		_bathtub: {
 			name: "bathtub",
 			takeable: false,
@@ -454,8 +459,8 @@ const itemModule = game => {
 				game.mapKey[this.lockedTarget].locked = true;
 				return;
 			},
-			unlock() {
-				Object.getPrototypeOf(this).unlock.call(this);
+			unlock(altThis) {
+				Object.getPrototypeOf(this).unlock.call(altThis ? altThis : this);
 				game.mapKey[this.lockedTarget].locked = false;
 				return;
 			},
@@ -895,13 +900,54 @@ const itemModule = game => {
 	}
 	
 	// Prototype-links each of the objects in items to either Item or other prototype, if defined
-	Object.keys(items).map((itemInstance) => {
-		const protoProperty = items[itemInstance].proto;
-		const prototype = protoProperty ? items[protoProperty] : Item
-		Object.setPrototypeOf(items[itemInstance], prototype);
-	});
+	// Object.keys(items).map((itemType) => {
+	// 	const protoProperty = items[itemType].proto;
+	// 	const prototype = protoProperty ? items[protoProperty] : Item
+	// 	Object.setPrototypeOf(items[itemType], prototype);
+	// });
+	const initializeItems = itemDefinitions => {
+		for (let item in itemDefinitions) {
+            console.log("TCL: item", item)
+			
+			const definedProto = itemDefinitions[item].proto;
+			const protoToApply = definedProto ? itemDefinitions[definedProto] : Item;
 
-	return items;
+			if (definedProto) {
+				const itemMethodNames = Object.entries(itemDefinitions[item])
+					.filter(prop => prop[1] instanceof Function)
+					.map(method => method[0]);
+				const protoMethods = Object.entries(protoToApply)
+					.filter(prop => prop[1] instanceof Function);
+                const methodsToRedefine = protoMethods.filter(method => {
+					const methodName = method[0];
+					return ! itemMethodNames.includes(methodName)
+				});
+
+				if (methodsToRedefine.length > 0) {
+					// unlock: function () {
+					// 	Object.getPrototypeOf(this).unlock(this)
+					// }
+					methodsToRedefine.forEach(method => {
+						
+						const [name, func] = method;
+						const newFunction = () => {
+							return Object.getPrototypeOf(this)[func](this);
+						}
+                        console.log("TCL: newFunction", newFunction)
+						Object.defineProperty(itemDefinitions[item], name, newFunction)
+                        console.log("TCL: itemDefinitions[item]", itemDefinitions[item])
+					})
+				}
+                // console.log("TCL: protoToApply", protoToApply)
+                
+			}
+			Object.setPrototypeOf(itemDefinitions[item], protoToApply);
+		}
+		return itemDefinitions;
+	}
+
+	return initializeItems(items);
 };
 
 export default itemModule;
+
