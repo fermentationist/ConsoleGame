@@ -5,6 +5,7 @@ import itemModule from "./items.js";
 import commandsList from "./commands.js";
 import customConsole from "./console_styles.js";
 import spells from "./spells.js";
+import {randomDogName} from "./dogNames.js"
 
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
 //todo: rewrite with generators?
@@ -37,6 +38,7 @@ const ConsoleGame = {
 			y: 13,
 			x: 7
 		},
+		dogName: randomDogName(),
 		get currentCellCode (){ 
 			return ConsoleGame.maps[this.position.z][this.position.y][this.position.x]
 		},
@@ -138,6 +140,7 @@ const ConsoleGame = {
 		this.state.gameOver = false;
 		this.state.pendingAction = null;
 		this.state.position = this.state.startPosition;
+		this.state.dogName = randomDogName();
 		window.localStorage.removeItem("ConsoleGame.history");
 		return;
 	},
@@ -559,13 +562,16 @@ const ConsoleGame = {
 				roomEnv.forEach((item) => {
 					let itemObj = typeof item === "string" ? this.items[`_${item}`] : item;
 					if (itemObj) {
-						const ItemProto = Object.getPrototypeOf(this.items._all);
-						const newObj = {...itemObj};
-						Object.setPrototypeOf(newObj, ItemProto)
+						// const newObj = JSON.parse(JSON.stringify(itemObj));
+                        const proto = Object.getPrototypeOf(itemObj);
+                        const created = Object.create(proto);
+						const newObj = Object.assign(created, itemObj)
+						console.log("TCL: proto", proto)
 						console.log("TCL: newObj", newObj)
+						// newEnv.push(itemObj);
 						newEnv.push(newObj);
 						return;
-					}
+					}// working on object copying problem
 					console.log(`Cannot stock ${item}. No such item.`);
 				});
 			}

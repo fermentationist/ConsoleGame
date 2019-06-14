@@ -170,6 +170,7 @@ const Commands = game => {
 			return;
 		}
 		const action = game.state.pendingAction;
+        console.log("TCL: _items -> action", action)
 		// invoke the item's method that corresponds to the selected action
 		return item[action]();
 	}
