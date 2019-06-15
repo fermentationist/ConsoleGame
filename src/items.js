@@ -48,7 +48,7 @@ const itemModule = game => {
 		},
 		close: function () {
 			game.state.objectMode = false;
-			if (!game.inEnvironment(this.name)) {
+			if (!game.inEnvironment(this.name) && !game.inInventory(this.name)) {
 				console.p(`You don't see ${this.article} ${this.name} here.`);
 				return;
 			}
@@ -172,7 +172,6 @@ const itemModule = game => {
 				return;
 			}
 			
-			console.log("TCL: this.locked", this.locked)
 			this.locked = false;
 			this.closed = false;
 			if (this.lockedTarget) {
@@ -281,6 +280,7 @@ const itemModule = game => {
 			name: "door",
 			locked: true,
 			closed: true,
+			listed: true,
 			proto: "_door",
 			unlockedBy: "old_key",
 			lockedTarget: "I"
@@ -707,6 +707,7 @@ const itemModule = game => {
 		},
 		_old_key: {
 			name: "old_key",
+			article: "an",
 			description: "It is an old-fashioned key, made of heavy, tarnished bronze.",
 			proto: "_key"
 		},
@@ -860,6 +861,9 @@ const itemModule = game => {
 			use: function (){
 				return window.rezrov;
 			},
+			cast: function () {
+				this.use.call(this)
+			}
 		},
 		_sink: {
 			name: "sink",

@@ -166,7 +166,7 @@ const Commands = game => {
 		const item = game.inEnvironment(itemName) || game.inInventory(itemName);
 		if (!item){
 			game.state.objectMode = false;
-			console.invalid(`${itemName} is not available.`);
+			console.p(`The ${itemName} is unavailable.`);
 			return;
 		}
 		const action = game.state.pendingAction;
@@ -270,6 +270,7 @@ const Commands = game => {
 		[_act_upon, aliasString("pull", thesaurus)],
 		[_act_upon, aliasString("read", thesaurus)],
 		[_act_upon, aliasString("rezrov", thesaurus)],
+		[_act_upon, aliasString("cast", thesaurus)],
 		[_act_upon, aliasString("spray", thesaurus)],
 		[_act_upon, aliasString("take", thesaurus)],
 		[_act_upon, aliasString("turn", thesaurus)],

@@ -120,22 +120,27 @@ const mapKey = game => {
 		"B": {
 			name: "Basement",
 			description: "A single dim bulb, dangling on a cord from the low, unfinished ceiling, is barely enough to illuminate the room. The floors appear to be composed of compressed earth, left unfinished since the space was initially excavated more than a century ago.  ",
-			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces."
+			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces.",
+			get sound () {
+				return `You can hear a dog barking. The sound is emanating from the room north of you. It is loud enough now for you to recognize it as ${game.state.dogName}'s bark!`;
+			}
 		},
 
 		"C": {
 			name: "Dark room",
 			hiddenSecrets: true,
-			des1: "As you walk into the dark room, it feels as if the increasingly uneven floor is sloping downward, though you can see nothing. \nIt is pitch black. You are likely to be eaten by a grue.",
+			get des1 () {
+				return `As you walk into the dark room, it feels as if the increasingly uneven floor is sloping downward, though you can see nothing. \nIt is pitch black. You are likely to be eaten by a grue. \nSomewhere in the dark, you can hear ${game.state.dogName} barking excitedly!`;
+			},
 			get des2 () {
 				return `By the flickering light of the flame, you can see that the floor becomes rougher and more irregular, sloping down toward the north.`;
 			},
-			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of grue feces.",
+			smell: "It smells strongly of old, damp dungeon – a mix of dirt and mildew with perhaps a hint of grue feces.",
 			get description () {
 				return this.hideSecrets ? this.des1 : this.des2;
 			},
-			hiddenEnv: ["collar", "lantern", "old_key"],
-			visibleEnv: ["basement_door"]
+			hiddenEnv: ["lantern", "old_key", "basement_door"],
+			visibleEnv: []
 		},
 
 		"D": {
@@ -224,19 +229,23 @@ const mapKey = game => {
 		"@": {
 			name: "Stone staircase, top",
 			description: "You are at the top of a stone staircase that leads down to the basement. A faint cold draft greets you from below.",
-			smell: "A vaguely unfresh scent wafts up from the basement."
+			smell: "A vaguely unfresh scent wafts up from the basement.",
+			visibleEnv: ["collar"],
+			sound: "You do not hear anything."
 		},
 		
 		"(": {
 			name: "Stone staircase, landing",
 			description: "You are standing on a stone staircase leading to the basement. A faint cold draft greets you from below.",
-			smell: "As you descend, the smell of mildew and earth becomes noticeable."
+			smell: "As you descend, the smell of mildew and earth becomes noticeable.",
+			sound: "For a moment, you are certain you can hear what sounds like muffled barking, but when you stop moving and strain to hear it again, the sound has stopped."
 		},
 
 		")": {
 			name: "Stone staircase, bottom",
 			description: "You are standing on a stone staircase leading upwards to the first floor.",
-			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces."
+			smell: "It smells strongly of old, damp basement – a mix of dirt and mildew with perhaps a hint of rodent feces.",
+			sound: "You can definitely hear the sound of distant, muffled barking. It is coming from the east!"
 		},
 
 		"$": {
