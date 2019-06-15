@@ -66,7 +66,6 @@ const ConsoleGame = {
 	  //=========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
     // This function runs at the start of each turn\\
-        // this.state.pendingAction = commandName;
 		if (this.state.gameOver) {
 			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
@@ -565,7 +564,7 @@ const ConsoleGame = {
 					if (itemObj) {
 						newEnv.push(itemObj);
 						return;
-					}// working on object copying problem
+					}
 					console.log(`Cannot stock ${item}. No such item.`);
 				});
 			}
@@ -582,7 +581,7 @@ const ConsoleGame = {
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key, this.items._scroll);
 		this.items._drawer.contents.push(this.items._cartridge);
-		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._key]);
+		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._key, this.items._matchbook]);
 	
 	},
 

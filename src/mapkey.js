@@ -20,8 +20,8 @@ const mapKey = game => {
 		set hideSecrets (trueOrFalse){
 			this.hiddenSecrets = trueOrFalse;
 		},
-		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing is happening, nor is anything of interest is likely to happen here in the future.", // the default text displayed when player enters or "looks" at room
-		smell: "Your nose is unable to detect anything unusual, beyond the smell of mildew and rot that permeates the entirety of the decrepit building.", // text displayed in response to smell command
+		description: "You find yourself in a non-descript, unremarkable, non-place. Nothing is happening, nor is anything of interest likely to happen here in the future.", // the default text displayed when player enters or "looks" at room
+		smell: "Your nose is unable to detect anything unusual, beyond the smell of age and decay that permeates the entirety of the decrepit building.", // text displayed in response to smell command
 		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creak of sagging floorboards underfoot.", // text displayed in response to listen command
 		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
 		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
@@ -85,10 +85,27 @@ const mapKey = game => {
 
 		"A": {
 			name: "Freedom!",
-			locked: false,
+			locked: true,
 			closed: true,
 			get lockText () {
 				return `The formidable wooden front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless layers of murky varnish. It is ${this.locked ? "locked" : "unlocked"}.`;
+				
+			},
+			get description () {
+				if (game.state.turn < 3) {
+					game.captured();
+					return "";
+				}
+				return game.winner("\nYou have escaped!\n");
+			},
+		},
+
+		"a": {
+			name: "Freedom!",
+			locked: true,
+			closed: true,
+			get lockText () {
+				return `The kitchen door will not open. It is ${this.locked ? "locked" : "unlocked"}.`;
 				
 			},
 			get description () {
@@ -117,8 +134,8 @@ const mapKey = game => {
 			get description () {
 				return this.hideSecrets ? this.des1 : this.des2;
 			},
-			hiddenEnv: ["collar", "lantern"],
-			visibleEnv: ["key"]
+			hiddenEnv: ["collar", "lantern", "old_key"],
+			visibleEnv: ["basement_door"]
 		},
 
 		"D": {
@@ -146,6 +163,17 @@ const mapKey = game => {
 		"H": {
 			name: "Master bathroom",
 			description: "",
+		},
+		"I": {
+			name: "Cell",
+			description: "It is a dark and scary cell.",
+			locked: true,
+			closed: true,
+			get lockText () {
+				return `An ominous-looking, rusted steel door blocks your path. It is ${this.locked ? "locked" : "unlocked"}.`;
+				
+			},
+
 		},
 		"^": {
 			name: "Second floor hallway, north",
