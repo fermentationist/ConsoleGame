@@ -465,6 +465,12 @@ const itemModule = game => {
 				this.play.call(this)
 			},
 		},
+		_dog: {
+			get name (){
+				return game.state.dogName;
+			},
+			description: "Four legs. barks.",
+		},
 		_door: {
 			name: "door",
 			article: "a",
