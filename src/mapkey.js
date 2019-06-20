@@ -7,7 +7,7 @@ const mapKey = game => {
 		unlockText: "", // text to be displayed when area becomes unlocked
 		hiddenSecrets: false, // used to toggle room description and whether player has access to hiddenEnv
 		get hideSecrets () {
-			const cond2 = this.visibleEnv.includes(game.items._lantern) || game.inInventory("lantern");
+			const cond2 = this.visibleEnv.includes(game.items._lantern) || this.hiddenEnv.includes(game.items._lantern) || game.inInventory("lantern");
 			const cond3 = this.visibleEnv.includes(game.items._matchbook) || game.inInventory("matchbook");
 			const cond2b = game.items._lantern.fireCount > 0;
 			const cond3b = game.items._matchbook.fireCount > 0;
@@ -139,8 +139,8 @@ const mapKey = game => {
 			get description () {
 				return this.hideSecrets ? this.des1 : this.des2;
 			},
-			hiddenEnv: ["lantern", "old_key", "basement_door"],
-			visibleEnv: []
+			hiddenEnv: ["lantern", "basement_door"],
+			visibleEnv: ["grue"]
 		},
 
 		"D": {
@@ -151,45 +151,55 @@ const mapKey = game => {
 		"E": {
 			name: "Guest Room",
 			description: "",
+			visibleEnv: ["old_key", "bed", "dresser"]
 		},
 		"F": {
 			name: "Sitting room",
-			description: "",
-			visibleEnv: ["chair", "sofa", "coffee_table"]
+			description: "A small sitting room adjoins the master bedroom. It contains a cushioned armchair and a small sofa, both facing a coffee table.",
+			visibleEnv: ["chair", "sofa", "coffee_table", "photo"]
 			
 		},
 		"G": {
 			name: "Master bedroom",
 			get description () {
-				return `The master bedroom is `;
+				return `The master bedroom is spacious though sparsely furnished, containing only a bedframe, a wardrobe and a nightstand`;
 			},
-			visibleEnv: ["photo", "bed", "nightstand", "dresser"]
+			visibleEnv: ["bed", "nightstand", "wardrobe"]
 		},
 		"H": {
 			name: "Master bathroom",
-			description: "",
+			description: "The bathroom adjoining the bedroom has all of the expected fixtures, though they are corroded and covered in filth. ",
+			visibleEnv: ["toilet", "sink", "bathtub"]
 		},
 		"I": {
 			name: "Cell",
 			description: "It is a dark and scary cell.",
 			locked: true,
 			closed: true,
+			smell: "It smells like dog waste.",
 			get lockText () {
 				return `An ominous-looking, rusted steel door blocks your path. It is ${this.locked ? "locked" : "unlocked"}.`;
-				
 			},
+			visibleEnv: ["dog"],
 
+		},
+		"J": {
+			name: "Parlor",
+			get description () { 
+				return `This room looks like it was used to screen films and recordings. There is a tall white pedestal${game.inEnvironment("projector") ? ", supporting a squarish plastic Super 8 projector," : ""} in the center of the room. `
+			},
+			visibleEnv: ["projector", "screen", "pedestal", "chair", "phonograph"],
 		},
 		"^": {
 			name: "Second floor hallway, north",
 			description: "You are at the top of a wide wooden staircase, on the second floor of the old house.",
-			visibleEnv: ["projector"]
+			visibleEnv: []
 		},
 
 		"-": {
 			name: "Second floor hallway, south",
 			description: "It looks like there are a couple of rooms on either side of the broad hallway, and a small broom closet at the south end.",
-			visibleEnv: ["cartridge"]
+			visibleEnv: []
 		},
 
 		"+": {

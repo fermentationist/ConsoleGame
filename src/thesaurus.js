@@ -20,12 +20,6 @@ const thesaurus = {
         "incinerate",
         "immolate"
     ],
-    cartridge: [
-        "movie",
-        "reel",
-        "film",
-        "film_cartridge"
-    ],
     collar: [
         "dog_collar",
         "leash"
@@ -93,6 +87,12 @@ const thesaurus = {
     ],
     extinguish: [
         "douse",
+    ],
+    film: [
+        "movie",
+        "reel",
+        "cartridge",
+        "film_cartridge"
     ],
     glove: [
         "mitt",

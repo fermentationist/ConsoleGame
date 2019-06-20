@@ -43,7 +43,7 @@ const customConsole = (() => {
 		customLog(message, `font-size:calc(1.2 * ${fontSize});color:cyan;font-family:${primaryFont};padding:0 1em;`);
 	}
 	console.title = message => {
-		customLog(message, `font-size:calc(2.5 * ${fontSize});font-weight:bold;color:gold;text-shadow:orange 2px 2px 5px;goldenrod -2px -2px 5px;font-family:Courier;padding:0 1em;margin:0 auto 0 35%;border: 2px dashed goldenrod;`);
+		customLog(message, `font-size:calc(2.5 * ${fontSize});font-weight:bold;color:orangered;text-shadow:orange 2px 2px 5px;goldenrod -2px -2px 5px;font-family:Courier;padding:0 1em;margin:0 auto 0 35%;border: 2px dashed goldenrod;`);
 	}
 	console.win = message => {
 		customLog(message, `font-size:calc(2.5 * ${fontSize});font-weight:bold;color:gold;text-shadow:orange 2px 2px 5px;goldenrod -2px -2px 5px;font-family:Courier;padding:0 1em;animation:flashing 0.8s infinite;`);

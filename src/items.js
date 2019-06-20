@@ -15,6 +15,10 @@ const itemModule = game => {
 		article: "a",
 		listed: true,
 		solution: null,
+		points: 1,
+		get fireCount() {
+			return this.activated ? this.count : 0;
+		},
 		burn: function () {
 			game.state.objectMode = false;
 			if (!game.inInventory("matchbook")) {
@@ -78,6 +82,7 @@ const itemModule = game => {
 			game.state.objectMode = false;
 			if (game.inInventory(this.name)) {
 				game.removeFromInventory(this);
+				game.state.score -= this.points;
 				game.state.currentMapCell.visibleEnv.push(this);
 				return console.p(`${this.name} dropped.`);
 			} else {
@@ -149,6 +154,8 @@ const itemModule = game => {
 			}
 			console.p(`The ${this.name} is now open.`);
 			this.closed = false;
+			game.state.score += this.points;
+			this.points = 0;
 			if (this.closedTarget){
 				game.mapKey[this.closedTarget].closed = false;
 			}
@@ -193,8 +200,9 @@ const itemModule = game => {
 		},
 		take: function () {
 			game.state.objectMode = false;
-			if (this.takeable && game.inEnvironment(this.name) ) {
+			if (this.takeable ){//&& game.inEnvironment(this.name) ) {
 				game.addToInventory([this]);
+				game.state.score += this.points;
 				game.state.currentMapCell.removeFromEnv(this);
 				console.p(`You pick up the ${this.name}.`);
 				return;
@@ -228,6 +236,7 @@ const itemModule = game => {
 				console.p(`Using the ${this.unlockedBy}, you are able to unlock the ${this.name}`);
 				if (this.lockedTarget){
 					game.mapKey[this.lockedTarget].locked = false;
+                
 				}
 				return;
 			}
@@ -283,17 +292,19 @@ const itemModule = game => {
 			listed: true,
 			proto: "_door",
 			unlockedBy: "old_key",
-			lockedTarget: "I"
+			lockedTarget: "I",
+			closedTarget: "I"
 		},
 		_bathtub: {
 			name: "bathtub",
 			takeable: false,
-			description: ""
+			description: "The old cast iron tub rests atop four taloned feet. It does not look functional."
 		},
 		_bed: {
 			name: "bed",
 			flammable: true,
 			takeable: false,
+			listed:false,
 			description: "The antique bedframe is made of tubular bronze. There are not any sheets or blankets or pillows on the old, stained, queen-sized mattress that rests atop it.",
 			burn: function () {
 				Object.getPrototypeOf(this).burnDown.call(this);
@@ -346,29 +357,6 @@ const itemModule = game => {
 				return;
 			}
 		},
-		_cartridge: {
-			name: "cartridge",
-			description: "The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.",
-			play: function () {
-				if (!game.inEnvironment("projector") && !game.inInventory("projector")) {
-					console.p("First, you will need to find something to project the film with.");
-					return;
-				}
-				return game.displayItem({
-					title: "\nCanned Laughs",
-					artist: "Dennis Hodges",
-					year: "2001",
-					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview"
-				});
-			},
-			use: function () {
-				this.play.call(this)
-			},
-			project: function () {
-				this.play.call(this);
-			}
-		},
 		_chain: {
 			name: "chain",
 			weight: 0,
@@ -407,7 +395,7 @@ const itemModule = game => {
 		},
 		_collar: {
 			name: "collar",
-			description: `It is ${game.state.dogName}'s collar! Whoever assaulted you and took your dog must have come this way!"`,
+			description: `It is ${game.state.dogName}'s collar! Whoever assaulted you and took your dog must have come this way!`,
 			smell: function () {
 				console.p("The collar smells like leather and scared doggie!");
 			}
@@ -466,16 +454,21 @@ const itemModule = game => {
 			},
 		},
 		_dog: {
-			get name (){
-				return game.state.dogName;
-			},
+			name: "dog",
+			points: 50,
+			article: "a",
+			takeable: true,
 			description: "Four legs. barks.",
+			rescue: function () {
+				Object.getPrototypeOf(this).take.call(this);
+			}
 		},
 		_door: {
 			name: "door",
 			article: "a",
+			points: 20,
 			openable: true,
-			locked: true,
+			locked: false,
 			closed: true,
 			takeable: false,
 			listed: false,
@@ -494,7 +487,6 @@ const itemModule = game => {
 			closed: true,
 			takeable: false,
 			contents: [],
-			// proto: "_desk",
 			get description () {
 				if (this.closed) {
 					return "The drawer is closed.";
@@ -504,14 +496,54 @@ const itemModule = game => {
 			open: function () {
 				Object.getPrototypeOf(this).open.call(this);
 				if (game.items._desk.closed){
-					game.items.desk.closed = false;
+					game.items._desk.closed = false;
 				}
 			},
 			close: function () {
 				Object.getPrototypeOf(this).close.call(this);
 				if (!game.items._desk.closed){
-					game.items.desk.closed = true;
+					game.items._desk.closed = true;
 				}
+			}
+		},
+		_dresser: {
+			name: "dresser",
+			takeable: false,
+			openable: true,
+			closed: true,
+			listed: false,
+			contents: [],
+			get description () {
+				return `The dresser is${this.closed ? "closed" : "open"}.`;
+			},
+		},
+		_film: {
+			name: "film",
+			article: "a reel of",
+			text: "Canned Laughs",
+			description: "The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.",
+			play: function () {
+				if (!game.inEnvironment("projector") && !game.inInventory("projector")) {
+					console.p("First, you will need to find something to project the film with.");
+					return;
+				}
+				if (!game.inEnvironment("screen") && !game.inInventory("screen")) {
+					console.p("You are going to need a screen to project onto.")
+					return;
+				}
+				return game.displayItem({
+					title: "\nCanned Laughs",
+					artist: "Dennis Hodges",
+					year: "2001",
+					info: "Super 8mm film to video transfer with dubbed audio",
+					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview"
+				});
+			},
+			use: function () {
+				this.play.call(this)
+			},
+			project: function () {
+				this.play.call(this);
 			}
 		},
 		_filthy_note: {
@@ -535,10 +567,27 @@ const itemModule = game => {
 				return this.description;
 			}
 		},
+		_grue: {
+			name: "grue",
+			listed: false,
+			takeable: false,
+			description: "No adventurer who has seen a grue has yet lived to tell of it.",
+			lurk: function () {
+				if (!game.state.currentMapCell.hideSecrets){
+					return;
+				}
+				const valarMorgulis = Math.random() >= 0.25;
+				if (valarMorgulis){
+					game.dead("Oh no! You have walked into the slavering fangs of a lurking grue!");
+				}
+				return;
+			},
+		},
 		_grue_repellant: {
 			name: "grue_repellant",
 			defective: Math.random() < 0.03,
 			weight: 3,
+			count: 3,
 			article: "some",
 			description: "A 12oz can of premium aerosol grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.",
 			use: function () {
@@ -552,6 +601,8 @@ const itemModule = game => {
 					return console.p("Nothing happens. This must be one of the Math.random() < 0.03 of grue_repellant cans that were programmed to be, I mean, that were accidentally manufactured defectively. Repeated attempts to coax repellant from the aerosol canister prove equally fruitless.");
 				} else {
 					this.used = true;
+					this.activated = true;
+					game.state.repellantMode = true;
 					return console.p("A cloud of repellant hisses from the canister, temporarily obscuring your surroundings. By the time it clears, your head begins to throb, and you feel a dull, leaden taste coating your tongue. The edges of your eyes and nostrils feel sunburnt, and there is also a burning sensation to accompany an unsteady buzzing in your ears. Although you are not a grue, you find it to be more than somewhat off-putting.");
 				}
 			},
@@ -562,15 +613,35 @@ const itemModule = game => {
 			drink: function () {
 				game.state.objectMode = false;
 				game.dead("Drinking from an aerosol can is awkward at best, but still you manage to ravenously slather your chops with the foaming grue repellant. You try to enjoy the searing pain inflicted by this highly caustic (and highly toxic!) chemical as it dissolves the flesh of your mouth and throat, but to no avail. It is not delicious, and you are starting to realize that there are some non-trivial drawbacks to willingly ingesting poison. Oops.");
-			}
+			},
+			decrementCounter: function () {
+				if (this.activated && this.count > 0) {
+					--this.count;
+					if (this.count === 0) {
+						console.p("The grue repellant has probably worn off by now.");
+						this.activated = false;
+						game.state.repellantMode = false;
+						return;
+					}
+				}
+			},
 		},
 		_key: {
 			name: "key",
-			description: "The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday."
+			description: "The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday.",
+			use: function () {
+				const unlockable = game.state.combinedEnv.filter(item => item.unlockedBy === this.name);
+				if (unlockable.length < 1){
+					console.p(`There is nothing to unlock with the ${this.name}`);
+					return;
+				}
+				unlockable.forEach(item => item.unlock());
+			}
 		},
 		_lantern: {
 			name: "lantern",
 			flammable: false,
+			activated: false,
 			proto: "_matchbook",
 			get description() {
 				return `The old brass lantern is the quaint sort that burns hydrocarbons to produce light. It is currently ${this.activated ? "lit." : "extinguished."}`;
@@ -627,11 +698,8 @@ const itemModule = game => {
 			get description() {
 				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\""}`;
 			},
-			get fireCount () {
-				return this.activated ? this.count : 0;
-			},
 			decrementCounter: function () {
-				if (this.activated && this.count > 0) {
+				if (this.fireCount) {
 					-- this.count;
 					if (this.count === 0){
 						console.p("Despite your best efforts the flame flickers out.");
@@ -686,8 +754,7 @@ const itemModule = game => {
 			},
 			contemplate: function () {
 				if (this.methodCallcount > 2) {
-					console.p("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
-					return game.winner();
+					return game.winner("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
 				}
 				return this.no_teaMethod("Let's not resort to that just yet!");
 			},
@@ -706,6 +773,7 @@ const itemModule = game => {
 				console.ransom(this.text);
 				if (this.firstRead) {
 					console.p(`Who would do such a thing to sweet little ${game.state.dogName}!?`);
+					console.p("You need to rescue your puppy and get out of this place before your attacker returns!");
 					this.firstRead = false;
 				}
 
@@ -760,6 +828,11 @@ const itemModule = game => {
 				return;
 			},
 		},
+		_pedestal: {
+			name: "pedestal",
+			proto: "_table",
+			description: "It is a simple wooden plinth, painted white."
+		},
 		_phonograph: {
 			name: "phonograph",
 			description: "The old phonograph has a built-in speaker, and looks like it might still work.",
@@ -793,11 +866,15 @@ const itemModule = game => {
 			name: "projector",
 			description: "It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.",
 			play: function () {
-				if (!game.inEnvironment("cartridge") && !game.inInventory("cartridge")) {
+				if (!game.inEnvironment("film") && !game.inInventory("film")) {
 					console.p("First, you will need to find something to project with the projector.")
 					return;
 				}
-				return game.items._cartridge.play.call(this);
+				if (!game.inEnvironment("screen") && !game.inInventory("screen")) {
+					console.p("You are going to need a screen to project onto.")
+					return;
+				}
+				return game.items._film.play.call(this);
 			},
 			use: function () {
 				this.play.call(this)
@@ -808,6 +885,7 @@ const itemModule = game => {
 		},
 		_safe: {
 			name: "safe",
+			points: 10,
 			closed: true,
 			openable: true,
 			locked: true,
@@ -859,6 +937,12 @@ const itemModule = game => {
 				this.unlock.call(this);
 			},
 		},
+		_screen: {
+			name: "screen",
+			takeable: true,
+			description: "It is the type of portable movie screen that rolls up into itself like an old window shade.",
+
+		},
 		_scroll: {
 			name: "scroll",
 			flammable: true,
@@ -874,7 +958,10 @@ const itemModule = game => {
 		_sink: {
 			name: "sink",
 			listed: false,
-			description: "",
+			description: "It is an old porcelain sink with separate taps for hot and cold water. Like everything else here, it is covered in dust and grime.",
+			use: function () {
+				console.p("You try to turn on the taps, but nothing comes out.");
+			},
 			 
 		},
 		_sofa: {
@@ -910,13 +997,24 @@ const itemModule = game => {
 		_toilet: {
 			name: "toilet",
 			listed: false,
-			description: "It is a very old porcelain toilet",
+			description: "You are surprised to find that the bowl of the very old porcelain toilet is still full of water.",
 			text: "Thomas Crapper % Co.",
 			flush: function () {
 				game.state.objectMode = false;
 				console.p("Having pushed the lever, and watched the water exit the bowl, you can personally verify that the toilet works as expected.");
 			}
-		}
+		},
+		_wardrobe: {
+			name: "wardrobe",
+			takeable: false,
+			openable: true,
+			closed: true,
+			listed: false,
+			contents: [],
+			get description() {
+				return `The wardrobe is about seven feet in height and is currently ${this.closed ? "closed" : "open"}.`;
+			},
+		},
 	}
 	
 	// Prototype-links each of the objects in items to either Item or other prototype, if defined
