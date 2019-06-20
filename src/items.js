@@ -419,14 +419,17 @@ const itemModule = game => {
 			containedPart: "_drawer",
 			description: "The antique writing desk is six feet in length, and blanketed with dust. It has a single drawer on one side.",
 			open: function () {
-				Object.getPrototypeOf(this).open.call(this);
+				if(this.closed){
+					Object.getPrototypeOf(this).open.call(this);
+				}
 				if (game.items[this.containedPart].closed){
 					game.items[this.containedPart].closed = false;
 				}
 			},
 			close: function () {
-				Object.getPrototypeOf(this).close.call(this);
-				// if (!this.closed){
+				if (!this.closed){
+					Object.getPrototypeOf(this).close.call(this);
+				}
 				if (!game.items[this.containedPart].closed) {
 					game.items[this.containedPart].closed = true;
 				}
@@ -497,13 +500,17 @@ const itemModule = game => {
 				return `The drawer is open. There is ${this.contents.length < 1 ? "nothing": game.formatList(this.contents.map(item => `${item.article} ${item.name}`))} inside.`
 			},
 			open: function () {
-				Object.getPrototypeOf(this).open.call(this);
+				if (this.closed){
+					Object.getPrototypeOf(this).open.call(this);
+				}
 				if (game.items[this.containedIn].closed){
 					game.items[this.containedIn].closed = false;
 				}
 			},
 			close: function () {
-				Object.getPrototypeOf(this).close.call(this);
+				if (!this.closed){
+					Object.getPrototypeOf(this).close.call(this);
+				}
 				if (!game.items[this.containedIn].closed){
 					game.items[this.containedIn].closed = true;
 				}
@@ -522,10 +529,16 @@ const itemModule = game => {
 				return `The modest wooden dresser is of simple design. The pale blue milk paint that coats it is worn through in several spots from use. It has a large drawer, which is ${this.closed ? "closed" : "open"}.`
 			},
 			open: function () {
-				console.log(this)
 				const proto = Object.getPrototypeOf(this);
-				const thisOpen = proto.open.bind(this);
-				thisOpen.call(this);
+				const urOpen = Object.getPrototypeOf(proto).open.bind(this);
+				urOpen.call(this);// open method from prototype's prototype
+				proto.open.call(this);// open method of prototype
+			},
+			close: function () {
+				const proto = Object.getPrototypeOf(this);
+				const urClose = Object.getPrototypeOf(proto).close.bind(this);
+				urClose.call(this);// close method from prototype's prototype
+				proto.close.call(this);// open method of prototype
 			},
 		},
 		_dresser_drawer: {
@@ -537,6 +550,18 @@ const itemModule = game => {
 			proto: "_drawer",
 			containedIn: "_dresser",
 			contents: [],
+			open: function () {
+				const proto = Object.getPrototypeOf(this);
+				const urOpen = Object.getPrototypeOf(proto).open.bind(this);
+				urOpen.call(this);// open method from prototype's prototype
+				proto.open.call(this);// open method of prototype
+			},
+			close: function () {
+				const proto = Object.getPrototypeOf(this);
+				const urClose = Object.getPrototypeOf(proto).close.bind(this);
+				urClose.call(this);// close method from prototype's prototype
+				proto.close.call(this);// open method of prototype
+			},
 		},
 		_film: {
 			name: "film",
