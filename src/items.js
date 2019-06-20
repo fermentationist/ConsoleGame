@@ -415,18 +415,20 @@ const itemModule = game => {
 			takeable: false,
 			openable: true,
 			closed: true,
-			contents: [],
+			// contents: [],
+			containedPart: "_drawer",
 			description: "The antique writing desk is six feet in length, and blanketed with dust. It has a single drawer on one side.",
 			open: function () {
 				Object.getPrototypeOf(this).open.call(this);
-				if (game.items._drawer.closed){
-					game.items._drawer.closed = false;
+				if (game.items[this.containedPart].closed){
+					game.items[this.containedPart].closed = false;
 				}
 			},
 			close: function () {
 				Object.getPrototypeOf(this).close.call(this);
-				if (!game.items._desk.closed){
-					game.items._drawer.closed = true;
+				// if (!this.closed){
+				if (!game.items[this.containedPart].closed) {
+					game.items[this.containedPart].closed = true;
 				}
 			}
 		},
@@ -486,6 +488,7 @@ const itemModule = game => {
 			openable: true,
 			closed: true,
 			takeable: false,
+			containedIn: "_desk",
 			contents: [],
 			get description () {
 				if (this.closed) {
@@ -495,14 +498,14 @@ const itemModule = game => {
 			},
 			open: function () {
 				Object.getPrototypeOf(this).open.call(this);
-				if (game.items._desk.closed){
-					game.items._desk.closed = false;
+				if (game.items[this.containedIn].closed){
+					game.items[this.containedIn].closed = false;
 				}
 			},
 			close: function () {
 				Object.getPrototypeOf(this).close.call(this);
-				if (!game.items._desk.closed){
-					game.items._desk.closed = true;
+				if (!game.items[this.containedIn].closed){
+					game.items[this.containedIn].closed = true;
 				}
 			}
 		},
@@ -511,14 +514,34 @@ const itemModule = game => {
 			takeable: false,
 			openable: true,
 			closed: true,
-			listed: false,
+			listed: true,
+			proto: "_desk",
+			containedPart: "_dresser_drawer",
 			contents: [],
 			get description () {
-				return `The dresser is${this.closed ? "closed" : "open"}.`;
+				return `The modest wooden dresser is of simple design. The pale blue milk paint that coats it is worn through in several spots from use. It has a large drawer, which is ${this.closed ? "closed" : "open"}.`
 			},
+			open: function () {
+				console.log(this)
+				const proto = Object.getPrototypeOf(this);
+				const thisOpen = proto.open.bind(this);
+				thisOpen.call(this);
+			},
+		},
+		_dresser_drawer: {
+			name: "drawer",
+			takeable: false,
+			openable: true,
+			closed: true,
+			listed: false,
+			proto: "_drawer",
+			containedIn: "_dresser",
+			contents: [],
 		},
 		_film: {
 			name: "film",
+			listed: true,
+			flammable: true,
 			article: "a reel of",
 			text: "Canned Laughs",
 			description: "The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.",
@@ -850,8 +873,10 @@ const itemModule = game => {
 		},
 		_photo: {
 			name: "photo",
-			description: "The four by six inch photograph is in a cheap frame made of painted fiberboard. It's a portrait of a very old, and probably infirm black poodle, bluish cataracts clouding its eyes.",
-			reverseDescription: "There is a handwritten inscription on the back of the frame.",
+			description: "The four by six inch photograph is in a cheap frame made of painted fiberboard. It's a portrait of a very old, and probably infirm black poodle, bluish cataracts clouding its eyes. There is some writing on the back of the frame.",
+			get reverseDescription () {
+				return `There is a handwritten inscription on the back of the frame${game.inInventory(this.name) ? ". It says, \"My Precious Muffin's 18th Birthday - 10/28/17\"" : ""}.`
+			},
 			text: "My Precious Muffin's 18th Birthday - 10/28/17",
 			read: function (){
 				game.state.objectMode = false;
@@ -1012,13 +1037,18 @@ const itemModule = game => {
 			listed: false,
 			contents: [],
 			get description() {
-				return `The wardrobe is about seven feet in height and is currently ${this.closed ? "closed" : "open"}.`;
+				const descriptionString = `The oak wardrobe is roughly four feet wide and seven feet in height and is currently${this.closed ? " closed" : " open"}. `
+				if (this.closed) {
+					return descriptionString;
+				}
+				const contentsString = `There is ${this.contents.length < 1 ? "nothing" : game.formatList(this.contents.map(item => `${item.article} ${item.name}`))} inside.`
+				return descriptionString + contentsString;
+
 			},
 		},
 	}
 	
 	// Prototype-links each of the objects in items to either Item or other prototype, if defined
-
 	const initializeItems = (itemDefinitions) => {
 		for (let itemName in itemDefinitions) {
 			let item = itemDefinitions[itemName];

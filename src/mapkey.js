@@ -150,8 +150,8 @@ const mapKey = game => {
 		},
 		"E": {
 			name: "Guest Room",
-			description: "",
-			visibleEnv: ["old_key", "bed", "dresser"]
+			description: "The guest room is modestly furnished, with little more than a small bed and a dresser.",
+			visibleEnv: ["bed", "dresser", "dresser_drawer"]
 		},
 		"F": {
 			name: "Sitting room",

@@ -11,7 +11,7 @@ import {randomDogName} from "./dogNames.js";
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
-	timeLimit: 250,
+	timeLimit: 360,
 	// weightLimit: 20,
 	state: {
 		objectMode : false,
@@ -309,7 +309,7 @@ const ConsoleGame = {
 			this.mapKey[this.items._door.closedTarget].closed = true;
 		}
 		if (this.state.turn >= this.timeLimit && ! this.state.gameOver) {
-			return this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.");
+			return this.dead(`\n\"You are taking too long and I am getting bored. I'm afraid I'll have to find a new player.\"\n\nYou are startled by the sudden reappearance your truant host and captor. You catch hardly a glimpse of your assailant before the blow that will knock you unconscious connects with the back of your skull. Good night.`);
 		}
 		this.state.lightSources.forEach(source => {
 			source.decrementCounter()
@@ -330,7 +330,7 @@ const ConsoleGame = {
 	dead: function (text) {
 		console.p(text);
 		console.p("\n****You have died**** \nOf course, being dead, you are unaware of this unfortunate turn of events. In fact, you are no longer aware of anything at all.");
-		console.p(`Your score is ${this.state.score} of a possible ${this.state.maxScore}`);
+		console.p(`You scored ${this.state.score} of a possible ${this.state.maxScore} points, in ${this.state.turn} moves.`);
 		window.localStorage.removeItem("ConsoleGame.history");
 		this.state.gameOver = true;
 		console.codeInline(["[Game over. Please type ", "start ", "to begin a new game, or", " restore", ", to load a previously saved game.]"]);
@@ -354,7 +354,7 @@ const ConsoleGame = {
 		}
 		console.win("You win!! Congratulations and thanks for playing!");
 		console.p(! this.inInventory("dog") ? `It is too bad you didn't manage to rescue ${this.state.dogName}. At least you escaped with your life...`: `And you rescued your dog, ${this.state.dogName}!!`);
-		console.p(`Your score is ${this.state.score} of a possible ${this.state.maxScore} points.`);
+		console.p(`You scored ${this.state.score} of a possible ${this.state.maxScore} points, in ${this.state.turn} moves.`);
 		window.localStorage.removeItem("ConsoleGame.history");
 		this.state.gameOver = true;
 		console.codeInline(["[Game over. Please type ", "start ", "to begin a new game, or", " restore", ", to load a previously saved game.]"]);
@@ -620,6 +620,7 @@ const ConsoleGame = {
 		this.items._safe.contents.push(this.items._key, this.items._scroll);
 		this.items._drawer.contents.push(this.items._disc);
 		this.items._wardrobe.contents.push(this.items._film);
+		this.items._dresser_drawer.contents.push(this.items._old_key);
 		this.addToInventory([this.items._no_tea]);
 	
 	},
