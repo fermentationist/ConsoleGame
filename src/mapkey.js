@@ -146,7 +146,7 @@ const mapKey = game => {
 		"D": {
 			name: "Bathroom",
 			description: "The bathroom is tiled with hundreds of tiny, white, hexagonal tiles. It features the usual bathroom amenities, like a sink, a tub and a commode.",
-			visibleEnv: ["sink", "bathtub", "toilet"]
+			visibleEnv: ["sink", "bathtub", "toilet", "knife"]
 		},
 		"E": {
 			name: "Guest Room",
@@ -164,7 +164,7 @@ const mapKey = game => {
 			get description () {
 				return `The master bedroom is spacious though sparsely furnished, containing only a bedframe, a wardrobe and a nightstand`;
 			},
-			visibleEnv: ["bed", "nightstand", "wardrobe"]
+			visibleEnv: ["bed", "nightstand", "nightstand_drawer", "wardrobe"]
 		},
 		"H": {
 			name: "Master bathroom",
@@ -221,7 +221,7 @@ const mapKey = game => {
 		"#": {
 			name: "Staircase landing",
 			description: "You are on the landing of a worn oak staircase connecting the first and second floors of the old abandoned house.",
-			visibleEnv: ["booklet", /*"card", "survey"*/]
+			visibleEnv: []
 		},
 
 		"%": {

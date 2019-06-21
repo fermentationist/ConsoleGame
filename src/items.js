@@ -278,12 +278,6 @@ const itemModule = game => {
 			unlockedBy: "key",
 			lockedTarget: "a",
 			closedTarget: "a",
-			// unlock: function () {
-			// 	Object.getPrototypeOf(this).unlock(this)
-			// },
-			// open: function () {
-			// 	Object.getPrototypeOf(this).open.call(this)
-			// }
 		},
 		_basement_door: {
 			name: "door",
@@ -298,7 +292,10 @@ const itemModule = game => {
 		_bathtub: {
 			name: "bathtub",
 			takeable: false,
-			description: "The old cast iron tub rests atop four taloned feet. It does not look functional."
+			description: "The old cast iron tub rests atop four taloned feet. It does not look functional.",
+			use: function () {
+				console.p("This is hardly an appropriate time for a bath!");
+			}
 		},
 		_bed: {
 			name: "bed",
@@ -345,17 +342,6 @@ const itemModule = game => {
 			takeable: false,
 			article: "some",
 			description: "Wooden bookshelves line one wall of the study, reaching from floor to ceiling. There are hundreds of moldering, hardcover books lining the shelves."
-		},
-		_card: {
-			name: "card",
-			text: `Survey Card \nFor each of the following questions, please circle '1' for 'strongly disagree', '2' for 'somewhat disagree', '3' for 'no opinion', '4' for 'somewhat agree' and '5' for 'strongly agree'. \n1. This is the first involuntary study I have participated in.\n2. I found the study conditions to be inadequately challenging.\n3. I would be willing to participate in additional studies.\n4. I am aware that any attempt to contact law enforcement will have adverse consequences for myself or my family, whose location of residence is known.\n`,
-			description: "It is a four by six inch card cut from off-white cardstock, on which a survey is printed.",
-			turn: function () {
-				game.state.objectMode = false;
-				console.p("Upon turning over the survey card, you notice a message, written in pencil. It says,");
-				console.note("\n\"THE OWLS ARE NOT WHAT THEY SEEM\".");
-				return;
-			}
 		},
 		_chain: {
 			name: "chain",
@@ -595,7 +581,7 @@ const itemModule = game => {
 			}
 		},
 		_filthy_note: {
-			name: "filthy_note",
+			name: "note",
 			text: `Dear John,\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.`,
 			description: "A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible."
 		},
@@ -686,6 +672,14 @@ const itemModule = game => {
 				unlockable.forEach(item => item.unlock());
 			}
 		},
+		_knife: {
+			name: "knife",
+			description: "The folding knife has a three inch locking blade and is small enough to fit in your pocket. It is designed to be a utility blade, and would probably make a poor weapon.",
+			use: function () {
+				console.p("The small knife is of no use here.");
+			}
+
+		},
 		_lantern: {
 			name: "lantern",
 			flammable: false,
@@ -769,6 +763,53 @@ const itemModule = game => {
 			light: function () {
 				this.use.call(this);
 			}
+		},
+		_nightstand: {
+			name: "nightstand",
+			takeable: false,
+			openable: true,
+			closed: true,
+			listed: false,
+			proto: "_desk",
+			containedPart: "_nightstand_drawer",
+			contents: [],
+			get description () {
+				return `The nightstand next to the bed is made of wood and is painted white. It has a single drawer, which is ${this.closed ? "closed" : "open"}.`
+			},
+			open: function () {
+				const proto = Object.getPrototypeOf(this);
+				const urOpen = Object.getPrototypeOf(proto).open.bind(this);
+				urOpen.call(this);// open method from prototype's prototype
+				proto.open.call(this);// open method of prototype
+			},
+			close: function () {
+				const proto = Object.getPrototypeOf(this);
+				const urClose = Object.getPrototypeOf(proto).close.bind(this);
+				urClose.call(this);// close method from prototype's prototype
+				proto.close.call(this);// open method of prototype
+			},
+		},
+		_nightstand_drawer: {
+			name: "drawer",
+			takeable: false,
+			openable: true,
+			closed: true,
+			listed: false,
+			proto: "_drawer",
+			containedIn: "_nightstand",
+			contents: [],
+			open: function () {
+				const proto = Object.getPrototypeOf(this);
+				const urOpen = Object.getPrototypeOf(proto).open.bind(this);
+				urOpen.call(this);// open method from prototype's prototype
+				proto.open.call(this);// open method of prototype
+			},
+			close: function () {
+				const proto = Object.getPrototypeOf(this);
+				const urClose = Object.getPrototypeOf(proto).close.bind(this);
+				urClose.call(this);// close method from prototype's prototype
+				proto.close.call(this);// open method of prototype
+			},
 		},
 		_no_tea: {
 			name: "no_tea",
@@ -1021,15 +1062,6 @@ const itemModule = game => {
 			description: "The well-worn sitting room sofa is upholstered brown cowhide.",
 			burn: function () {
 				Object.getPrototypeOf(this).burnDown.call(this);
-			}
-		},
-		_survey: {
-			name: "survey",
-			proto: "_card",
-			listed: false,
-			takeable: true,
-			take: function () {
-				this.takeComponent.call(this)
 			}
 		},
 		_symbol: {

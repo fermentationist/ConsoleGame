@@ -1,5 +1,5 @@
 import { primaryFont, textColor, fontSize } from "./prefs.js";
-import fonts from "./webFonts.js";
+// import fonts from "./webFonts.js";
 import ransom from "./console_ransom.js";
 
 const customConsole = (() => {

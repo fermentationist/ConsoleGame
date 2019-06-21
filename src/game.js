@@ -283,7 +283,7 @@ const ConsoleGame = {
 			info.setAttribute("style", "color:black;font-style:italic;text-align:center;font-size:1em;padding-bottom:2em;");
 			contentDiv.appendChild(info);
 		}
-		window.scroll(0, 10000);
+		window.scrollTo(0, 10000);
 	},
 
 	timers: function () {
@@ -551,7 +551,7 @@ const ConsoleGame = {
 		return options;
 	}, 
 	preface: function () {
-		console.p("You slowly open your eyes. Your eyelids aren't halfway open before the throbbing pain in your head asserts itself. The last thing you can remember is taking your dog for a walk after work, but you certainly don't remember being here before.");
+		console.p("You slowly open your eyes. Your eyelids aren't halfway open before the throbbing pain in your head asserts itself. The last thing you can remember is taking your dog for a walk. Your current surroundings look entirely unfamiliar.");
 	},
 	stockDungeon: function (subEnvName){
 		Object.keys(this.mapKey).map((key) => {
@@ -580,7 +580,10 @@ const ConsoleGame = {
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key, this.items._scroll);
 		this.items._drawer.contents.push(this.items._cartridge);
-		this.addToInventory([this.items._grue_repellant, this.items._no_tea, this.items._key, this.items._matchbook]);
+		this.items._nightstand_drawer.contents.push(this.items._old_key);
+		this.items._wardrobe.contents.push(this.items._grue_repellant);
+		this.items._dresser_drawer.contents.push(this.items._booklet);
+		this.addToInventory([this.items._no_tea]);
 	
 	},
 
