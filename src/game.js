@@ -139,7 +139,7 @@ const ConsoleGame = {
 		this.state.gameOver = false;
 		this.state.pendingAction = null;
 		this.state.position = this.state.startPosition;
-		this.state.dogName = randomDogName();
+		// this.state.dogName = randomDogName(); removed because this was causing inconsistent random dog name
 		window.localStorage.removeItem("ConsoleGame.history");
 		return;
 	},
@@ -244,11 +244,13 @@ const ConsoleGame = {
 	// returns a list of items available in the environment that are nested inside other objects, as a formatted string
 	nestedItemString: function () {
 		const openContainers = this.state.currentMapCell.openContainers;
+        console.log("TCL: openContainers", openContainers)
         
 		const containedItems = openContainers.map(obj => {
+            console.log("TCL: obj", obj)
 			const name = `${obj.article} ${obj.name}`;// the name of the container
 			const objectNames = obj.contents.map(item => `${item.article} ${item.name}`);// array of names of the objects inside the container (with articles)
-			return [name, this.formatList(objectNames)];// returns an object with a single property, the name of the container, 
+			return [name, this.formatList(objectNames)];
 		});
         
 		const containedString = containedItems.map(container => {
@@ -579,7 +581,8 @@ const ConsoleGame = {
 		this.stockDungeon("visibleEnv");
 		this.items._glove.contents.push(this.items._matchbook);
 		this.items._safe.contents.push(this.items._key, this.items._scroll);
-		this.items._drawer.contents.push(this.items._cartridge);
+		this.items._drawer.contents.push(this.items._film);
+        console.log("TCL: this.items:", this.items)
 		this.items._nightstand_drawer.contents.push(this.items._old_key);
 		this.items._wardrobe.contents.push(this.items._grue_repellant);
 		this.items._dresser_drawer.contents.push(this.items._booklet);
