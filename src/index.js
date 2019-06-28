@@ -1,5 +1,8 @@
 import {primaryFont, textColor, fontSize, pStyle} from "./prefs.js";
+window.CONSOLE_GAME_DEBUG = true;
+// eslint-disable-next-line import/first
 import game from "./game.js";
+
 
 // Wait for page to load, and display greeting.
 window.onload = () => {

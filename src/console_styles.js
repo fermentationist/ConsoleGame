@@ -3,7 +3,12 @@ import { primaryFont, textColor, fontSize } from "./prefs.js";
 import ransom from "./console_ransom.js";
 
 const customConsole = (() => {
+	window.debugLog = [];
+	// console.log = message => ()
 	const customLog = function (message, style, logType = "log") {
+		if (window.CONSOLE_GAME_DEBUG) {
+			debugLog.push(message);
+		}
 		console[logType](`%c${message}`, style);
 	}
 	console.custom = (message, style) => {
@@ -81,6 +86,8 @@ const customConsole = (() => {
 		});
 		console.inline(splitText, styles);
 	}
+
+
 })();
 
 export default customConsole;

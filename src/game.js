@@ -69,6 +69,9 @@ const ConsoleGame = {
 			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 		}
+		if (window.CONSOLE_GAME_DEBUG) {
+			window.debugLog.push(commandName);
+		}
 		try {
 			let dontCountTurn = this.exemptCommands.includes(commandName);
 			if (dontCountTurn) {// execute exempt commands without incrementing turn counter or timers, and without recording in history
