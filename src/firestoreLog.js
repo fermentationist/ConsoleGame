@@ -14,15 +14,16 @@ const firestore = firebase.firestore();
 const collection = firestore.collection("games");// get reference to collection "games"
 
 const getUserData = async () => {
-    return await fetch("https://ipinfo.io/json").then(response => response);
+    const TOKEN = "312e90479fdd9b";
+    // return await fetch("https://ipinfo.io/json").then(response => response);
+    return await fetch(`https://ipinfo.io/json/?token=${TOKEN}`).then(response => response.json().then(data => data));
 }
 const getNewGameRef = async () => {
     const now = String(new Date());
-    fetch("https://json.geoiplookup.io/api").then(response => {
-    }).catch(e => { });
+    const userData = getUserData();
     const newGame = collection.add({// add new game document to collection
         creationDate: now,// store time of document creation
-        userData: {...await getUserData()},
+        userData: await userData,
         gameLog: window.debugLog || [],// store gameLog, if exists
     }).then(gameRef => gameRef).catch(e => {});
     return await newGame;// return reference to new game document (contains id)

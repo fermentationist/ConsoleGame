@@ -65,7 +65,6 @@ const ConsoleGame = {
 	   
 	  //=========================================\\
 	turnDemon: function (commandName, interpreterFunction) {
-    // console.log("TCL: commandName", commandName)
     // This function runs at the start of each turn\\
 		if (this.state.gameOver) {
 			console.log(commandName)
