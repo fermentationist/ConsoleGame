@@ -7,7 +7,7 @@ const customConsole = (() => {
 	// console.log = message => ()
 	const customLog = function (message, style, logType = "log") {
 		if (window.CONSOLE_GAME_DEBUG) {
-			debugLog.push(message);
+			window.debugLog.push({gameOutput: message});
 		}
 		console[logType](`%c${message}`, style);
 	}

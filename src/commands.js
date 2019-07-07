@@ -159,7 +159,8 @@ const Commands = game => {
 	const _items = (itemName) => {
 		// Exit function with error message if previous command does not require an object
 		if (!game.state.objectMode && itemName !== "maps"){
-			console.invalid("Invalid command");
+			// console.invalid("Invalid command");
+			console.trace("Invalid command");
 			return;
 		}
 		// Exit function with error message if item is not available in player inventory or current location.

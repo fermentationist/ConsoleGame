@@ -1064,12 +1064,12 @@ const itemModule = game => {
 				Object.getPrototypeOf(this).burnDown.call(this);
 			}
 		},
-		_symbol: {
-			name: "symbol",
-			listed: false,
-			takeable: false,
-			description: "The symbol on the card's reverse is printed in red ink, and is shaped like (??)",
-		},
+		// _symbol: {
+		// 	name: "symbol",
+		// 	listed: false,
+		// 	takeable: false,
+		// 	description: "The symbol on the card's reverse is printed in red ink, and is shaped like (??)",
+		// },
 		_table: {
 			name: "table",
 			takeable: false,
