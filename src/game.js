@@ -584,11 +584,10 @@ const ConsoleGame = {
 
 	initializeNewGame: function () {
 		if (window.CONSOLE_GAME_DEBUG) {
-			firestoreLog().then(response => {
+			firestoreLog().then(function (response){
 			this.firestoreGameID = response.id;
 			this.firestoreGameRef = response;
 			});
-			
 		}
 		this.resetGame();
 		this.initCommands(this.commands);
