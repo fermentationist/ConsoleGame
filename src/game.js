@@ -584,7 +584,7 @@ const ConsoleGame = {
 
 	initializeNewGame: function () {
 		if (window.CONSOLE_GAME_DEBUG) {
-			firestoreLog().then(function (response){
+			firestoreLog().then(response => {
 			this.firestoreGameID = response.id;
 			this.firestoreGameRef = response;
 			});
