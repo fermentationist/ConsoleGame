@@ -1,5 +1,5 @@
 import {primaryFont, textColor, fontSize, pStyle} from "./prefs.js";
-window.CONSOLE_GAME_DEBUG = true;
+window.CONSOLE_GAME_DEBUG = false;
 // eslint-disable-next-line import/first
 import game from "./game.js";
 
