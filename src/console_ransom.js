@@ -7,7 +7,7 @@ export default console.ransom = (message) => {
         const {foreground, background, border} = getColors();
         const [r, g, b] = foreground;
         const [br, bg, bb] = background;
-        const style = `font-family:${randomFont()};color:rgb(${r}, ${g}, ${b});font-size:${3 + (Math.random() / 2)}em;line-height:${Math.random() + 0.5}em;background-color:rgb(${br}, ${bg}, ${bb});${randomPadding()}${randomOutline(border)}`
+        const style = `font-family:${randomFont()};color:rgb(${r}, ${g}, ${b});font-size:${3 + (Math.random() / 2)}em;line-height:${Math.random() + 0.5}em;background-color:rgb(${br}, ${bg}, ${bb});${randomPadding()}${randomOutline(border)}`;
         return char === " " ? blankStyle: style;
     });
     const spacedText = splitText.join(" ").split("");
@@ -23,7 +23,7 @@ const getColors = () => {
     return {foreground, background, border};
 }
 
-const randomPadding = (max = 3) => `padding: ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px ${Math.random() * max}px;`
+const randomPadding = (max = 3, min = 1) => `padding: ${(Math.random() * max) + min}px ${(Math.random() * max) + min}px ${(Math.random() * max) + min}px ${(Math.random() * max) + min}px;`
 
 const randomRGBValues = ([r, g, b] = [128, 128, 128], maxVariance = 25) => {
     const randomlyVary = (baseValue, maxVary) => {

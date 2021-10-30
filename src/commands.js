@@ -1,12 +1,9 @@
 import {pStyle, textColor, primaryFont, fontSize} from "./prefs.js";
 import thesaurus from "./thesaurus.js";
 import maps from "./maps.js";
-import itemModule from "./items.js";
-
-var ALIASES;
 
 // Command functions
-const Commands = game => {
+const Commands = function (game) {
 
 	// destructure admin methods from game object
 	const { _start,
@@ -190,7 +187,7 @@ const Commands = game => {
 	}
 
 	const _score = () => {
-		console.p(`Your score is ${game.state.score} of a possible ${game.state.maxScore} points.`);
+		console.p(`Your score is ${game.state.score} in ${game.state.turn} turns.`);
 	}
 
 	// const _again = () => {
@@ -331,7 +328,6 @@ const Commands = game => {
 	const itemAliases = itemNames.map(item => [_items, aliasString(item, thesaurus)]);
 	const aliases = commandAliases.concat(itemAliases);
 
-	// ALIASES = aliases;
 	return aliases;
 };
 
