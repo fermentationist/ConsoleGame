@@ -845,7 +845,8 @@ const itemModule = function (game) {
 			},
 			contemplate: function () {
 				if (this.methodCallcount > 2) {
-					return game.winner("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space. You are the spoon, so to speak.");
+					game.state.score += 75;
+					return game.winner("Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space.");
 				}
 				return this.no_teaMethod("Let's not resort to that just yet!");
 			},

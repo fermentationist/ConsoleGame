@@ -96,7 +96,7 @@ const ConsoleGame = {
 			return;
 		}
 		catch (err){
-			console.trace(err)// recognized command word used incorrectly
+			// recognized command word used incorrectly
 			return console.p(`That's not going to work. Please try something else.`);
 		}
 	},
@@ -336,6 +336,7 @@ const ConsoleGame = {
 			console.p(text);
 		}
 		console.win("You win!! Congratulations and thanks for playing!");
+		window.score;
 		window.localStorage.removeItem("ConsoleGame.history");
 		this.state.gameOver = true;
 		console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
@@ -449,13 +450,10 @@ const ConsoleGame = {
 	bindCommandToFunction: function (interpreterFunction, commandAliases, daemon=this.turnDemon){
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
-		if (commandName in window){
-			// already defined, do nothing
-			return;
-		}
 		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
 		try {
 			aliasArray.map(alias => {
+				// The following (commented-out) line was causing a bug
 				// Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
 				Object.defineProperty(globalThis, alias.trim(), {
 					get () {
@@ -465,7 +463,6 @@ const ConsoleGame = {
 			});
 		} catch (err) {
 			// fail silently
-			// console.log(err);
 		}
 	},
 	
@@ -524,8 +521,6 @@ const ConsoleGame = {
 		console.custom("by Dennis Hodges\ncopyright 2019", "font-size:100%;color:lightgray;padding:0 1em;");
 		console.intro(intro_1);
 		console.codeInline(this.introOptions());
-		// console.ransom(`we have your doggo.`)
-		// console.note(spells)
 	},
 
 	introOptions: function (){

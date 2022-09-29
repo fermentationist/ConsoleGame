@@ -96,6 +96,7 @@ const mapKey = function (game) {
 					game.captured();
 					return "";
 				}
+				game.state.score += 50;
 				return game.winner("\nYou have escaped!\n");
 			},
 		},

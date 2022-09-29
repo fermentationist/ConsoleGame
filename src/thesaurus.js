@@ -112,7 +112,6 @@ const thesaurus = {
     grue_repellant: [
         "repellant",
         "aerosol",
-        "spray"
     ],
     inventory: [
         "booty",
