@@ -448,11 +448,16 @@ const ConsoleGame = {
 	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
 	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases.
 	bindCommandToFunction: function (interpreterFunction, commandAliases, daemon=this.turnDemon){
+		const allowOverwrites = ["open", "close", "status", "inspect", "table", "screen"];
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
 		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
 		try {
 			aliasArray.map(alias => {
+				if (alias in globalThis && !allowOverwrites.includes(alias)) {
+					// prevent overwrite of global property, i.e. Map
+					return;
+				}
 				// The following (commented-out) line was causing a bug
 				// Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
 				Object.defineProperty(globalThis, alias.trim(), {
