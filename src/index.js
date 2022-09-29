@@ -1,12 +1,12 @@
-import {primaryFont, textColor, fontSize, pStyle} from "./prefs.js";
-window.CONSOLE_GAME_DEBUG = false;
 // eslint-disable-next-line import/first
-import game from "./game.js";
+import {primaryFont, textColor, fontSize, pStyle} from "./prefs.js";
+import game, {init} from "./game.js";
+// window.CONSOLE_GAME_DEBUG = true;
 
 
 // Wait for page to load, and display greeting.
 window.onload = () => {
-    // console.clear();
+    init();
     const prefMode = localStorage.getItem("ConsoleGame.prefMode");
     if (prefMode) {
         localStorage.removeItem("ConsoleGame.prefMode");
@@ -14,7 +14,7 @@ window.onload = () => {
     }
     return game.intro();
 };
+
 window.scroll(0, 0);
-// for debugging - remove later
-// window.game = ConsoleGame;
+
 export default game;

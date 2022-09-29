@@ -2,7 +2,7 @@
 ---
 Being someone who has spent literally decades interacting with CLIs on a near-daily basis, and who is also a huge fan of old text adventures, I wanted to see if a text-based game could be implemented in the browser's JavaScript console. ConsoleGame is my attempt to accomplish this.
 
-It is currently more proof-of-concept than a complete game, but you can explore its basic functionality in its current state. Open the console in your browser's developer tools to check it out! (press F12).
+Open the console in your browser's developer tools to check it out! (press F12).
 
 There are several limitations of the browser console that made this project an interesting challenge. First, the console provides no way to directly read user input (I was hoping I could use `process.argv` like in Node, but alas!). This problem can be solved by implementing the commands available to the user as methods of the global object. Another small limitation is that user input cannot begin with numerals or many other characters because when used as property names, they cannot be accessed without using `Object[propertyName]` syntax, which will not work for our purposes.
 

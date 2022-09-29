@@ -5,14 +5,14 @@ import itemModule from "./items.js";
 import commandsList from "./commands.js";
 import customConsole from "./console_styles.js";
 import {randomDogName} from "./dogNames.js"
-import firestoreLog from "./firestoreLog.js";
 
+let dogName = randomDogName();
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
 //todo: rewrite with generators?
 const ConsoleGame = {
 	maps: [...maps],
 	key: {...mapKeyModule(this)},
-	timeLimit: 250,
+	timeLimit: 300,
 	// weightLimit: 20,
 	state: {
 		objectMode : false,
@@ -25,6 +25,8 @@ const ConsoleGame = {
 		verbose: false,
 		inventory: [],
 		history: [],
+		score: 0,
+		maxScore: 100,
 		turn: null,
 		pendingAction: null,
 		gameOver: false,
@@ -38,7 +40,7 @@ const ConsoleGame = {
 			y: 13,
 			x: 7
 		},
-		dogName: randomDogName(),
+		dogName,
 		get currentCellCode (){ 
 			return ConsoleGame.maps[this.position.z][this.position.y][this.position.x]
 		},
@@ -67,16 +69,10 @@ const ConsoleGame = {
 	turnDemon: function (commandName, interpreterFunction) {
     // This function runs at the start of each turn\\
 		if (this.state.gameOver) {
-			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 		}
 		if (window.CONSOLE_GAME_DEBUG) {
 			window.debugLog.push({userInput: commandName});
-			if (this.firestoreGameRef){
-				this.firestoreGameRef.update({
-					gameLog: window.debugLog
-				});
-			}
 		}
 		try {
 			let dontCountTurn = this.exemptCommands.includes(commandName);
@@ -145,10 +141,12 @@ const ConsoleGame = {
 		this.state.inventory = [];
 		this.state.history = [];
 		this.state.turn = 0;
+		this.state.score = 0;
 		this.state.gameOver = false;
 		this.state.pendingAction = null;
 		this.state.position = this.state.startPosition;
-		// this.state.dogName = randomDogName(); removed because this was causing inconsistent random dog name
+		dogName = randomDogName();
+		this.state.dogName = dogName; 
 		window.localStorage.removeItem("ConsoleGame.history");
 		return;
 	},
@@ -157,14 +155,13 @@ const ConsoleGame = {
 		const length = itemArray.length;
 		const conjunction = disjunction ? "or" : "and";
 		if (length === 0) {
-			return "nowhere";
+			return "nothing";
 		}
 		if (length === 1) {
 			return itemArray[0];
 		} 
 		if (length === 2) {
 			return `${itemArray[0]} ${conjunction} ${itemArray[1]}`;
-			// return itemArray[0] + conjunction + itemArray[1];
 		}
 		return `${itemArray[0]}, ${this.formatList(itemArray.slice(1), disjunction)}`
 	},
@@ -270,14 +267,14 @@ const ConsoleGame = {
 	displayItem: function (galleryItem = {title: "untitled", artist: "unknown", info: null, source: "", dimensions: null}) {
 		const contentDiv = document.getElementById("console-game-content");
 		contentDiv.innerHTML = "";
-		contentDiv.setAttribute("style", "background-color:#D1D1D1;")
+		contentDiv.setAttribute("style", "width:100vw;background-color:#D1D1D1;padding-top:75%;position:relative;display:flex;flex-direction:column;justify-content:center;align-content:center;")
 		const iFrame = document.createElement("iframe")
 		iFrame.src = galleryItem.source;
 		
 		iFrame.autoplay = true;
-		iFrame.setAttribute("style", "width:100vw;height:80vh;background-color:gray;top:0;position:sticky;");
+		iFrame.setAttribute("style", "width:50vw;height:37.5vw;background-color:gray;top:0;position:sticky;position:absolute;msrgin-left:auto;");
 		const p = document.createElement("p");
-		p.setAttribute("style", "text-align:center;")
+		// p.setAttribute("style", "text-align:center;");
 		const title = document.createElement("h2");
 		title.setAttribute("style", "color:black;");
 		const artist = title.cloneNode(true);
@@ -290,10 +287,10 @@ const ConsoleGame = {
 		if (galleryItem.info) {
 			const info = document.createElement("p");
 			info.innerHTML = galleryItem.info;
-			info.setAttribute("style", "color:black;font-style:italic;text-align:center;font-size:1em;padding-bottom:2em;");
+			info.setAttribute("style", "color:black;font-style:italic;font-size:1em;padding-bottom:2em;");
 			contentDiv.appendChild(info);
 		}
-		window.scrollTo(0, 10000);
+		// window.scrollTo(0, 10000);
 	},
 
 	timers: function () {
@@ -310,6 +307,9 @@ const ConsoleGame = {
 			return this.dead("You don't feel so well. It never occurs to you, as you crumple to the ground, losing consciousness for the final time, that you have been poisoned by an odorless, invisible, yet highly toxic gas.");
 		}
 		this.lightSources.forEach(source => source.decrementCounter());
+		if (this.inEnvironment("grue")) {
+			this.items._grue.lurk();
+		}
 	},
 	dead: function (text) {
 		console.p(text);
@@ -376,7 +376,7 @@ const ConsoleGame = {
 		this.state.pendingAction = command;
 		const infoStyle = `font-size:100%;color:#75715E;font-family:${primaryFont};`;
 		const boldInfo = infoStyle + `font-weight:bold;color:white`;
-		console.info("Please choose a slot number (_0 through _9) to save your this. To save to the selected slot, type an underscore, immediately followed by the slot number.");
+		console.info("Please choose a slot number (_0 through _9) to save your game. To save to the selected slot, type an underscore, immediately followed by the slot number.");
 		console.codeInline([`For example, type `, `_3`, ` to select slot 3.`]);
 	},
 
@@ -430,15 +430,15 @@ const ConsoleGame = {
 	// Reload window (and game)
 	_quit: function () {
 		this.resetGame();
-		location.reload();
+		// location.reload();
 		return "reloading...";
 	},
 
 
 	// Applies bindCommandToFunction() to an array of all of the commands to be created.
 	initCommands: function (commandsArray){
-		commandsArray.map(commandLog => {
-			let [interpreterFunction, aliases] = commandLog;
+		commandsArray.map(commandEntry => {
+			let [interpreterFunction, aliases] = commandEntry;
 			this.bindCommandToFunction(interpreterFunction, aliases);
 		});
 	},
@@ -447,18 +447,21 @@ const ConsoleGame = {
 	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
 	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases.
 	bindCommandToFunction: function (interpreterFunction, commandAliases, daemon=this.turnDemon){
-	
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
-		// if (commandName in window){
-		// 	console.log(`${commandName} already defined.`);
-		// }
+		if (commandName in window){
+			// already defined, do nothing
+			return;
+		}
 		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
-		// const interpretCmd = interpreterFunction.bind(null, interpreterDemon);
-		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
 		try {
 			aliasArray.map(alias => {
-				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
+				// Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
+				Object.defineProperty(globalThis, alias.trim(), {
+					get () {
+						interpretCommand();
+					}
+				});
 			});
 		} catch (err) {
 			// fail silently
@@ -471,7 +474,6 @@ const ConsoleGame = {
 			[this._start, this.cases("start", "begin")],
 			[this._resume, this.cases("resume")],
 			[this._help, this.cases("help") + ",h,H,ayuda"],
-			[this._commands, this.cases("command", "commands")],
 			[this._restore, this.cases("restore", "load")],
 			[this._quit, this.cases("quit", "restart")],
 			[this._save, this.cases("save")],
@@ -517,7 +519,7 @@ const ConsoleGame = {
 	},
 	intro: function (){
 		// Greeting to be displayed at the beginning of the game
-		const intro_1 = "\nWelcome!\nAs a fan of old Infocom™ interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. This work in progress is my attempt. Try it out by typing in the console below. Have fun!\n";
+		const intro_1 = "\nWelcome!\nAs a fan of old Infocom™ interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. Try it out by typing in the console below. Have fun!\n";
 		console.title("consoleGame");
 		console.custom("by Dennis Hodges\ncopyright 2019", "font-size:100%;color:lightgray;padding:0 1em;");
 		console.intro(intro_1);
@@ -583,14 +585,11 @@ const ConsoleGame = {
 	},
 
 	initializeNewGame: function () {
-		if (window.CONSOLE_GAME_DEBUG) {
-			firestoreLog().then(response => {
-			this.firestoreGameID = response.id;
-			this.firestoreGameRef = response;
-			});
-			
-		}
 		this.resetGame();
+		this.state.dogName = dogName;
+		this.items = {...new itemModule(this)};
+		this.mapKey = {...new mapKeyModule(this)};
+		this.commands = [...new commandsList(this)];
 		this.initCommands(this.commands);
 		this.stockDungeon("hiddenEnv");
 		this.stockDungeon("visibleEnv");
@@ -601,7 +600,6 @@ const ConsoleGame = {
 		this.items._wardrobe.contents.push(this.items._grue_repellant);
 		this.items._dresser_drawer.contents.push(this.items._booklet);
 		this.addToInventory([this.items._no_tea]);
-	
 	},
 
 	_start: function () {
@@ -653,7 +651,7 @@ const ConsoleGame = {
 	},
 	_commands: function () {
 		const commands = this.commands.map(cmd => {
-			const [fn, aliases] = cmd
+			const [fn, aliases] = cmd;
 			return aliases;
 		});
 		const commandTable = {};
@@ -669,16 +667,11 @@ const ConsoleGame = {
 	}
 }
 
-// this function enables user to set preferences
-window._ = ConsoleGame.setValue.bind(ConsoleGame);
-
-// include imported items
-ConsoleGame.items = itemModule(ConsoleGame);
-// include imported commands
-ConsoleGame.commands = [...commandsList(ConsoleGame)];
-// include map key
-ConsoleGame.mapKey = {...mapKeyModule(ConsoleGame)};
-// enable "start" and other essential commands contained in ConsoleGame, but not imported commands
-ConsoleGame.bindInitialCommands();
-
 export default ConsoleGame;
+
+export const init = () => {
+	// this function enables user to set preferences
+	window._ = ConsoleGame.setValue.bind(ConsoleGame);
+	// enable "start" and other essential commands contained in ConsoleGame, but not imported commands
+	ConsoleGame.bindInitialCommands();
+}

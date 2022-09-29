@@ -1,4 +1,4 @@
-const mapKey = game => {
+const mapKey = function (game) {
 	// Prototype definition for a single cell on the map grid (usually a room)
 	const MapCell = {
 		name: "Nowhere", // room name to be displayed by game.currentHeader() 
@@ -25,7 +25,7 @@ const mapKey = game => {
 		sound: "The silence is broken only by the faint sound of the wind outside, and the occasional creak of sagging floorboards underfoot.", // text displayed in response to listen command
 		hiddenEnv: [], // items in area that are not described and cannot be interacted with unless hideSecrets = false
 		visibleEnv: [], // items described at the end of game.describeSurroundings() text by default
-		get env (){ // accessor property returns an array containing the names (as strngs) of the items in present environment
+		get env (){ // accessor property returns an array containing the names (as strings) of the items in present environment
 			return {
 				visibleEnv: this.visibleEnv,
 				containedEnv: this.containedEnv,
@@ -85,7 +85,7 @@ const mapKey = game => {
 
 		"A": {
 			name: "Freedom!",
-			locked: true,
+			locked: false,
 			closed: true,
 			get lockText () {
 				return `The formidable wooden front door will not open. It looks as old as the rest of the building, and like the wood panelled walls of the entrance hall, it is dark with countless layers of murky varnish. It is ${this.locked ? "locked" : "unlocked"}.`;
