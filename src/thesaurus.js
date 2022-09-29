@@ -7,8 +7,7 @@ const thesaurus = {
         "catalog",
         "catalogue",
         "book",
-        "program",
-        "📓"
+        "program"
     ],
     bookshelves : [
         "bookshelf",
