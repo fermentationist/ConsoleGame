@@ -5,8 +5,8 @@ import itemModule from "./items.js";
 import commandsList from "./commands.js";
 import customConsole from "./console_styles.js";
 import {randomDogName} from "./dogNames.js"
-import firestoreLog from "./firestoreLog.js";
-import {cloneDeep} from "lodash";
+
+let dogName = randomDogName();
 // consoleGame.state object stores player position, inventory, number of turns, history of player actions, and some methods to update the object's values.
 //todo: rewrite with generators?
 const ConsoleGame = {
@@ -40,7 +40,7 @@ const ConsoleGame = {
 			y: 13,
 			x: 7
 		},
-		dogName: "Spike",
+		dogName,
 		get currentCellCode (){ 
 			return ConsoleGame.maps[this.position.z][this.position.y][this.position.x]
 		},
@@ -69,16 +69,10 @@ const ConsoleGame = {
 	turnDemon: function (commandName, interpreterFunction) {
     // This function runs at the start of each turn\\
 		if (this.state.gameOver) {
-			console.log(commandName)
 			return console.codeInline(["[Game over. Please type ", "start ", "to begin a new game.]"]);
 		}
 		if (window.CONSOLE_GAME_DEBUG) {
 			window.debugLog.push({userInput: commandName});
-			if (this.firestoreGameRef){
-				this.firestoreGameRef.update({
-					gameLog: window.debugLog
-				});
-			}
 		}
 		try {
 			let dontCountTurn = this.exemptCommands.includes(commandName);
@@ -151,7 +145,8 @@ const ConsoleGame = {
 		this.state.gameOver = false;
 		this.state.pendingAction = null;
 		this.state.position = this.state.startPosition;
-		// this.state.dogName = randomDogName(); removed because this was causing inconsistent random dog name
+		dogName = randomDogName();
+		this.state.dogName = dogName; 
 		window.localStorage.removeItem("ConsoleGame.history");
 		return;
 	},
@@ -160,7 +155,7 @@ const ConsoleGame = {
 		const length = itemArray.length;
 		const conjunction = disjunction ? "or" : "and";
 		if (length === 0) {
-			return "nowhere";
+			return "nothing";
 		}
 		if (length === 1) {
 			return itemArray[0];
@@ -435,7 +430,7 @@ const ConsoleGame = {
 	// Reload window (and game)
 	_quit: function () {
 		this.resetGame();
-		location.reload();
+		// location.reload();
 		return "reloading...";
 	},
 
@@ -452,18 +447,21 @@ const ConsoleGame = {
 	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
 	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases.
 	bindCommandToFunction: function (interpreterFunction, commandAliases, daemon=this.turnDemon){
-	
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
-		// if (commandName in window){
-		// 	console.log(`${commandName} already defined.`);
-		// }
+		if (commandName in window){
+			// already defined, do nothing
+			return;
+		}
 		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
-		// const interpretCmd = interpreterFunction.bind(null, interpreterDemon);
-		// const interpretWithDemon = interpretCmd.bind(null, turnDemon);
 		try {
 			aliasArray.map(alias => {
-				Object.defineProperty(window, alias.trim(), {get: interpretCommand});
+				// Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
+				Object.defineProperty(globalThis, alias.trim(), {
+					get () {
+						interpretCommand();
+					}
+				});
 			});
 		} catch (err) {
 			// fail silently
@@ -476,7 +474,6 @@ const ConsoleGame = {
 			[this._start, this.cases("start", "begin")],
 			[this._resume, this.cases("resume")],
 			[this._help, this.cases("help") + ",h,H,ayuda"],
-			[this._commands, this.cases("command", "commands")],
 			[this._restore, this.cases("restore", "load")],
 			[this._quit, this.cases("quit", "restart")],
 			[this._save, this.cases("save")],
@@ -588,17 +585,11 @@ const ConsoleGame = {
 	},
 
 	initializeNewGame: function () {
-		if (window.CONSOLE_GAME_DEBUG) {
-			firestoreLog().then(response => {
-			this.firestoreGameID = response.id;
-			this.firestoreGameRef = response;
-			});
-		}
 		this.resetGame();
-		this.state.dogName = randomDogName();
+		this.state.dogName = dogName;
 		this.items = {...new itemModule(this)};
 		this.mapKey = {...new mapKeyModule(this)};
-		this.commands = [...new commandsList(this )];
+		this.commands = [...new commandsList(this)];
 		this.initCommands(this.commands);
 		this.stockDungeon("hiddenEnv");
 		this.stockDungeon("visibleEnv");
@@ -660,7 +651,7 @@ const ConsoleGame = {
 	},
 	_commands: function () {
 		const commands = this.commands.map(cmd => {
-			const [fn, aliases] = cmd
+			const [fn, aliases] = cmd;
 			return aliases;
 		});
 		const commandTable = {};
@@ -676,10 +667,11 @@ const ConsoleGame = {
 	}
 }
 
-// this function enables user to set preferences
-window._ = ConsoleGame.setValue.bind(ConsoleGame);
-
-// enable "start" and other essential commands contained in ConsoleGame, but not imported commands
-ConsoleGame.bindInitialCommands();
-
 export default ConsoleGame;
+
+export const init = () => {
+	// this function enables user to set preferences
+	window._ = ConsoleGame.setValue.bind(ConsoleGame);
+	// enable "start" and other essential commands contained in ConsoleGame, but not imported commands
+	ConsoleGame.bindInitialCommands();
+}

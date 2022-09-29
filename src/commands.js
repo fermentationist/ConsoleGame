@@ -4,7 +4,6 @@ import maps from "./maps.js";
 
 // Command functions
 const Commands = function (game) {
-
 	// destructure admin methods from game object
 	const { _start,
 		_help,
@@ -223,13 +222,14 @@ const Commands = function (game) {
 		let variations = [];
 		if (thesaurus){
 			const synonyms = thesaurus[word] || [];
-			variations = synonyms.filter((synonym) => {
+			variations = synonyms.map((synonym) => {
 				if (synonym.indexOf(" ") === -1){
 					return cases(synonym);
 				}
 			});
 		}
-		return `${cases(word)},${variations.join()}${optionalString ? "," +optionalString : ""}`;
+		const output = `${cases(word)}${variations.length ? "," + variations.join() : ""}${optionalString ? "," +optionalString : ""}`;
+		return output;
 	}
 
 	// Commands and their aliases
