@@ -451,7 +451,7 @@ const ConsoleGame = {
 		const allowOverwrites = ["open", "close", "status", "inspect", "table", "screen"];
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
-		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction): interpreterFunction.bind(this, commandName);
+		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction.bind(this)): interpreterFunction.bind(this, commandName);
 		try {
 			aliasArray.map(alias => {
 				if (alias in globalThis && !allowOverwrites.includes(alias)) {
