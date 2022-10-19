@@ -275,6 +275,7 @@ const Commands = function (game) {
 		[_act_upon, aliasString("pull", thesaurus)],
 		[_act_upon, aliasString("read", thesaurus)],
 		[_act_upon, aliasString("rezrov", thesaurus)],
+		[_act_upon, aliasString("frotz", thesaurus)],
 		[_act_upon, aliasString("cast", thesaurus)],
 		[_act_upon, aliasString("rescue", thesaurus)],
 		[_act_upon, aliasString("spray", thesaurus)],
