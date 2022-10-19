@@ -601,7 +601,7 @@ const ConsoleGame = {
 		this.items._nightstand_drawer.contents.push(this.items._old_key);
 		this.items._wardrobe.contents.push(this.items._grue_repellant);
 		this.items._dresser_drawer.contents.push(this.items._booklet);
-		this.addToInventory([this.items._no_tea]);
+		this.addToInventory([this.items._no_tea, this.items._me]);
 	},
 
 	_start: function () {

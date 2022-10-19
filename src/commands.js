@@ -115,11 +115,12 @@ const Commands = function (game) {
 	const _inventory = command => {
 
 		let items = [], itemsPlusArticles = [];
-		// const itemsPlusArticles = game.state.inventory.map(item => item.article ? `${item.article} ${item.name}` :  item.name);
 		game.state.inventory.forEach(item => {
-			items.push(item.name);
-			const itemWithArticle = item.article ? `${item.article} ${item.name}` :  item.name;
-			itemsPlusArticles.push(itemWithArticle);
+			if (item.listed) {
+				items.push(item.name);
+				const itemWithArticle = item.article ? `${item.article} ${item.name}` :  item.name;
+				itemsPlusArticles.push(itemWithArticle);
+			}
 		});
 		
 		let segments =  `You are carrying ${game.formatList(itemsPlusArticles)}`.split(" ");

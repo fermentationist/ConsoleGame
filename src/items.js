@@ -6,7 +6,6 @@ const itemModule = function (game) {
 		get description () {
 			return `There is nothing particularly interesting about the ${this.name}.`
 		},
-		burning: false,
 		takeable: true,
 		openable: false,
 		flammable: false,
@@ -278,7 +277,7 @@ const itemModule = function (game) {
 			},
 			drop: function () {
 				game.state.objectMode = false;
-				const all = game.state.inventory.filter(it => it.name !== "no_tea");// filter out "no_tea" (you can't drop it)
+				const all = game.state.inventory.filter(it => !["no_tea", "me"].includes(it.name));// filter out "no_tea" (you can't drop it)
 				all.forEach(item => {
 					item.drop();
 					return;
@@ -783,6 +782,17 @@ const itemModule = function (game) {
 			light: function () {
 				this.use.call(this);
 			}
+		},
+		_me: {
+			name: "me",
+			article: "your",
+			takeable: false,
+			listed: false,
+			get description() {
+				const descriptionString = `Upon taking a quick inventory of your person and its component parts – everything seems to be accounted for and intact.`;
+				return descriptionString;
+
+			},
 		},
 		_nightstand: {
 			name: "nightstand",
