@@ -6,6 +6,7 @@ const itemModule = function (game) {
 		get description () {
 			return `There is nothing particularly interesting about the ${this.name}.`
 		},
+		burning: false,
 		takeable: true,
 		openable: false,
 		flammable: false,
@@ -16,7 +17,7 @@ const itemModule = function (game) {
 		listed: true,
 		solution: null,
 		points: 1,
-		get fireCount() {
+		get lightCount() {
 			return this.activated ? this.count : 0;
 		},
 		burn: function () {
@@ -73,6 +74,12 @@ const itemModule = function (game) {
 		},
 		correctGuess: function () {
 		},
+		decrementCounter: function () {
+			if (this.lightCount === 1 && game.inInventory(this.name)) {
+				console.p(`The light from the ${this.name} fades.`);
+			}
+			this.count = this.count - 1 || 0;
+		},
 		drink: function () {
 			game.objectMode = false;
 			console.p(`You cannot drink the ${this.name}.`);
@@ -96,14 +103,15 @@ const itemModule = function (game) {
 		},
 		examine: function () {
 			game.state.objectMode = false;
-			return console.p(this.description);
-
+			console.p(this.description);
+			if (this.activated && this.lightCount > 0) {
+				console.p("Its glow illuminates the darkness.")
+			}
 		},
 		extinguish: function () {
 			game.state.objectMode = false;
-			if (this.fireCount > 0) {
+			if (this.lightCount > 0) {
 				this.activated = false;
-				this.count = 0;
 				console.p(`You extinguish the ${this.name}.`);
 				return;
 			}
@@ -111,6 +119,12 @@ const itemModule = function (game) {
 		},
 		flush: function () {
 			game.state.objectMode = false;
+		},
+		frotz: function () {
+			game.state.objectMode = false;
+			this.activated = true;
+			this.count = 3;
+			console.p(`Upon uttering the magic word, there is a flash, and then the ${this.name} begins to glow!`);
 		},
 		incorrectGuess: function () {
 		},
@@ -696,6 +710,10 @@ const itemModule = function (game) {
 					console.p("You don't have the means to light a fire.");
 					return;
 				}
+				if (this.count === 0) {
+					console.p("The lantern appears to be out of fuel.");
+					return;
+				}
 				game.items._matchbook.closed = false;
 				this.activated = true;
 				this.count = 250;
@@ -743,7 +761,7 @@ const itemModule = function (game) {
 				return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${this.closed ? "It is closed, its cardboard cover tucked in." : "The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\""}`;
 			},
 			decrementCounter: function () {
-				if (this.fireCount) {
+				if (this.lightCount) {
 					-- this.count;
 					if (this.count === 0){
 						console.p("Despite your best efforts the flame flickers out.");
@@ -839,6 +857,9 @@ const itemModule = function (game) {
 			},
 			examine: function () {
 				return this.no_teaMethod(this.description);
+			},
+			frotz: function () {
+				return this.no_teaMethod("Unfortunately, you cannot \"frotz\" the no tea.")
 			},
 			use: function () {
 				return this.no_teaMethod("Unsurprisingly, using the no tea has no effect.");

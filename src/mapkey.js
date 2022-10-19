@@ -7,14 +7,14 @@ const mapKey = function (game) {
 		unlockText: "", // text to be displayed when area becomes unlocked
 		hiddenSecrets: false, // used to toggle room description and whether player has access to hiddenEnv
 		get hideSecrets () {
-			const cond2 = this.visibleEnv.includes(game.items._lantern) || this.hiddenEnv.includes(game.items._lantern) || game.inInventory("lantern");
-			const cond3 = this.visibleEnv.includes(game.items._matchbook) || game.inInventory("matchbook");
-			const cond2b = game.items._lantern.fireCount > 0;
-			const cond3b = game.items._matchbook.fireCount > 0;
-			if ( (cond2 && cond2b)||(cond3 && cond3b) ) {
+			const combinedEnv = [...this.visibleEnv, ...game.state.inventory];
+			const lightSource = combinedEnv.some(item => {
+				return item.lightCount > 0;
+			});
+			if ( lightSource ) {
 				return false;
 			}
-			return this.hiddenSecrets;//game.state.fireCount > 0 ? false : this.hiddenSecrets;
+			return this.hiddenSecrets;
 			
 		},
 		set hideSecrets (trueOrFalse){

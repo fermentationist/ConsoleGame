@@ -61,7 +61,7 @@ const ConsoleGame = {
 		this.key = value;
 	},
 	get lightSources() {
-		return Object.values(this.items).filter(it => it.proto === "_matchbook" || it.name === "matchbook");
+		return Object.values(this.items).filter(item => item.lightCount > 0);
 	},
 	exemptCommands: ["help", "start", "commands", "inventory", "inventorytable", "look", "font", "color", "size", "save", "restore", "resume", "verbose", "_save_slot", "yes", "_0", "_1", "_2", "_3", "_4", "_5", "_6", "_7", "_8", "_9"],
 	   
@@ -97,6 +97,7 @@ const ConsoleGame = {
 		}
 		catch (err){
 			// recognized command word used incorrectly
+			console.error(err);
 			return console.p(`That's not going to work. Please try something else.`);
 		}
 	},
@@ -213,8 +214,9 @@ const ConsoleGame = {
 		if (itemName === "all") {
 			return this.items._all;
 		}
-		const invIndex = this.state.inventory.map((item) => item.name).indexOf(itemName);
-		const objectFromInventory = invIndex !== -1 && this.state.inventory[invIndex];
+		const [objectFromInventory] = this.state.inventory.filter(item => item.name === itemName);
+		// const invIndex = this.state.inventory.map((item) => item.name).indexOf(itemName);
+		// const objectFromInventory = invIndex !== -1 && this.state.inventory[invIndex];
 		return objectFromInventory;
 	},
 
