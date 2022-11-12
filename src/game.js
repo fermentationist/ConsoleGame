@@ -215,8 +215,6 @@ const ConsoleGame = {
 			return this.items._all;
 		}
 		const [objectFromInventory] = this.state.inventory.filter(item => item.name === itemName);
-		// const invIndex = this.state.inventory.map((item) => item.name).indexOf(itemName);
-		// const objectFromInventory = invIndex !== -1 && this.state.inventory[invIndex];
 		return objectFromInventory;
 	},
 
@@ -269,16 +267,16 @@ const ConsoleGame = {
 	displayItem: function (galleryItem = {title: "untitled", artist: "unknown", info: null, source: "", dimensions: null}) {
 		const contentDiv = document.getElementById("console-game-content");
 		contentDiv.innerHTML = "";
-		contentDiv.setAttribute("style", "width:100vw;background-color:#D1D1D1;padding-top:75%;position:relative;display:flex;flex-direction:column;justify-content:center;align-content:center;")
+		contentDiv.setAttribute("style", "width:100vw;background-color:inherit;color:inherit;position:relative;display:flex;flex-direction:column;justify-content:center;align-content:center;")
 		const iFrame = document.createElement("iframe")
 		iFrame.src = galleryItem.source;
-		
+		iFrame.playsinline = true;
 		iFrame.autoplay = true;
-		iFrame.setAttribute("style", "width:50vw;height:37.5vw;background-color:gray;top:0;position:sticky;position:absolute;msrgin-left:auto;");
+		iFrame.muted = true;
+		iFrame.setAttribute("style", `width:${galleryItem.width ? galleryItem.width : "min(38vw,720px)"};height:${galleryItem.height ? galleryItem.height : "min(25vw,480px)"};margin:auto`);
 		const p = document.createElement("p");
-		// p.setAttribute("style", "text-align:center;");
 		const title = document.createElement("h2");
-		title.setAttribute("style", "color:black;");
+		title.setAttribute("style", "color:inherit;");
 		const artist = title.cloneNode(true);
 		title.innerHTML = `Title: ${galleryItem.title}`;
 		artist.innerHTML = `Artist: ${galleryItem.artist}`;
@@ -289,7 +287,7 @@ const ConsoleGame = {
 		if (galleryItem.info) {
 			const info = document.createElement("p");
 			info.innerHTML = galleryItem.info;
-			info.setAttribute("style", "color:black;font-style:italic;font-size:1em;padding-bottom:2em;");
+			info.setAttribute("style", "color:inherit;font-style:italic;font-size:1em;padding-bottom:2em;");
 			contentDiv.appendChild(info);
 		}
 		// window.scrollTo(0, 10000);
@@ -450,7 +448,7 @@ const ConsoleGame = {
 	// Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/console.html
 	// It creates a new, one-word command in the interpreter. It takes in the function that will be invoked when the command is entered, and a comma-separated string of command aliases (synonyms). The primary command will be named after the first name in the string of aliases.
 	bindCommandToFunction: function (interpreterFunction, commandAliases, daemon=this.turnDemon){
-		const allowOverwrites = ["open", "close", "status", "inspect", "table", "screen"];
+		const allowOverwrites = ["open", "close", "status", "inspect", "table", "screen", "scroll"];
 		const aliasArray = commandAliases.split(",");
 		const commandName = aliasArray[0];
 		const interpretCommand = daemon ? daemon.bind(this, commandName, interpreterFunction.bind(this)): interpreterFunction.bind(this, commandName);

@@ -335,7 +335,9 @@ const itemModule = function (game) {
 					artist: "Isak Berbic, Emiliano Cerna-Rios, Dennis Hodges and Zdenko Mandusic",
 					year: "2008",
 					info: "Exhibition catalog",
-					source: "https://drive.google.com/file/d/0B89dfqio_IykVk9ZMV96TUJESnM/preview?usp=sharing"
+					source: "https://drive.google.com/file/d/1pJcIPQZxY1JhRZ3ssV-EPL6eWY-XLdpI/preview",
+					width: "800px",
+					height: "800px"
 				});
 			}
 		},
@@ -583,7 +585,9 @@ const itemModule = function (game) {
 					artist: "Dennis Hodges",
 					year: "2001",
 					info: "Super 8mm film to video transfer with dubbed audio",
-					source: "https://drive.google.com/file/d/0B0gDqpRvgWsgY2o5U1pqckFTQlE/preview"
+					source: "https://drive.google.com/file/d/1loiWbLQgHVVoCtJVscJe2sYiPle8u7Tf/preview?usp=sharing",
+					width: "720px",
+					height: "480px"
 				});
 			},
 			use: function () {
@@ -785,7 +789,7 @@ const itemModule = function (game) {
 		},
 		_me: {
 			name: "me",
-			article: "your",
+			article: "",
 			takeable: false,
 			listed: false,
 			get description() {
