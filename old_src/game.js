@@ -202,7 +202,7 @@ const ConsoleGame = {
 		return console.p(description + "\n" + moveOptions + "\n" + itemStr + "\n" + nestedItemStr);
 	},
 
-	currentHeader: function (columnWidth = 80){
+	currentHeader: function (columnWidth = window.innerWidth){
 		const roomName = this.state.currentMapCell.name;
 		const turn = `Turn : ${this.state.turn}`;
 		const gapSize = columnWidth - roomName.length - turn.length;
