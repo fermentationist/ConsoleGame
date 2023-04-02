@@ -54,10 +54,11 @@ const mapKey = function (game: GameType) {
       get description() {
         if (game.state.turn < 3) {
           game.captured();
-          return "";
+          return game.variableWidthDivider();
         }
         game.state.score += 50;
-        return game.winner("\nYou have escaped!\n");
+        game.winner("\nYou have escaped!\n");
+        return game.variableWidthDivider();
       },
     },
 

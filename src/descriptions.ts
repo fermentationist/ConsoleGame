@@ -12,7 +12,6 @@ import { primaryFont } from "./utils/prefs";
 		game.log.custom("by Dennis Hodges\ncopyright 2019-2023", "font-size:100%;color:lightgray;padding:0 1em;");
 		game.log.intro(intro_1);
 		game.log.codeInline((descriptions as Record<string, any>).introOptions(game));
-		return `___________________________________________________________`
   },
 
   introOptions: (game: GameType) => {
@@ -25,29 +24,16 @@ import { primaryFont } from "./utils/prefs";
 			"start",
 			". ]"
 		];
-		const commonOptions = [
+		const initialOptions = [
 			"[ Please type ",
 			"help ",
 			"for instructions, ",
-			// "commands ",
-			// "for a list of available commands, ",
 			"restore ",
 			"to load a saved game, or ",
-		];
-		const options = [
-			...commonOptions,
-			"resume ",
-			"to resume the game. ]"
-		];
-		const initialOptions = [
-			...commonOptions,
 			"start ",
-			"to start the game. ]"
+			"to begin a new game. ]"
 		];
-		if (game.state.turn === null) {
-			return game.unfinishedGame() ? existingGame : initialOptions;
-		}
-		return options;
+		return game.unfinishedGame() ? existingGame : initialOptions;
 	},
 
   captured: ["As you step out onto the front porch, you struggle to see in the bright midday sun, your eyes having adjusted to the dimly lit interior of the house. You hear a surprised voice say, \"Hey! How did you get out here?!\" You spin around to see the source of the voice, but something blunt and heavy has other plans for you and your still aching skull. You descend back into the darkness of sleep.", "Groggily, you lift yourself from the floor, your hands probing the fresh bump on the back of your head."],

@@ -7,7 +7,7 @@ export default (game) => {
     locked: true,
     listed: false,
     takeable: false,
-    solution: 10281999,
+    solution: "10281999",
     description:
       "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.",
     contents: [],
@@ -30,14 +30,13 @@ export default (game) => {
     incorrectGuess () {
       game.state.objectMode = false;
       game.log.digi("PASSCODE INCORRECT");
-      return;
     },
     open () {
       if (this.locked) {
         this.unlock.call(this);
-        return;
+      } else {
+        Object.getPrototypeOf(this).open.call(this);
       }
-      Object.getPrototypeOf(this).open.call(this);
     },
     lock () {
       game.state.objectMode = false;
@@ -50,15 +49,15 @@ export default (game) => {
       game.state.objectMode = false;
       if (!this.locked) {
         game.log.p("The safe is already unlocked.");
-        return;
+      } else {
+        game.log.codeInline([
+          `To enter the 8-digit numerical passcode, you must type an underscore `,
+          `_`,
+          `, followed by the value enclosed in parentheses or backticks.`,
+        ]);
+        game.log.codeInline([`For example: `, `_(01234567)`, ` or `, "_`01234567`"]);
+        game.log.digi("ENTER PASSCODE:");
       }
-      game.log.codeInline([
-        `To enter the 8-digit numerical passcode, you must type an underscore `,
-        `_`,
-        `, followed by the value enclosed in parentheses.`,
-      ]);
-      game.log.codeInline([`For example: `, `_(01234567)`]);
-      game.log.digi("ENTER PASSCODE:");
     },
     use () {
       this.unlock.call(this);

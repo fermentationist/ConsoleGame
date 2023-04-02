@@ -4,6 +4,7 @@ export default (game) => {
     openable: true,
     closed: true,
     count: 3,
+    points: 7,
     flammable: true,
     get description() {
       return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \"Magnum Opus\" in a peculiar, squirming op-art font. ${

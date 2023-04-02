@@ -10,6 +10,7 @@ export default (game) => {
           : ""
       }.`;
     },
+    points: 3,
     text: "My Precious Muffin's 18th Birthday - 10/28/17",
     read () {
       game.state.objectMode = false;

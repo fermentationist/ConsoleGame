@@ -104,7 +104,7 @@ export default {
     font-family:${primaryFont};
     padding:0 1em;
   `,
-    logType: "log"
+    logType: "log",
   },
   inventory: {
     style: `
@@ -113,7 +113,7 @@ export default {
       font-family:${primaryFont};
       padding:0 1em;
     `,
-    logType: "log"
+    logType: "log",
   },
   title: {
     style: `
@@ -127,7 +127,7 @@ export default {
       margin:0 auto 0 35%;
       border: 2px dashed goldenrod;
     `,
-    logType: "log"
+    logType: "log",
   },
   win: {
     style: `
@@ -140,7 +140,7 @@ export default {
       padding:0 1em;
       animation:flashing 0.8s infinite;
     `,
-    logType: "log"
+    logType: "log",
   },
   header: {
     style: `
@@ -150,7 +150,7 @@ export default {
       font-family:${primaryFont};
       padding:0 1em;
     `,
-    logType: "log"
+    logType: "log",
   },
   groupTitle: {
     style: `
@@ -158,7 +158,7 @@ export default {
       color:#75EA5B;
       font-family:${primaryFont};
     `,
-    logType: "group"
+    logType: "group",
   },
 
   codeInlineBaseStyle: `
@@ -178,220 +178,17 @@ export default {
   `,
   getDigiStyle: () => `
     font-family:'monaco', 'Consolas', 'Lucida Console', 'Courier New', monospace;
-    color:rgb(${255 - getRandomInt(0, 10)}, ${68 + getRandomInt(0, 10)}, ${0 + getRandomInt(0, 10)});
-    font-size:${1.5 + (Math.random() / 4)}em;
+    color:rgb(${255 - getRandomInt(0, 10)}, ${68 + getRandomInt(0, 10)}, ${
+    0 + getRandomInt(0, 10)
+  });
+    font-size:${1.5 + Math.random() / 4}em;
     opacity:${1 - Math.random() / 2};
   `,
-  getScreamStyle: (index: number) =>  `
+  getScreamStyle: (index: number) => `
     font-family:'courier new';
-    color:rgb(${255 + getRandomInt(0, 10)}, ${33 + getRandomInt(0, 10)}, ${33 + getRandomInt(0, 10)});
-    font-size:${1.2 + index/3}em;
+    color:rgb(${255 + getRandomInt(0, 10)}, ${33 + getRandomInt(0, 10)}, ${
+    33 + getRandomInt(0, 10)
+  });
+    font-size:${1.2 + index / 3}em;
   `,
-}
-// export const _error = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     color:red;
-//     font-family:${primaryFont};
-//     line-height:1.5;
-//   `,
-//   logType: "error",
-// };
-
-// export const _h1 = {
-//   style: `
-//     font-size:125%;
-//     color:pink;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "log",
-// };
-
-// export const _intro = {
-//   style: `
-//     font-size:calc(1.25 * ${fontSize});
-//     color:orange;
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//     line-height:1.5;
-// 	`,
-//   logType: "log",
-// };
-
-// export const _cursive = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     font-family:cursive;
-//     font-weight:bold;
-//     color:lightgray;
-//     background-color:black;
-//     line-spacing:2em;
-//     padding:1em;
-//     margin:0 auto  0 0;
-//     white-space:pre-wrap;
-//     text-align:center;
-// 	`,
-//   logType: "log",
-// };
-
-// export const _note = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     font-family:courier new;
-//     font-weight:bold;
-//     color:#75715E;
-//     background-color:white;
-//     line-spacing:2em;
-//     padding:0 1em 1em;
-//     margin:0 auto  0 0;
-//     white-space:pre-wrap;
-// 	`,
-//   logType: "log",
-// };
-
-// export const _warning = {
-//   style: `
-//     font-size:calc(1.15 * ${fontSize});
-//     color:orange;
-//     font-family:${primaryFont};
-// 	`,
-//   logType: "warn",
-// };
-
-// export const _papyracy = {
-//   style: `
-//     font-size:calc(1.4 * ${fontSize});
-//     color:beige;
-//     font-family:Papyrus;
-//   `,
-//   logType: "log",
-// };
-
-// export const _p = {
-//   style: `
-//     font-size:calc(1.2 *${fontSize});
-//     color:${textColor};
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//     line-height:1.5;
-//   `,
-//   logType: "log",
-// };
-
-// export const _tiny = {
-//   style: `
-//     font-size:calc(0.5 * ${fontSize});
-//     color:#75715E;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "log",
-// };
-
-// export const _info = {
-//   style: `
-//     font-size:calc(1.15*${fontSize});
-//     padding:0.5em 1em 0 0.5em;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "log",
-// }
-
-// export const _invalid = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     color:red;
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//   `,
-//   logType: "log"
-// }
-
-// export const _inventory = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     color:cyan;
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//   `,
-//   logType: "log"
-// }
-
-// export const _title = {
-//   style: `
-    
-//   font-size:calc(2.5 * ${fontSize});
-//     font-weight:bold;
-//     color:orangered;
-//     text-shadow:orange 2px 2px 5px;
-//     goldenrod -2px -2px 5px;
-//     font-family:Courier;
-//     padding:0 1em;
-//     margin:0 auto 0 35%;
-//     border: 2px dashed goldenrod;
-//   `,
-//   logType: "log"
-// }
-
-// export const _win = {
-//   style: `
-//     font-size:calc(2.5 * ${fontSize});
-//     font-weight:bold;
-//     color:gold;
-//     text-shadow:orange 2px 2px 5px;
-//     goldenrod -2px -2px 5px;
-//     font-family:Courier;
-//     padding:0 1em;
-//     animation:flashing 0.8s infinite;
-//   `,
-//   logType: "log"
-// }
-
-// export const _header = {
-//   style: `
-//     font-size:calc(1.25 * ${fontSize});
-//     font-weight:bold;
-//     color:${textColor};
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//   `,
-//   logType: "log"
-// }
-
-// export const _groupTitle = {
-//   style: `
-//     font-size:calc(1.25 * ${fontSize});
-//     color:#75EA5B;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "group"
-// }
-
-// export const _codeInlineCodeStyle = `
-//   font-family:courier;
-//   font-weight:bold;
-//   line-height:1.5;
-//   padding-top:0.5em;
-//   font-size:calc(1.35*${fontSize});
-//   color:lime;
-// `;
-
-// export const _codeInlineBaseStyle = `
-//   font-size:calc(1.15*${fontSize});
-//   font-family:${primaryFont};
-//   font-weight:inherit;
-//   line-height:1.5;
-//   padding-top:0.5em;
-// `;
-
-// export const _getDigiStyle = () => `
-//   font-family:'monaco', 'Consolas', 'Lucida Console', 'Courier New', monospace;
-//   color:rgb(${255 - getRandomInt(0, 10)}, ${68 + getRandomInt(0, 10)}, ${0 + getRandomInt(0, 10)});
-//   font-size:${1.5 + (Math.random() / 4)}em;
-//   opacity:${1 - Math.random() / 2};
-// `;
-
-// export const _getScreamStyle = (index: number) =>  `
-//   font-family:'courier new';
-//   color:rgb(${255 + getRandomInt(0, 10)}, ${33 + getRandomInt(0, 10)}, ${33 + getRandomInt(0, 10)});
-//   font-size:${1.2 + index/3}em;
-// `;
+};

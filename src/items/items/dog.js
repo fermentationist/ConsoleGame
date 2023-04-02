@@ -3,7 +3,7 @@ export default {
   points: 50,
   article: "a",
   takeable: true,
-  description: "Four legs. barks.",
+  description: "Four legs. Barks.",
   rescue () {
     Object.getPrototypeOf(this).take.call(this);
   }

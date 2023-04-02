@@ -216,7 +216,7 @@ var logStyles = {
     font-family:${primaryFont};
     padding:0 1em;
   `,
-        logType: "log"
+        logType: "log",
     },
     inventory: {
         style: `
@@ -225,7 +225,7 @@ var logStyles = {
       font-family:${primaryFont};
       padding:0 1em;
     `,
-        logType: "log"
+        logType: "log",
     },
     title: {
         style: `
@@ -239,7 +239,7 @@ var logStyles = {
       margin:0 auto 0 35%;
       border: 2px dashed goldenrod;
     `,
-        logType: "log"
+        logType: "log",
     },
     win: {
         style: `
@@ -252,7 +252,7 @@ var logStyles = {
       padding:0 1em;
       animation:flashing 0.8s infinite;
     `,
-        logType: "log"
+        logType: "log",
     },
     header: {
         style: `
@@ -262,7 +262,7 @@ var logStyles = {
       font-family:${primaryFont};
       padding:0 1em;
     `,
-        logType: "log"
+        logType: "log",
     },
     groupTitle: {
         style: `
@@ -270,7 +270,7 @@ var logStyles = {
       color:#75EA5B;
       font-family:${primaryFont};
     `,
-        logType: "group"
+        logType: "group",
     },
     codeInlineBaseStyle: `
     font-size:calc(1.15*${fontSize});
@@ -290,7 +290,7 @@ var logStyles = {
     getDigiStyle: () => `
     font-family:'monaco', 'Consolas', 'Lucida Console', 'Courier New', monospace;
     color:rgb(${255 - getRandomInt(0, 10)}, ${68 + getRandomInt(0, 10)}, ${0 + getRandomInt(0, 10)});
-    font-size:${1.5 + (Math.random() / 4)}em;
+    font-size:${1.5 + Math.random() / 4}em;
     opacity:${1 - Math.random() / 2};
   `,
     getScreamStyle: (index) => `
@@ -299,193 +299,6 @@ var logStyles = {
     font-size:${1.2 + index / 3}em;
   `,
 };
-// export const _error = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     color:red;
-//     font-family:${primaryFont};
-//     line-height:1.5;
-//   `,
-//   logType: "error",
-// };
-// export const _h1 = {
-//   style: `
-//     font-size:125%;
-//     color:pink;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "log",
-// };
-// export const _intro = {
-//   style: `
-//     font-size:calc(1.25 * ${fontSize});
-//     color:orange;
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//     line-height:1.5;
-// 	`,
-//   logType: "log",
-// };
-// export const _cursive = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     font-family:cursive;
-//     font-weight:bold;
-//     color:lightgray;
-//     background-color:black;
-//     line-spacing:2em;
-//     padding:1em;
-//     margin:0 auto  0 0;
-//     white-space:pre-wrap;
-//     text-align:center;
-// 	`,
-//   logType: "log",
-// };
-// export const _note = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     font-family:courier new;
-//     font-weight:bold;
-//     color:#75715E;
-//     background-color:white;
-//     line-spacing:2em;
-//     padding:0 1em 1em;
-//     margin:0 auto  0 0;
-//     white-space:pre-wrap;
-// 	`,
-//   logType: "log",
-// };
-// export const _warning = {
-//   style: `
-//     font-size:calc(1.15 * ${fontSize});
-//     color:orange;
-//     font-family:${primaryFont};
-// 	`,
-//   logType: "warn",
-// };
-// export const _papyracy = {
-//   style: `
-//     font-size:calc(1.4 * ${fontSize});
-//     color:beige;
-//     font-family:Papyrus;
-//   `,
-//   logType: "log",
-// };
-// export const _p = {
-//   style: `
-//     font-size:calc(1.2 *${fontSize});
-//     color:${textColor};
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//     line-height:1.5;
-//   `,
-//   logType: "log",
-// };
-// export const _tiny = {
-//   style: `
-//     font-size:calc(0.5 * ${fontSize});
-//     color:#75715E;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "log",
-// };
-// export const _info = {
-//   style: `
-//     font-size:calc(1.15*${fontSize});
-//     padding:0.5em 1em 0 0.5em;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "log",
-// }
-// export const _invalid = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     color:red;
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//   `,
-//   logType: "log"
-// }
-// export const _inventory = {
-//   style: `
-//     font-size:calc(1.2 * ${fontSize});
-//     color:cyan;
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//   `,
-//   logType: "log"
-// }
-// export const _title = {
-//   style: `
-//   font-size:calc(2.5 * ${fontSize});
-//     font-weight:bold;
-//     color:orangered;
-//     text-shadow:orange 2px 2px 5px;
-//     goldenrod -2px -2px 5px;
-//     font-family:Courier;
-//     padding:0 1em;
-//     margin:0 auto 0 35%;
-//     border: 2px dashed goldenrod;
-//   `,
-//   logType: "log"
-// }
-// export const _win = {
-//   style: `
-//     font-size:calc(2.5 * ${fontSize});
-//     font-weight:bold;
-//     color:gold;
-//     text-shadow:orange 2px 2px 5px;
-//     goldenrod -2px -2px 5px;
-//     font-family:Courier;
-//     padding:0 1em;
-//     animation:flashing 0.8s infinite;
-//   `,
-//   logType: "log"
-// }
-// export const _header = {
-//   style: `
-//     font-size:calc(1.25 * ${fontSize});
-//     font-weight:bold;
-//     color:${textColor};
-//     font-family:${primaryFont};
-//     padding:0 1em;
-//   `,
-//   logType: "log"
-// }
-// export const _groupTitle = {
-//   style: `
-//     font-size:calc(1.25 * ${fontSize});
-//     color:#75EA5B;
-//     font-family:${primaryFont};
-//   `,
-//   logType: "group"
-// }
-// export const _codeInlineCodeStyle = `
-//   font-family:courier;
-//   font-weight:bold;
-//   line-height:1.5;
-//   padding-top:0.5em;
-//   font-size:calc(1.35*${fontSize});
-//   color:lime;
-// `;
-// export const _codeInlineBaseStyle = `
-//   font-size:calc(1.15*${fontSize});
-//   font-family:${primaryFont};
-//   font-weight:inherit;
-//   line-height:1.5;
-//   padding-top:0.5em;
-// `;
-// export const _getDigiStyle = () => `
-//   font-family:'monaco', 'Consolas', 'Lucida Console', 'Courier New', monospace;
-//   color:rgb(${255 - getRandomInt(0, 10)}, ${68 + getRandomInt(0, 10)}, ${0 + getRandomInt(0, 10)});
-//   font-size:${1.5 + (Math.random() / 4)}em;
-//   opacity:${1 - Math.random() / 2};
-// `;
-// export const _getScreamStyle = (index: number) =>  `
-//   font-family:'courier new';
-//   color:rgb(${255 + getRandomInt(0, 10)}, ${33 + getRandomInt(0, 10)}, ${33 + getRandomInt(0, 10)});
-//   font-size:${1.2 + index/3}em;
-// `;
 
 var fonts = [
     "Arial",
@@ -588,62 +401,62 @@ const randomFont = () => {
     return fonts[number];
 };
 
-const inline = (stringSegmentArray, styleArray) => {
+const _inline = (stringSegmentArray, styleArray) => {
     const stringSegments = stringSegmentArray.map((segment) => `%c${segment}`).join("");
     console.log(stringSegments, ...styleArray);
 };
-const customLog = function (message, style, logType = "log") {
+const _customLog = function (message, style, logType = "log") {
     if (window.CONSOLE_GAME_DEBUG) {
         window.debugLog.push({ gameOutput: message });
     }
     if (Array.isArray(message) && Array.isArray(style)) {
-        inline(message, style);
+        _inline(message, style);
     }
     else {
         console[logType](`%c${message}`, style);
     }
 };
-const codeInline = (stringOrStringSegmentArray) => {
+const _codeInline = (stringOrStringSegmentArray) => {
     const baseStyle = logStyles.codeInlineBaseStyle;
     const codeStyle = logStyles.codeInlineCodeStyle;
     if (typeof stringOrStringSegmentArray === "string") {
-        customLog(stringOrStringSegmentArray, codeStyle);
+        _customLog(stringOrStringSegmentArray, codeStyle);
     }
     else {
         const styleArray = Array(stringOrStringSegmentArray.length).fill(baseStyle).map((baseStyle, index) => {
             // alternate between baseStyle and codeStyle
             return index % 2 !== 0 ? codeStyle : baseStyle;
         });
-        customLog(stringOrStringSegmentArray, styleArray);
+        _customLog(stringOrStringSegmentArray, styleArray);
     }
 };
-const digi = (message) => {
+const _digi = (message) => {
     const spacedText = message.toUpperCase().split("").join(" ").split("");
     const styles = spacedText.map(char => logStyles.getDigiStyle());
-    customLog(spacedText, styles);
+    _customLog(spacedText, styles);
 };
-const map = (floorMap) => console.table(floorMap.map(row => row.join("")));
-const scream = (message) => {
+const _map = (floorMap) => console.table(floorMap.map(row => row.join("")));
+const _scream = (message) => {
     const splitText = [...message];
     const styles = splitText.map((char, index) => {
         return logStyles.getScreamStyle(index);
     });
-    customLog(splitText, styles);
+    _customLog(splitText, styles);
 };
-const ransom = (message) => {
+const _ransom = (message) => {
     const [text, styles] = getRansomArray(message);
-    inline(text, styles);
+    _inline(text, styles);
 };
 const customConsole = (() => {
     window.debugLog = [];
     const log = {
-        inline,
-        codeInline,
-        digi,
-        map,
-        scream,
-        custom: customLog,
-        ransom,
+        inline: _inline,
+        codeInline: _codeInline,
+        digi: _digi,
+        map: _map,
+        scream: _scream,
+        custom: _customLog,
+        ransom: _ransom,
         table: console.table,
         groupCollapsed: console.groupCollapsed,
         groupEnd: console.groupEnd,
@@ -654,7 +467,7 @@ const customConsole = (() => {
         // only iterate over the style objects, not the methods
         if (typeof styleDetails === "object") {
             const { style, logType } = styleDetails;
-            log[styleName] = (message) => customLog(message, style, logType);
+            log[styleName] = (message) => _customLog(message, style, logType);
         }
     }
     return log;
@@ -1272,7 +1085,7 @@ const Commands = function (game) {
         let newPosition = {
             x: game.state.position.x,
             y: game.state.position.y,
-            z: game.state.position.z
+            z: game.state.position.z,
         };
         switch (direction) {
             case "north":
@@ -1304,7 +1117,10 @@ const Commands = function (game) {
         // Display message and exit function if path to next space is blocked by a locked or closed door or analagous item
         if (game.mapKey[newCell].locked || game.mapKey[newCell].closed) {
             game.log.p("The way is blocked.");
-            game.log.p(game.mapKey[newCell].lockText && (game.mapKey[newCell].locked || game.mapKey[newCell].closed) ? game.mapKey[newCell].lockText : "");
+            game.log.p(game.mapKey[newCell].lockText &&
+                (game.mapKey[newCell].locked || game.mapKey[newCell].closed)
+                ? game.mapKey[newCell].lockText
+                : "");
             return;
         }
         // If movement in direction is possible, update player position
@@ -1329,7 +1145,7 @@ const Commands = function (game) {
         game.log.p(game.state.currentMapCell.sound);
         return;
     };
-    // Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.                               
+    // Handles commands that require an object. Sets pendingAction to the present command, and objectMode so that next command is interpreted as the object of the pending command.
     const _act_upon = (command) => {
         game.state.objectMode = true;
         game.state.pendingAction = command;
@@ -1349,7 +1165,9 @@ const Commands = function (game) {
         game.state.inventory.forEach((item) => {
             if (item.listed) {
                 items.push(item.name);
-                const itemWithArticle = item.article ? `${item.article} ${item.name}` : item.name;
+                const itemWithArticle = item.article
+                    ? `${item.article} ${item.name}`
+                    : item.name;
                 itemsPlusArticles.push(itemWithArticle);
             }
         });
@@ -1381,8 +1199,7 @@ const Commands = function (game) {
     const _items = (itemName) => {
         // Exit function with error message if previous command does not require an object
         if (!game.state.objectMode && itemName !== "maps") {
-            // console.invalid("Invalid command");
-            console.trace("Invalid command");
+            game.log.invalid("Invalid command.");
             return;
         }
         // Exit function with error message if item is not available in player inventory or current location.
@@ -1404,6 +1221,7 @@ const Commands = function (game) {
         game.state.prefMode = false;
         if (unfinishedGame === null || unfinishedGame === void 0 ? void 0 : unfinishedGame.length) {
             await game.initializeNewGame();
+            console.log("calling replayHistory");
             game.replayHistory(unfinishedGame);
             game.describeSurroundings();
         }
@@ -1461,6 +1279,7 @@ const Commands = function (game) {
     };
     const _quit = () => {
         game.initializeNewGame();
+        game.start();
     };
     const _pref = (whichPref) => {
         game.state.prefMode = true;
@@ -1498,6 +1317,7 @@ const Commands = function (game) {
         game.log.p("Maximum verbosity.");
     };
     const _score = () => {
+        console.log("game.state", game.state);
         game.log.p(`Your score is ${game.state.score} in ${game.state.turn} turns.`);
     };
     const _commands = () => {
@@ -1509,17 +1329,9 @@ const Commands = function (game) {
         }, {});
         game.log.table(commandTable);
     };
-    // const _again = () => {
-    // 	const lastCommand = game.state.history[game.state.history.length - 1];
-    // 	const itemNames = Object.keys(game.items).map(key => key.slice(1));
-    //     if (itemNames.includes(lastCommand)){
-    // 		const [pendingActionFn] = game.commands.filter(entry => entry[1].split(",")[0] === game.state.pendingAction)[0];
-    // 		pendingActionFn.call(this);
-    // 	}
-    // 	const [lastCommandFn] = game.commands.filter(entry => entry[1].split(",")[0] === lastCommand)[0];
-    // 	lastCommandFn.call(this);
-    // 	return;
-    // }
+    const _again = () => {
+        game.again();
+    };
     const _poof = () => {
         var _a;
         const body = document.querySelector("body");
@@ -1562,7 +1374,7 @@ const Commands = function (game) {
         [_smell, aliasString("smell", thesaurus)],
         [_wait, aliasString("wait", thesaurus) + ",z,Z,zzz,ZZZ,Zzz"],
         [_yell, aliasString("yell", thesaurus)],
-        // [_again, aliasString("again", thesaurus) + ",g,G"],
+        [_again, aliasString("again", thesaurus) + ",g,G"],
         // Item methods
         [_act_upon, aliasString("burn", thesaurus)],
         [_act_upon, aliasString("climb", thesaurus)],
@@ -1596,7 +1408,6 @@ const Commands = function (game) {
         [_commands, cases("commands") + ",c,C"],
         [_help, cases("help") + ",h,H"],
         [_inventoryTable, cases("inventoryTable", "invTable", "invt")],
-        // [_papyracy, cases("papyracy")],
         [_verbose, cases("verbose")],
         [_yes, cases("yes") + ",y,Y"],
         [_score, cases("score")],
@@ -1622,14 +1433,17 @@ const Commands = function (game) {
         [_save_slot, "_7"],
         [_save_slot, "_8"],
         [_save_slot, "_9"],
-        // Other 
+        // Other
         [_poof, cases("poof")],
         // this command exists as a kludgy fix for a bug that happens if console is in "eager evaluation" mode. Starting to type "glove" auto-evaluates to "globalThis", which for some reason calls _act_upon("close"). This same goes for the keyword "this". This command tricks auto-evaluation because it prioritizes suggestions alphabetically.
         [_none, cases("globaa")],
         [_none, cases("thia")],
     ];
-    const itemNames = Object.keys(game.items).map(itemName => itemName.slice(1));
-    const itemAliases = itemNames.map(itemName => [_items, aliasString(itemName, thesaurus)]);
+    const itemNames = Object.keys(game.items).map((itemName) => itemName.slice(1));
+    const itemAliases = itemNames.map((itemName) => [
+        _items,
+        aliasString(itemName, thesaurus),
+    ]);
     const aliases = [...commandAliases, ...itemAliases];
     return aliases;
 };
@@ -1906,7 +1720,7 @@ var itemContents = {
     _dresser_drawer: ["_booklet"]
 };
 
-var items = {"_all":"(game) => {\n  return {\n    name: \"all\",\n    listed: false,\n    takeable: false,\n    take () {\n      game.state.objectMode = false;\n      const all = game.state.combinedEnv;\n      all.forEach((item) => {\n        return item.takeable ? (item.take && item.take()) : null;\n      });\n    },\n    drop () {\n      game.state.objectMode = false;\n      const all = game.state.inventory.filter((it) => ![\"no_tea\", \"me\"].includes(it.name));// filter out \"no_tea\" (you can't drop it)\n      all.forEach((item) => {\n        item.drop && item.drop();\n      });\n    }\n  };\n}","_backdoor":"{\"name\":\"door\",\"locked\":true,\"proto\":\"door\",\"unlockedBy\":\"key\",\"lockedTarget\":\"a\",\"closedTarget\":\"a\"}","_basement_door":"{\"name\":\"door\",\"locked\":true,\"closed\":true,\"listed\":true,\"proto\":\"door\",\"unlockedBy\":\"old_key\",\"lockedTarget\":\"I\",\"closedTarget\":\"I\"}","_bathtub":"(game) => {  \n  return {\n    name: \"bathtub\",\n    takeable: false,\n    description: \"The old cast iron tub rests atop four taloned feet. It does not look functional.\",\n    use () {\n      game.log.p(\"This is hardly an appropriate time for a bath!\");\n    }\n  }\n}","_bed":"(game) => {\n  return {\n\t\t\tname: \"bed\",\n\t\t\tflammable: true,\n\t\t\ttakeable: false,\n\t\t\tlisted:false,\n\t\t\tdescription: \"The antique bedframe is made of tubular bronze. There are not any sheets or blankets or pillows on the old, stained, queen-sized mattress that rests atop it.\",\n\t\t\tburn () {\n\t\t\t\tObject.getPrototypeOf(this).burnDown.call(this);\n\t\t\t},\n\t\t}\n}","_booklet":"(game) => {\n  return {\n    name: \"booklet\",\n    article: \"a\",\n    flammable: true,\n    description: \"This booklet appears to be the exhibition catalogue for some fancy art show. \",\n    read () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      game.displayItem({\n        title: \"Ministry of Culture\",\n        artist: \"Isak Berbic, Emiliano Cerna-Rios, Dennis Hodges and Zdenko Mandusic\",\n        year: \"2008\",\n        info: \"Exhibition catalog\",\n        source: \"https://drive.google.com/file/d/1pJcIPQZxY1JhRZ3ssV-EPL6eWY-XLdpI/preview\",\n        width: \"800px\",\n        height: \"800px\"\n      });\n    }\n  }\n}","_books":"(game) => {\n  return {\n    name: \"books\",\n    listed: false,\n    takeable: false,\n    description: \"While you notice many of the titles as familiar works of classic literature, nothing stands out as being of particular interest.\",\n    read () {\n      game.log.p(\"You cannot possibly read all of these books, and considering you have been abducted by persons unknown and are trapped in a strange house, you have neither the presence of mind, nor the time to sit down with a good book right now.\");\n    },\n    proto: \"bookshelves\",\n  }\n}","_bookshelves":"{\"name\":\"bookshelves\",\"listed\":false,\"takeable\":false,\"article\":\"some\",\"description\":\"Wooden bookshelves line one wall of the study, reaching from floor to ceiling. There are hundreds of moldering, hardcover books lining the shelves.\"}","_chain":"(game) => {\n  return {\n\t\t\tname: \"chain\",\n\t\t\tweight: 0,\n\t\t\tdescription: \"The thin ball chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \\\"pull\\\" it...\",\n\t\t\ttakeable: false,\n\t\t\tlisted: false,\n\t\t\tpull () {\n\t\t\t\tgame.state.objectMode = false;\n\t\t\t\tlet dark = game.state.currentMapCell.hideSecrets;\n\t\t\t\tdark ? game.log.p(\"An overhead lightbulb flickers on, faintly illuminating the room.\") : game.log.p(\"The lightbulb is extinguished.\");\n\t\t\t\tgame.state.currentMapCell.hideSecrets = !dark;\n\t\t\t\treturn game.describeSurroundings();\n\t\t\t},\n\t\t\tuse () {\n\t\t\t\treturn this.pull();\n\t\t\t}\n\t\t}\n}","_chair":"(game) => {\n  return {\n    name: \"chair\",\n    takeable: false,\n    description: \"It looks like a wooden chair– no more, no less.\",\n    use () {\n      game.state.objectMode = false;\n      game.log.p(\"You sit down on the chair.\");\n      const wait = game.commands._wait;\n      wait.call(this);\n    }\n  }\n}","_coffee_table":"(game) => {\n  return {\n    name: \"coffee_table\",\n    listed: false,\n    takeable: false,\n    description () {\n      return `The low, four-legged table has nothing on it${\n        game.state.env.visibleEnv.includes(\"photo\")\n          ? \" except for a small, framed photo.\"\n          : \".\"\n      }`;\n    },\n  };\n}","_collar":"(game) => {\n  return {\n    name: \"collar\",\n    description: `It is ${game.state.dogName}'s collar! Whoever assaulted you and took your dog must have come this way!`,\n    smell () {\n      game.log.p(\"The collar smells like leather and scared doggie!\");\n    }\n  }\n}","_cup":"{\"name\":\"cup\",\"weight\":2,\"description\":\"It is a small, golden cup with two finely wrought handles.\"}","_desk":"(game) => {\n  return {\n    name: \"desk\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    // contents: [],\n    containedPart: \"_drawer\",\n    description: \"The antique writing desk is six feet in length, and blanketed with dust. It has a single drawer on one side.\",\n    open () {\n      if(this.closed){\n        Object.getPrototypeOf(this).open.call(this);\n      }\n      if (game.items[this.containedPart].closed){\n        game.items[this.containedPart].closed = false;\n      }\n    },\n    close () {\n      if (!this.closed){\n        Object.getPrototypeOf(this).close.call(this);\n      }\n      if (!game.items[this.containedPart].closed) {\n        game.items[this.containedPart].closed = true;\n      }\n    }\n  }\n}","_disc":"(game) => {\n  return {\n    name: \"disc\",\n    text: \"Untitled (Litany)\",\n    get description() {\n      return `It is a disc made of a shiny black polymer, lined with hundreds of tiny concentric grooves. It looks to be about seven inches in diameter, with a one and one-half inch hole in its center. It bears a label that says, \"${this.text}\".`;\n    },\n    play () {\n      if (!game.inEnvironment(\"phonograph\") && !game.inInventory(\"phonograph\")) {\n        game.log.p(\"First, you will need to find a phonograph.\")\n        return;\n      }\n      return game.displayItem({\n        title: \"\\nUntitled (litany)\",\n        artist: \"Dennis Hodges\",\n        year: \"2010\",\n        info: \"Found audio recordings\",\n        source: \"https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing\"\n      });\n    },\n    use () {\n      this.play.call(this)\n    },\n  }\n}","_dog":"{\"name\":\"dog\",\"points\":50,\"article\":\"a\",\"takeable\":true,\"description\":\"Four legs. barks.\",\"rescue\":\"rescue () {\\n    Object.getPrototypeOf(this).take.call(this);\\n  }\"}","_door":"(game) => {\n  return {\n    name: \"door\",\n    article: \"a\",\n    points: 20,\n    openable: true,\n    locked: false,\n    closed: true,\n    takeable: false,\n    listed: false,\n    unlockedBy: \"key\",\n    lockedTarget: \"A\",\n    closedTarget: \"A\",\n    get description() {\n      game.state.objectMode = false;\n      return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a sturdy new deadbolt, which is ${!this.locked ? \"unlocked.\" : \"locked.\"}${this.closed ? \"\" : \"\\nThe door is open.\"}`\n    },\n  }\n}","_drawer":"(game) => {\n  const drawer = {\n    name: \"drawer\",\n    listed: false,\n    openable: true,\n    closed: true,\n    takeable: false,\n    containedIn: \"_desk\",\n    contents: [],\n    get description() {\n      return this.closed\n        ? \"The drawer is closed.\"\n        : `The drawer is open. There is ${\n            this.contents.length < 1\n              ? \"nothing\"\n              : game.formatList(\n                  this.contents.map((item) => `${item.article} ${item.name}`)\n                )\n          } inside.`;\n    },\n    open () {\n      if (this.closed) {\n        Object.getPrototypeOf(this).open.call(this);\n      }\n      if (game.items[this.containedIn].closed) {\n        game.items[this.containedIn].closed = false;\n      }\n    },\n    close () {\n      if (!this.closed) {\n        Object.getPrototypeOf(this).close.call(this);\n      }\n      if (!game.items[this.containedIn].closed) {\n        game.items[this.containedIn].closed = true;\n      }\n    },\n  };\n  return drawer;\n}","_dresser":"(game) => {\n  return {\n    name: \"dresser\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: true,\n    proto: \"desk\",\n    containedPart: \"_dresser_drawer\",\n    contents: [],\n    get description () {\n      return `The modest wooden dresser is of simple design. The pale blue milk paint that coats it is worn through in several spots from use. It has a large drawer, which is ${this.closed ? \"closed\" : \"open\"}.`\n    },\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this);// open method from prototype's prototype\n      proto.open.call(this);// open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this);// close method from prototype's prototype\n      proto.close.call(this);// open method of prototype\n    },\n  }\n}","_dresser_drawer":"(game) => {\n  return {\n    name: \"drawer\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    proto: \"drawer\",\n    containedIn: \"_dresser\",\n    contents: [],\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this); // open method from prototype's prototype\n      proto.open.call(this); // open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this); // close method from prototype's prototype\n      proto.close.call(this); // open method of prototype\n    },\n  };\n}","_film":"(game) => {\n  return {\n    name: \"film\",\n    listed: true,\n    flammable: true,\n    article: \"a reel of\",\n    text: \"Canned Laughs\",\n    description:\n      'The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.',\n    play () {\n      if (!game.inEnvironment(\"projector\") && !game.inInventory(\"projector\")) {\n        game.log.p(\n          \"First, you will need to find something to project the film with.\"\n        );\n        return;\n      }\n      if (!game.inEnvironment(\"screen\") && !game.inInventory(\"screen\")) {\n        game.log.p(\"You are going to need a screen to project onto.\");\n        return;\n      }\n      return game.displayItem({\n        title: \"\\nCanned Laughs\",\n        artist: \"Dennis Hodges\",\n        year: \"2001\",\n        info: \"Super 8mm film to video transfer with dubbed audio\",\n        source:\n          \"https://drive.google.com/file/d/1loiWbLQgHVVoCtJVscJe2sYiPle8u7Tf/preview?usp=sharing\",\n        width: \"720px\",\n        height: \"480px\",\n      });\n    },\n    use () {\n      this.play.call(this);\n    },\n    project () {\n      this.play.call(this);\n    },\n  };\n}","_filthy_note":"{\"name\":\"note\",\"text\":\"Dear John,\\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.\",\"description\":\"A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible.\"}","_glove":"(game) => {\n  return {\n    name: \"glove\",\n    closed: true,\n    description: \"It is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.\",\n    contents: [],\n    examine () {\n      game.state.objectMode = false;\n      if (this.contents.length) {\n        const hiddenItem = this.contents.pop();\n        game.log.p(`${this.description}\\nAs you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);\n        game.state.currentMapCell.addToEnv(hiddenItem.name);\n        return;\n      }\n      return this.description;\n    }\n  }\n}","_grue":"(game) => {\n  return {\n    name: \"grue\",\n    listed: false,\n    takeable: false,\n    turns: 3,\n    description:\n      \"No adventurer who has seen a grue has yet lived to tell of it.\",\n    lurk () {\n      if (!game.state.currentMapCell.hideSecrets) {\n        return;\n      }\n      const valarMorgulis = Math.random() >= 0.25;\n      if (valarMorgulis && this.turns < 1) {\n        game.dead(\n          \"Oh no! You have walked into the slavering fangs of a lurking grue!\"\n        );\n      }\n      this.turns--;\n      return;\n    },\n  };\n}","_grue_repellant":"(game) => {\n  return {\n    name: \"grue_repellant\",\n    defective: Math.random() < 0.03,\n    weight: 3,\n    count: 3,\n    article: \"some\",\n    description: \"A 12oz can of premium aerosol grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.\",\n    use () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.inEnvironment(this.name) ? game.log.p(\"You will need to pick it up first.\") : game.log.p(\"You don't see that here.\");\n      } else if (this.used) {\n        return game.log.p(\"Sorry, but it has already been used.\");\n      } else if (this.defective) {\n        this.used = true;\n        return game.log.p(\"Nothing happens. This must be one of the Math.random() < 0.03 of grue_repellant cans that were programmed to be, I mean, that were accidentally manufactured defectively. Repeated attempts to coax repellant from the aerosol canister prove equally fruitless.\");\n      } else {\n        this.used = true;\n        this.activated = true;\n        game.state.repellantMode = true;\n        return game.log.p(\"A cloud of repellant hisses from the canister, temporarily obscuring your surroundings. By the time it clears, your head begins to throb, and you feel a dull, leaden taste coating your tongue. The edges of your eyes and nostrils feel sunburnt, and there is also a burning sensation to accompany an unsteady buzzing in your ears. Although you are not a grue, you find it to be more than somewhat off-putting.\");\n      }\n    },\n    spray () {\n      game.state.objectMode = false;\n      return this.use();\n    },\n    drink () {\n      game.state.objectMode = false;\n      game.dead(\"Drinking from an aerosol can is awkward at best, but still you manage to ravenously slather your chops with the foaming grue repellant. You try to enjoy the searing pain inflicted by this highly caustic (and highly toxic!) chemical as it dissolves the flesh of your mouth and throat, but to no avail. It is not delicious, and you are starting to realize that there are some non-trivial drawbacks to willingly ingesting poison. Oops.\");\n    },\n    decrementCounter () {\n      if (this.activated && this.count > 0) {\n        --this.count;\n        if (this.count === 0) {\n          game.log.p(\"The grue repellant has probably worn off by now.\");\n          this.activated = false;\n          game.state.repellantMode = false;\n          return;\n        }\n      }\n    }\n  }\n}","_key":"(game) => {\n  return {\n    name: \"key\",\n    description:\n      \"The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday.\",\n    use () {\n      const unlockable = game.state.combinedEnv.filter(\n        (item) => item.unlockedBy === this.name\n      );\n      if (unlockable.length < 1) {\n        game.log.p(`There is nothing to unlock with the ${this.name}`);\n        return;\n      }\n      unlockable.forEach((item) => item.unlock());\n    },\n  };\n}","_knife":"(game) => {\n  return {\n    name: \"knife\",\n    description:\n      \"The folding knife has a three inch locking blade and is small enough to fit in your pocket. It is designed to be a utility blade, and would probably make a poor weapon.\",\n    use () {\n      game.log.p(\"The small knife is of no use here.\");\n    },\n  };\n}","_lantern":"(game) => {\n  return {\n    name: \"lantern\",\n    flammable: false,\n    activated: false,\n    proto: \"matchbook\",\n    get description() {\n      return `The old brass lantern is the quaint sort that burns hydrocarbons to produce light. It is currently ${\n        this.activated ? \"lit.\" : \"extinguished.\"\n      }`;\n    },\n    use () {\n      game.state.objectMode = false;\n      if (!game.inInventory(\"matchbook\")) {\n        game.log.p(\"You don't have the means to light a fire.\");\n        return;\n      }\n      if (this.count === 0) {\n        game.log.p(\"The lantern appears to be out of fuel.\");\n        return;\n      }\n      game.items._matchbook.closed = false;\n      this.activated = true;\n      this.count = 250;\n      game.log.p(\n        \"Lighting the lantern with the match produces a brighter, longer lasting source of light.\"\n      );\n    },\n    light () {\n      this.use.call(this);\n    },\n    burn () {\n      this.use.call(this);\n    },\n  };\n}","_maps":"(game) => {\n  return {\n    name: \"maps\",\n    article: \"some\",\n    get description() {\n      this.read();\n      return `The stack of dogeared pages appear to be architectural drawings. With a quick survey of your surroundings, you confirm with reasonable certainty that they are likely floor plans for this house.`;\n    },\n    read () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      const currentPosition = game.state.position;\n      const floorMap = game.maps[currentPosition.z].map((row) => {\n        return row.map((cell) => (cell === \"*\" ? \"⬛️\" : \"🌫\"));\n      });\n      floorMap[currentPosition.y].splice(currentPosition.x, 1, \"⭐️\");\n      const croppedMap = floorMap.slice(8).map((row) => row.slice(5, 11));\n      game.log.map(croppedMap);\n    },\n    use () {\n      this.read.call(this);\n    },\n  };\n}","_matchbook":"(game) => {\n  return {\n    name: \"matchbook\",\n    openable: true,\n    closed: true,\n    count: 3,\n    flammable: true,\n    get description() {\n      return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \\\"Magnum Opus\\\" in a peculiar, squirming op-art font. ${\n        this.closed\n          ? \"It is closed, its cardboard cover tucked in.\"\n          : 'The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\"'\n      }`;\n    },\n    decrementCounter () {\n      if (this.lightCount) {\n        --this.count;\n        if (this.count === 0) {\n          game.log.p(\"Despite your best efforts the flame flickers out.\");\n          this.activated = false;\n          return;\n        }\n      }\n    },\n    use () {\n      game.state.objectMode = false;\n      if (this.closed) {\n        this.open.call(this);\n        game.log.p(\n          \"As you flip open the matchbook, folding back the cover, you glimpse something scrawled in pencil on the inside.\"\n        );\n      }\n      game.log.p(\n        \"You pluck out one of the paper matches. It ignites easily as you scrape its head against the red phosphorus strip, producing a tenuous flame that you are quick to guard with your cupped hand.\"\n      );\n      this.count = 3;\n      this.activated = true;\n    },\n    light () {\n      this.use.call(this);\n    },\n  };\n}","_me":"(game) => {\n  return {\n    name: \"me\",\n    article: \"\",\n    takeable: false,\n    listed: false,\n    get description() {\n      const descriptionString = `Upon taking a quick inventory of your person and its component parts – everything seems to be accounted for and intact.`;\n      return descriptionString;\n    },\n  };\n}","_nightstand":"(game) => {\n  return {\n    name: \"nightstand\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    proto: \"desk\",\n    containedPart: \"_nightstand_drawer\",\n    contents: [],\n    get description() {\n      return `The nightstand next to the bed is made of wood and is painted white. It has a single drawer, which is ${\n        this.closed ? \"closed\" : \"open\"\n      }.`;\n    },\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this); // open method from prototype's prototype\n      proto.open.call(this); // open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this); // close method from prototype's prototype\n      proto.close.call(this); // open method of prototype\n    },\n  };\n}","_nightstand_drawer":"(game) => {\n  return {\n    name: \"drawer\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    proto: \"drawer\",\n    containedIn: \"_nightstand\",\n    contents: [],\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this); // open method from prototype's prototype\n      proto.open.call(this); // open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this); // close method from prototype's prototype\n      proto.close.call(this); // close method of prototype\n    },\n  };\n}","_no_tea":"(game) => {\n  return {\n    name: \"no_tea\",\n    weight: 0,\n    article: \"\",\n    description: \"You do not have any tea.\",\n    methodCallcount: 0,\n    takeable: false,\n    no_teaMethod (message) {\n      this.methodCallcount++;\n      game.state.objectMode = false;\n      game.log.p(message);\n      if (\n        this.methodCallcount > 1 &&\n        game.state.pendingAction !== \"contemplate\"\n      ) {\n        game.log.p(\"Perhaps you should take a moment to contemplate that.\");\n      }\n    },\n    drink () {\n      return this.no_teaMethod(\"How do you intend to drink no tea?\");\n    },\n    drop () {\n      return this.no_teaMethod(\n        \"You can't very well drop tea that you don't have.\"\n      );\n    },\n    take () {\n      return this.no_teaMethod(\"No tea isn't the sort of thing you can take.\");\n    },\n    examine () {\n      return this.no_teaMethod(this.description);\n    },\n    frotz () {\n      return this.no_teaMethod('Unfortunately, you cannot \"frotz\" the no tea.');\n    },\n    use () {\n      return this.no_teaMethod(\n        \"Unsurprisingly, using the no tea has no effect.\"\n      );\n    },\n    contemplate () {\n      if (this.methodCallcount > 2) {\n        game.state.score += 75;\n        return game.winner(\n          \"Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space.\"\n        );\n      }\n      return this.no_teaMethod(\"Let's not resort to that just yet!\");\n    },\n  };\n}","_note":"(game) => {\n  return {\n    name: \"note\",\n    text: `We have your dog.`,\n    flammable: true,\n    firstRead: true,\n    description:\n      \"The note is composed of eclectically sourced, cut-out letters, in the style of a movie ransom note. You found it lying next to you on the floor when you regained consciousness.\",\n    read () {\n      game.state.objectMode = false;\n      console.log(\"this:\", this)\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      game.log.ransom(this.text);\n      if (this.firstRead) {\n        game.log.p(\n          `Who would do such a thing to sweet little ${game.state.dogName}!?`\n        );\n        game.log.p(\n          \"You need to rescue your puppy and get out of this place before your attacker returns!\"\n        );\n        this.firstRead = false;\n      }\n    },\n  };\n}","_old_key":"{\"name\":\"old_key\",\"article\":\"an\",\"description\":\"It is an old-fashioned key, made of heavy, tarnished bronze.\",\"proto\":\"key\"}","_painting":"(game) => {\n  return {\n    name: \"painting\",\n    takeable: true,\n    listed: false,\n    flammable: true,\n    description:\n      \"The small, grimy image is of an owl, teaching a class a classroom of kittens how to catch mice. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.\",\n    previouslyRevealed: false,\n    location: \"+\",\n    take () {\n      Object.getPrototypeOf(this).take.call(this);\n      this.revealText(\"When you remove the terrible painting, \");\n    },\n    revealText (text) {\n      if (!this.previouslyRevealed) {\n        game.log.p(\n          text +\n            \"a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.\"\n        );\n        game.mapKey[this.location].hideSecrets = false;\n        this.previouslyRevealed = true;\n      }\n    },\n    move () {\n      this.revealText(\"When you move the terrible painting, \");\n    },\n    turn () {\n      this.move();\n    },\n    burn () {\n      game.state.objectMode = false;\n      if (!game.inInventory(\"matchbook\")) {\n        // check for matchbook, exit if not in inventory\n        game.log.p(\"You don't have the means to light a fire.\");\n        return;\n      }\n      // update the description of the painting to reflect the fact that it has been burned.\n      this.description =\n        \"The painting is lying broken upon the floor. It is so badly burned now, that its subject has become indecipherable. What remains of the canvas is a carbonized black. You can't help but think that it is still an improvement compared to the original work.\";\n      game.items._matchbook.closed = false; // matchbook remains open after use, if not already opened.\n      if (game.state.currentMapCell.hideSecrets) {\n        // if painting still on wall\n        this.revealText(\n          \"Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. Thinking it unwise to burn down the house you are trapped in, you remove the painting from the wall, and stomp out the fire before it can spread any further. \\nWhen you look back at the wall that formerly held the burning painting, \"\n        );\n        return;\n      }\n      // if painting already removed from wall\n      this.revealText(\n        \"Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. You are suddenly inspired to end your ill-considered, if brief flirtation with pyromania, and promptly stomp out the fire before they can spread any further.\"\n      );\n      return;\n    },\n  };\n}","_pedestal":"{\"name\":\"pedestal\",\"proto\":\"table\",\"description\":\"It is a simple wooden plinth, painted white.\"}","_phonograph":"(game) => {\n  return {\n    name: \"phonograph\",\n    description:\n      \"The old phonograph has a built-in speaker, and looks like it might still work.\",\n    play () {\n      if (!game.inEnvironment(\"disc\") && !game.inInventory(\"disc\")) {\n        game.log.p(\n          \"First, you will need to find something to play on the phonograph.\"\n        );\n        return;\n      }\n      return game.items._disc.play.call(this);\n    },\n    use () {\n      this.play.call(this);\n    },\n  };\n}","_photo":"(game) => {\n  return {\n    name: \"photo\",\n    description:\n      \"The four by six inch photograph is in a cheap frame made of painted fiberboard. It's a portrait of a very old, and probably infirm black poodle, bluish cataracts clouding its eyes. There is some writing on the back of the frame.\",\n    get reverseDescription() {\n      return `There is a handwritten inscription on the back of the frame${\n        game.inInventory(this.name)\n          ? '. It says, \"My Precious Muffin\\'s 18th Birthday - 10/28/17\"'\n          : \"\"\n      }.`;\n    },\n    text: \"My Precious Muffin's 18th Birthday - 10/28/17\",\n    read () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      game.log.p(`The text on the ${this.name} reads: \\n`);\n      return game.log.cursive(this.text);\n    },\n  };\n}","_projector":"(game) => {\n  return {\n    name: \"projector\",\n    description:\n      \"It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.\",\n    play () {\n      if (!game.inEnvironment(\"film\") && !game.inInventory(\"film\")) {\n        game.log.p(\n          \"First, you will need to find something to project with the projector.\"\n        );\n        return;\n      }\n      if (!game.inEnvironment(\"screen\") && !game.inInventory(\"screen\")) {\n        game.log.p(\"You are going to need a screen to project onto.\");\n        return;\n      }\n      return game.items._film.play.call(this);\n    },\n    use () {\n      this.play.call(this);\n    },\n    project () {\n      this.play.call(this);\n    },\n  };\n}","_safe":"(game) => {\n  return {\n    name: \"safe\",\n    points: 10,\n    closed: true,\n    openable: true,\n    locked: true,\n    listed: false,\n    takeable: false,\n    solution: 10281999,\n    description:\n      \"The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.\",\n    contents: [],\n    correctGuess () {\n      game.state.objectMode = false;\n      this.locked = false;\n      this.closed = false;\n      game.log.digi(\"PASSCODE ACCEPTED.\");\n      game.log.p(\n        \"Upon entering the correct passcode, the bolt inside the safe's door slides back, and the door pops open gently.\"\n      );\n      if (this.contents.length > 0) {\n        game.log.p(\n          `Inside the safe is ${game.formatList(\n            this.contents.map((item) => `${item.article} ${item.name}`)\n          )}.`\n        );\n      }\n    },\n    incorrectGuess () {\n      game.state.objectMode = false;\n      game.log.digi(\"PASSCODE INCORRECT\");\n      return;\n    },\n    open () {\n      if (this.locked) {\n        this.unlock.call(this);\n        return;\n      }\n      Object.getPrototypeOf(this).open.call(this);\n    },\n    lock () {\n      game.state.objectMode = false;\n      this.closed = true;\n      this.locked = true;\n      game.log.p(\"You lock the wall safe.\");\n    },\n    unlock () {\n      game.state.solveMode = true;\n      game.state.objectMode = false;\n      if (!this.locked) {\n        game.log.p(\"The safe is already unlocked.\");\n        return;\n      }\n      game.log.codeInline([\n        `To enter the 8-digit numerical passcode, you must type an underscore `,\n        `_`,\n        `, followed by the value enclosed in parentheses.`,\n      ]);\n      game.log.codeInline([`For example: `, `_(01234567)`]);\n      game.log.digi(\"ENTER PASSCODE:\");\n    },\n    use () {\n      this.unlock.call(this);\n    },\n  };\n}","_screen":"{\"name\":\"screen\",\"takeable\":true,\"description\":\"It is the type of portable movie screen that rolls up into itself like an old window shade.\"}","_scroll":"(game) => {\n  return {\n    name: \"scroll\",\n    flammable: true,\n    description:\n      'There is some small text, printed on a thin leather strap that was used to bind the rolled up scroll. It says, \"rezrov: Open even locked or enchanted objects\". As you unfurl the scroll, there appears to be some writing on the inside surface of the parchment, but each line of text seems to disappear as soon as it is revealed.',\n    text: \"rezrov: Open even locked or enchanted objects\",\n    use () {\n      return game.commands._rezrov();\n    },\n    cast () {\n      this.use.call(this);\n    },\n  };\n}","_sink":"(game) => {\n  return {\n    name: \"sink\",\n    listed: false,\n    description:\n      \"It is an old porcelain sink with separate taps for hot and cold water. Like everything else here, it is covered in dust and grime.\",\n    use () {\n      game.log.p(\"You try to turn on the taps, but nothing comes out.\");\n    },\n  };\n}","_sofa":"(game) => {\n  return {\n    name: \"sofa\",\n    flammable: true,\n    listed: false,\n    description:\n      \"The well-worn sitting room sofa is upholstered brown cowhide.\",\n    burn () {\n      Object.getPrototypeOf(this).burnDown.call(this);\n    },\n  };\n}","_table":"{\"name\":\"table\",\"takeable\":false,\"listed\":false,\"description\":\"The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair.\"}","_toilet":"(game) => {\n  return {\n    name: \"toilet\",\n    listed: false,\n    description:\n      \"You are surprised to find that the bowl of the very old porcelain toilet is still full of water.\",\n    text: \"Thomas Crapper & Co.\",\n    flush () {\n      game.state.objectMode = false;\n      game.log.p(\n        \"Having pushed the lever, and watched the water exit the bowl, you can personally verify that the toilet works as expected.\"\n      );\n    },\n  };\n}","_wardrobe":"(game) => {\n  return {\n    name: \"wardrobe\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    contents: [],\n    get description() {\n      const descriptionString = `The oak wardrobe is roughly four feet wide and seven feet in height and is currently${\n        this.closed ? \" closed\" : \" open\"\n      }. `;\n      if (this.closed) {\n        return descriptionString;\n      }\n      const contentsString = `There is ${\n        this.contents.length < 1\n          ? \"nothing\"\n          : game.formatList(\n              this.contents.map((item) => `${item.article} ${item.name}`)\n            )\n      } inside.`;\n      return descriptionString + contentsString;\n    },\n  };\n}"};
+var items = {"_all":"(game) => {\n  return {\n    name: \"all\",\n    listed: false,\n    takeable: false,\n    take () {\n      game.state.objectMode = false;\n      const all = game.state.combinedEnv;\n      all.forEach((item) => {\n        return item.takeable ? (item.take && item.take()) : null;\n      });\n    },\n    drop () {\n      game.state.objectMode = false;\n      const all = game.state.inventory.filter((it) => ![\"no_tea\", \"me\"].includes(it.name));// filter out \"no_tea\" (you can't drop it)\n      all.forEach((item) => {\n        item.drop && item.drop();\n      });\n    }\n  };\n}","_backdoor":"{\"name\":\"door\",\"locked\":true,\"proto\":\"door\",\"unlockedBy\":\"key\",\"lockedTarget\":\"a\",\"closedTarget\":\"a\"}","_basement_door":"{\"name\":\"door\",\"locked\":true,\"closed\":true,\"listed\":true,\"proto\":\"door\",\"unlockedBy\":\"old_key\",\"lockedTarget\":\"I\",\"closedTarget\":\"I\"}","_bathtub":"(game) => {  \n  return {\n    name: \"bathtub\",\n    takeable: false,\n    description: \"The old cast iron tub rests atop four taloned feet. It does not look functional.\",\n    use () {\n      game.log.p(\"This is hardly an appropriate time for a bath!\");\n    }\n  }\n}","_bed":"(game) => {\n  return {\n\t\t\tname: \"bed\",\n\t\t\tflammable: true,\n\t\t\ttakeable: false,\n\t\t\tlisted:false,\n\t\t\tdescription: \"The antique bedframe is made of tubular bronze. There are not any sheets or blankets or pillows on the old, stained, queen-sized mattress that rests atop it.\",\n\t\t\tburn () {\n\t\t\t\tObject.getPrototypeOf(this).burnDown.call(this);\n\t\t\t},\n\t\t}\n}","_booklet":"(game) => {\n  return {\n    name: \"booklet\",\n    article: \"a\",\n    flammable: true,\n    description: \"This booklet appears to be the exhibition catalogue for some fancy art show. \",\n    read () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      game.displayItem({\n        title: \"Ministry of Culture\",\n        artist: \"Isak Berbic, Emiliano Cerna-Rios, Dennis Hodges and Zdenko Mandusic\",\n        year: \"2008\",\n        info: \"Exhibition catalog\",\n        source: \"https://drive.google.com/file/d/1pJcIPQZxY1JhRZ3ssV-EPL6eWY-XLdpI/preview\",\n        width: \"800px\",\n        height: \"800px\"\n      });\n    }\n  }\n}","_books":"(game) => {\n  return {\n    name: \"books\",\n    listed: false,\n    takeable: false,\n    description: \"While you notice many of the titles as familiar works of classic literature, nothing stands out as being of particular interest.\",\n    read () {\n      game.log.p(\"You cannot possibly read all of these books, and considering you have been abducted by persons unknown and are trapped in a strange house, you have neither the presence of mind, nor the time to sit down with a good book right now.\");\n    },\n    proto: \"bookshelves\",\n  }\n}","_bookshelves":"{\"name\":\"bookshelves\",\"listed\":false,\"takeable\":false,\"article\":\"some\",\"description\":\"Wooden bookshelves line one wall of the study, reaching from floor to ceiling. There are hundreds of moldering, hardcover books lining the shelves.\"}","_chain":"(game) => {\n  return {\n\t\t\tname: \"chain\",\n\t\t\tweight: 0,\n\t\t\tdescription: \"The thin ball chain dangling in front of you is exactly the sort often connected to a lightbulb. Perhaps you should \\\"pull\\\" it...\",\n\t\t\ttakeable: false,\n\t\t\tlisted: false,\n\t\t\tpull () {\n\t\t\t\tgame.state.objectMode = false;\n\t\t\t\tlet dark = game.state.currentMapCell.hideSecrets;\n\t\t\t\tdark ? game.log.p(\"An overhead lightbulb flickers on, faintly illuminating the room.\") : game.log.p(\"The lightbulb is extinguished.\");\n\t\t\t\tgame.state.currentMapCell.hideSecrets = !dark;\n\t\t\t\treturn game.describeSurroundings();\n\t\t\t},\n\t\t\tuse () {\n\t\t\t\treturn this.pull();\n\t\t\t}\n\t\t}\n}","_chair":"(game) => {\n  return {\n    name: \"chair\",\n    takeable: false,\n    description: \"It looks like a wooden chair– no more, no less.\",\n    use () {\n      game.state.objectMode = false;\n      game.log.p(\"You sit down on the chair.\");\n      const wait = game.commands._wait;\n      wait.call(this);\n    }\n  }\n}","_coffee_table":"(game) => {\n  return {\n    name: \"coffee_table\",\n    listed: false,\n    takeable: false,\n    description () {\n      return `The low, four-legged table has nothing on it${\n        game.state.env.visibleEnv.includes(\"photo\")\n          ? \" except for a small, framed photo.\"\n          : \".\"\n      }`;\n    },\n  };\n}","_collar":"(game) => {\n  return {\n    name: \"collar\",\n    points: 2,\n    description: `It is ${game.state.dogName}'s collar! Whoever assaulted you and took your dog must have come this way!`,\n    smell () {\n      game.log.p(\"The collar smells like leather and scared doggie!\");\n    }\n  }\n}","_cup":"{\"name\":\"cup\",\"weight\":2,\"description\":\"It is a small, golden cup with two finely wrought handles.\"}","_desk":"(game) => {\n  return {\n    name: \"desk\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    // contents: [],\n    containedPart: \"_drawer\",\n    description: \"The antique writing desk is six feet in length, and blanketed with dust. It has a single drawer on one side.\",\n    open () {\n      if(this.closed){\n        Object.getPrototypeOf(this).open.call(this);\n      }\n      if (game.items[this.containedPart].closed){\n        game.items[this.containedPart].closed = false;\n      }\n    },\n    close () {\n      if (!this.closed){\n        Object.getPrototypeOf(this).close.call(this);\n      }\n      if (!game.items[this.containedPart].closed) {\n        game.items[this.containedPart].closed = true;\n      }\n    }\n  }\n}","_disc":"(game) => {\n  return {\n    name: \"disc\",\n    text: \"Untitled (Litany)\",\n    get description() {\n      return `It is a disc made of a shiny black polymer, lined with hundreds of tiny concentric grooves. It looks to be about seven inches in diameter, with a one and one-half inch hole in its center. It bears a label that says, \"${this.text}\".`;\n    },\n    play () {\n      if (!game.inEnvironment(\"phonograph\") && !game.inInventory(\"phonograph\")) {\n        game.log.p(\"First, you will need to find a phonograph.\")\n        return;\n      }\n      return game.displayItem({\n        title: \"\\nUntitled (litany)\",\n        artist: \"Dennis Hodges\",\n        year: \"2010\",\n        info: \"Found audio recordings\",\n        source: \"https://drive.google.com/file/d/1s02tHvAU0E7dMJgbhUnIPNg8ayWGNmxZ/preview?usp=sharing\"\n      });\n    },\n    use () {\n      this.play.call(this)\n    },\n  }\n}","_dog":"{\"name\":\"dog\",\"points\":50,\"article\":\"a\",\"takeable\":true,\"description\":\"Four legs. Barks.\",\"rescue\":\"rescue () {\\n    Object.getPrototypeOf(this).take.call(this);\\n  }\"}","_door":"(game) => {\n  return {\n    name: \"door\",\n    article: \"a\",\n    points: 20,\n    openable: true,\n    locked: false,\n    closed: true,\n    takeable: false,\n    listed: false,\n    unlockedBy: \"key\",\n    lockedTarget: \"A\",\n    closedTarget: \"A\",\n    get description() {\n      game.state.objectMode = false;\n      return `The massive wooden door, darkened with generations of dirt and varnish, is secured with a sturdy new deadbolt, which is ${!this.locked ? \"unlocked.\" : \"locked.\"}${this.closed ? \"\" : \"\\nThe door is open.\"}`\n    },\n  }\n}","_drawer":"(game) => {\n  const drawer = {\n    name: \"drawer\",\n    listed: false,\n    openable: true,\n    closed: true,\n    takeable: false,\n    containedIn: \"_desk\",\n    contents: [],\n    get description() {\n      return this.closed\n        ? \"The drawer is closed.\"\n        : `The drawer is open. There is ${\n            this.contents.length < 1\n              ? \"nothing\"\n              : game.formatList(\n                  this.contents.map((item) => `${item.article} ${item.name}`)\n                )\n          } inside.`;\n    },\n    open () {\n      if (this.closed) {\n        Object.getPrototypeOf(this).open.call(this);\n      }\n      if (game.items[this.containedIn].closed) {\n        game.items[this.containedIn].closed = false;\n      }\n    },\n    close () {\n      if (!this.closed) {\n        Object.getPrototypeOf(this).close.call(this);\n      }\n      if (!game.items[this.containedIn].closed) {\n        game.items[this.containedIn].closed = true;\n      }\n    },\n  };\n  return drawer;\n}","_dresser":"(game) => {\n  return {\n    name: \"dresser\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: true,\n    proto: \"desk\",\n    containedPart: \"_dresser_drawer\",\n    contents: [],\n    get description () {\n      return `The modest wooden dresser is of simple design. The pale blue milk paint that coats it is worn through in several spots from use. It has a large drawer, which is ${this.closed ? \"closed\" : \"open\"}.`\n    },\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this);// open method from prototype's prototype\n      proto.open.call(this);// open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this);// close method from prototype's prototype\n      proto.close.call(this);// open method of prototype\n    },\n  }\n}","_dresser_drawer":"(game) => {\n  return {\n    name: \"drawer\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    proto: \"drawer\",\n    containedIn: \"_dresser\",\n    contents: [],\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this); // open method from prototype's prototype\n      proto.open.call(this); // open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this); // close method from prototype's prototype\n      proto.close.call(this); // open method of prototype\n    },\n  };\n}","_film":"(game) => {\n  return {\n    name: \"film\",\n    listed: true,\n    flammable: true,\n    article: \"a reel of\",\n    text: \"Canned Laughs\",\n    description:\n      'The Super 8 film cartridge is made primarily of a clear, smoky plastic body containing a single spool of developed film. It looks a lot like an audio cassette tape, though it is a little thicker, and it is square instead of being merely rectangular. The title, \"Canned Laughs\", is hand written on a curling paper label.',\n    play () {\n      if (!game.inEnvironment(\"projector\") && !game.inInventory(\"projector\")) {\n        game.log.p(\n          \"First, you will need to find something to project the film with.\"\n        );\n        return;\n      }\n      if (!game.inEnvironment(\"screen\") && !game.inInventory(\"screen\")) {\n        game.log.p(\"You are going to need a screen to project onto.\");\n        return;\n      }\n      return game.displayItem({\n        title: \"\\nCanned Laughs\",\n        artist: \"Dennis Hodges\",\n        year: \"2001\",\n        info: \"Super 8mm film to video transfer with dubbed audio\",\n        source:\n          \"https://drive.google.com/file/d/1loiWbLQgHVVoCtJVscJe2sYiPle8u7Tf/preview?usp=sharing\",\n        width: \"720px\",\n        height: \"480px\",\n      });\n    },\n    use () {\n      this.play.call(this);\n    },\n    project () {\n      this.play.call(this);\n    },\n  };\n}","_filthy_note":"{\"name\":\"note\",\"text\":\"Dear John,\\nI'm leaving. After all of this time, I said it. But I want you to understand that it is not because of you, or something you've done (you have been a loving and loyal partner). It is I who have changed. I am leaving because I am not the person who married you so many years ago; that, and the incredibly low, low prices at Apple Cabin. Click here ==> http://liartownusa.tumblr.com/post/44189893625/apple-cabin-foods-no-2 to see why I prefer their produce for its quality and respectability.\",\"description\":\"A filthy note you found on the floor of a restroom. Congratulations, it is still slightly damp. Despite its disquieting moistness, the text is still legible.\"}","_glove":"(game) => {\n  return {\n    name: \"glove\",\n    closed: true,\n    points: 1,\n    description: \"It is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.\",\n    contents: [],\n    examine () {\n      game.state.objectMode = false;\n      if (this.contents.length) {\n        const hiddenItem = this.contents.pop();\n        game.log.p(`${this.description}\\nAs you examine the glove, a ${hiddenItem.name} falls out, onto the floor.`);\n        game.state.currentMapCell.addToEnv(hiddenItem.name);\n        return;\n      }\n      return this.description;\n    }\n  }\n}","_grue":"(game) => {\n  return {\n    name: \"grue\",\n    listed: false,\n    takeable: false,\n    turns: 3,\n    description:\n      \"No adventurer who has seen a grue has yet lived to tell of it.\",\n    lurk () {\n      if (!game.state.currentMapCell.hideSecrets) {\n        return;\n      }\n      const valarMorgulis = Math.random() >= 0.25;\n      if (valarMorgulis && this.turns < 1) {\n        game.dead(\n          \"Oh no! You have walked into the slavering fangs of a lurking grue!\"\n        );\n      }\n      this.turns--;\n      return;\n    },\n  };\n}","_grue_repellant":"(game) => {\n  return {\n    name: \"grue_repellant\",\n    defective: Math.random() < 0.03,\n    weight: 3,\n    count: 3,\n    points: 3,\n    article: \"some\",\n    description: \"A 12oz can of premium aerosol grue repellant. This is the good stuff. Grues genuinely find it to be somewhat off-putting.\",\n    use () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.inEnvironment(this.name) ? game.log.p(\"You will need to pick it up first.\") : game.log.p(\"You don't see that here.\");\n      } else if (this.used) {\n        return game.log.p(\"Sorry, but it has already been used.\");\n      } else if (this.defective) {\n        this.used = true;\n        return game.log.p(\"Nothing happens. This must be one of the Math.random() < 0.03 of grue_repellant cans that were programmed to be, I mean, that were accidentally manufactured defectively. Repeated attempts to coax repellant from the aerosol canister prove equally fruitless.\");\n      } else {\n        this.used = true;\n        this.activated = true;\n        game.state.repellantMode = true;\n        return game.log.p(\"A cloud of repellant hisses from the canister, temporarily obscuring your surroundings. By the time it clears, your head begins to throb, and you feel a dull, leaden taste coating your tongue. The edges of your eyes and nostrils feel sunburnt, and there is also a burning sensation to accompany an unsteady buzzing in your ears. Although you are not a grue, you find it to be more than somewhat off-putting.\");\n      }\n    },\n    spray () {\n      game.state.objectMode = false;\n      return this.use();\n    },\n    drink () {\n      game.state.objectMode = false;\n      game.dead(\"Drinking from an aerosol can is awkward at best, but still you manage to ravenously slather your chops with the foaming grue repellant. You try to enjoy the searing pain inflicted by this highly caustic (and highly toxic!) chemical as it dissolves the flesh of your mouth and throat, but to no avail. It is not delicious, and you are starting to realize that there are some non-trivial drawbacks to willingly ingesting poison. Oops.\");\n    },\n    decrementCounter () {\n      if (this.activated && this.count > 0) {\n        --this.count;\n        if (this.count === 0) {\n          game.log.p(\"The grue repellant has probably worn off by now.\");\n          this.activated = false;\n          game.state.repellantMode = false;\n          return;\n        }\n      }\n    }\n  }\n}","_key":"(game) => {\n  return {\n    name: \"key\",\n    points: 10,\n    description:\n      \"The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday.\",\n    use () {\n      const unlockable = game.state.combinedEnv.filter(\n        (item) => item.unlockedBy === this.name\n      );\n      if (unlockable.length < 1) {\n        game.log.p(`There is nothing to unlock with the ${this.name}`);\n        return;\n      }\n      unlockable.forEach((item) => item.unlock());\n    },\n  };\n}","_knife":"(game) => {\n  return {\n    name: \"knife\",\n    points: 1,\n    description:\n      \"The folding knife has a three inch locking blade and is small enough to fit in your pocket. It is designed to be a utility blade, and would probably make a poor weapon.\",\n    use () {\n      game.log.p(\"The small knife is of no use here.\");\n    },\n  };\n}","_lantern":"(game) => {\n  return {\n    name: \"lantern\",\n    flammable: false,\n    activated: false,\n    points: 5,\n    proto: \"matchbook\",\n    get description() {\n      return `The old brass lantern is the quaint sort that burns hydrocarbons to produce light. It is currently ${\n        this.activated ? \"lit.\" : \"extinguished.\"\n      }`;\n    },\n    use () {\n      game.state.objectMode = false;\n      if (!game.inInventory(\"matchbook\")) {\n        game.log.p(\"You don't have the means to light a fire.\");\n        return;\n      }\n      if (this.count === 0) {\n        game.log.p(\"The lantern appears to be out of fuel.\");\n        return;\n      }\n      game.items._matchbook.closed = false;\n      this.activated = true;\n      this.count = 250;\n      game.log.p(\n        \"Lighting the lantern with the match produces a brighter, longer lasting source of light.\"\n      );\n    },\n    light () {\n      this.use.call(this);\n    },\n    burn () {\n      this.use.call(this);\n    },\n  };\n}","_maps":"(game) => {\n  return {\n    name: \"maps\",\n    article: \"some\",\n    points: 5,\n    get description() {\n      this.read();\n      return `The stack of dogeared pages appear to be architectural drawings. With a quick survey of your surroundings, you confirm with reasonable certainty that they are likely floor plans for this house.`;\n    },\n    read () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      const currentPosition = game.state.position;\n      const floorMap = game.maps[currentPosition.z].map((row) => {\n        return row.map((cell) => (cell === \"*\" ? \"⬛️\" : \"🌫\"));\n      });\n      floorMap[currentPosition.y].splice(currentPosition.x, 1, \"⭐️\");\n      const croppedMap = floorMap.slice(8).map((row) => row.slice(5, 11));\n      game.log.map(croppedMap);\n    },\n    use () {\n      this.read.call(this);\n    },\n  };\n}","_matchbook":"(game) => {\n  return {\n    name: \"matchbook\",\n    openable: true,\n    closed: true,\n    count: 3,\n    points: 7,\n    flammable: true,\n    get description() {\n      return `It is an old paper matchbook, of the type that used to be given away with packs of cigarettes, or printed with the name and telephone number of a business and used as marketing schwag. This particular specimen is beige, with black and white text that says \\\"Magnum Opus\\\" in a peculiar, squirming op-art font. ${\n        this.closed\n          ? \"It is closed, its cardboard cover tucked in.\"\n          : 'The cardboard cover is open, and you can see a handwritten message on the inside. It says, \"THE OWLS ARE NOT WHAT THEY SEEM.\"'\n      }`;\n    },\n    decrementCounter () {\n      if (this.lightCount) {\n        --this.count;\n        if (this.count === 0) {\n          game.log.p(\"Despite your best efforts the flame flickers out.\");\n          this.activated = false;\n          return;\n        }\n      }\n    },\n    use () {\n      game.state.objectMode = false;\n      if (this.closed) {\n        this.open.call(this);\n        game.log.p(\n          \"As you flip open the matchbook, folding back the cover, you glimpse something scrawled in pencil on the inside.\"\n        );\n      }\n      game.log.p(\n        \"You pluck out one of the paper matches. It ignites easily as you scrape its head against the red phosphorus strip, producing a tenuous flame that you are quick to guard with your cupped hand.\"\n      );\n      this.count = 3;\n      this.activated = true;\n    },\n    light () {\n      this.use.call(this);\n    },\n  };\n}","_me":"(game) => {\n  return {\n    name: \"me\",\n    article: \"\",\n    takeable: false,\n    listed: false,\n    get description() {\n      const descriptionString = `Upon taking a quick inventory of your person and its component parts – everything seems to be accounted for and intact.`;\n      return descriptionString;\n    },\n  };\n}","_nightstand":"(game) => {\n  return {\n    name: \"nightstand\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    proto: \"desk\",\n    containedPart: \"_nightstand_drawer\",\n    contents: [],\n    get description() {\n      return `The nightstand next to the bed is made of wood and is painted white. It has a single drawer, which is ${\n        this.closed ? \"closed\" : \"open\"\n      }.`;\n    },\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this); // open method from prototype's prototype\n      proto.open.call(this); // open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this); // close method from prototype's prototype\n      proto.close.call(this); // open method of prototype\n    },\n  };\n}","_nightstand_drawer":"(game) => {\n  return {\n    name: \"drawer\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    proto: \"drawer\",\n    containedIn: \"_nightstand\",\n    contents: [],\n    open () {\n      const proto = Object.getPrototypeOf(this);\n      const urOpen = Object.getPrototypeOf(proto).open.bind(this);\n      urOpen.call(this); // open method from prototype's prototype\n      proto.open.call(this); // open method of prototype\n    },\n    close () {\n      const proto = Object.getPrototypeOf(this);\n      const urClose = Object.getPrototypeOf(proto).close.bind(this);\n      urClose.call(this); // close method from prototype's prototype\n      proto.close.call(this); // close method of prototype\n    },\n  };\n}","_no_tea":"(game) => {\n  return {\n    name: \"no_tea\",\n    weight: 0,\n    article: \"\",\n    description: \"You do not have any tea.\",\n    methodCallcount: 0,\n    takeable: false,\n    no_teaMethod (message) {\n      this.methodCallcount++;\n      game.state.objectMode = false;\n      game.log.p(message);\n      if (\n        this.methodCallcount > 1 &&\n        game.state.pendingAction !== \"contemplate\"\n      ) {\n        game.log.p(\"Perhaps you should take a moment to contemplate that.\");\n      }\n    },\n    drink () {\n      return this.no_teaMethod(\"How do you intend to drink no tea?\");\n    },\n    drop () {\n      return this.no_teaMethod(\n        \"You can't very well drop tea that you don't have.\"\n      );\n    },\n    take () {\n      return this.no_teaMethod(\"No tea isn't the sort of thing you can take.\");\n    },\n    examine () {\n      return this.no_teaMethod(this.description);\n    },\n    frotz () {\n      return this.no_teaMethod('Unfortunately, you cannot \"frotz\" the no tea.');\n    },\n    use () {\n      return this.no_teaMethod(\n        \"Unsurprisingly, using the no tea has no effect.\"\n      );\n    },\n    contemplate () {\n      if (this.methodCallcount > 2) {\n        game.state.score += 75;\n        return game.winner(\n          \"Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space.\"\n        );\n      }\n      return this.no_teaMethod(\"Let's not resort to that just yet!\");\n    },\n  };\n}","_note":"(game) => {\n  return {\n    name: \"note\",\n    text: `We have your dog.`,\n    flammable: true,\n    firstRead: true,\n    description:\n      \"The note is composed of eclectically sourced, cut-out letters, in the style of a movie ransom note. You found it lying next to you on the floor when you regained consciousness.\",\n    read () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      game.log.ransom(this.text);\n      if (this.firstRead) {\n        game.log.p(\n          `Who would do such a thing to sweet little ${game.state.dogName}!?`\n        );\n        game.log.p(\n          \"You need to rescue your puppy and get out of this place before your attacker returns!\"\n        );\n        this.firstRead = false;\n      }\n    },\n  };\n}","_old_key":"{\"name\":\"old_key\",\"points\":5,\"article\":\"an\",\"description\":\"It is an old-fashioned key, made of heavy, tarnished bronze.\",\"proto\":\"key\"}","_painting":"(game) => {\n  return {\n    name: \"painting\",\n    takeable: true,\n    listed: false,\n    flammable: true,\n    description:\n      \"The small, grimy image is of an owl, teaching a class a classroom of kittens how to catch mice. The rendering of perspective is amateurish, and the depicted animals look hostile and disfigured. It is an awful painting.\",\n    previouslyRevealed: false,\n    location: \"+\",\n    take () {\n      Object.getPrototypeOf(this).take.call(this);\n      this.revealText(\"When you remove the terrible painting, \");\n    },\n    revealText (text) {\n      if (!this.previouslyRevealed) {\n        game.log.p(\n          text +\n            \"a small recess is revealed. Within the shallow niche is a small black wall safe, covered with countless shallow dents, scratches and abrasions.\"\n        );\n        game.mapKey[this.location].hideSecrets = false;\n        this.previouslyRevealed = true;\n      }\n    },\n    move () {\n      this.revealText(\"When you move the terrible painting, \");\n    },\n    turn () {\n      this.move();\n    },\n    burn () {\n      game.state.objectMode = false;\n      if (!game.inInventory(\"matchbook\")) {\n        // check for matchbook, exit if not in inventory\n        game.log.p(\"You don't have the means to light a fire.\");\n        return;\n      }\n      // update the description of the painting to reflect the fact that it has been burned.\n      this.description =\n        \"The painting is lying broken upon the floor. It is so badly burned now, that its subject has become indecipherable. What remains of the canvas is a carbonized black. You can't help but think that it is still an improvement compared to the original work.\";\n      game.items._matchbook.closed = false; // matchbook remains open after use, if not already opened.\n      if (game.state.currentMapCell.hideSecrets) {\n        // if painting still on wall\n        this.revealText(\n          \"Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. Thinking it unwise to burn down the house you are trapped in, you remove the painting from the wall, and stomp out the fire before it can spread any further. \\nWhen you look back at the wall that formerly held the burning painting, \"\n        );\n        return;\n      }\n      // if painting already removed from wall\n      this.revealText(\n        \"Although the match nearly goes out before you can ignite the painting, a small flame finally finds a foothold on the canvas, and it is soon alarmingly ablaze. You are suddenly inspired to end your ill-considered, if brief flirtation with pyromania, and promptly stomp out the fire before they can spread any further.\"\n      );\n      return;\n    },\n  };\n}","_pedestal":"{\"name\":\"pedestal\",\"proto\":\"table\",\"description\":\"It is a simple wooden plinth, painted white.\"}","_phonograph":"(game) => {\n  return {\n    name: \"phonograph\",\n    description:\n      \"The old phonograph has a built-in speaker, and looks like it might still work.\",\n    play () {\n      if (!game.inEnvironment(\"disc\") && !game.inInventory(\"disc\")) {\n        game.log.p(\n          \"First, you will need to find something to play on the phonograph.\"\n        );\n        return;\n      }\n      return game.items._disc.play.call(this);\n    },\n    use () {\n      this.play.call(this);\n    },\n  };\n}","_photo":"(game) => {\n  return {\n    name: \"photo\",\n    description:\n      \"The four by six inch photograph is in a cheap frame made of painted fiberboard. It's a portrait of a very old, and probably infirm black poodle, bluish cataracts clouding its eyes. There is some writing on the back of the frame.\",\n    get reverseDescription() {\n      return `There is a handwritten inscription on the back of the frame${\n        game.inInventory(this.name)\n          ? '. It says, \"My Precious Muffin\\'s 18th Birthday - 10/28/17\"'\n          : \"\"\n      }.`;\n    },\n    points: 3,\n    text: \"My Precious Muffin's 18th Birthday - 10/28/17\",\n    read () {\n      game.state.objectMode = false;\n      if (!game.inInventory(this.name)) {\n        return game.log.p(`You will need to pick up the ${this.name} first.`);\n      }\n      game.log.p(`The text on the ${this.name} reads: \\n`);\n      return game.log.cursive(this.text);\n    },\n  };\n}","_projector":"(game) => {\n  return {\n    name: \"projector\",\n    description:\n      \"It took you a moment to even recognize the brown plastic box as a film projector. It was designed for consumer use, to display Super 8mm film cartridges of the type that were once used to make home movies in the 1970's.\",\n    play () {\n      if (!game.inEnvironment(\"film\") && !game.inInventory(\"film\")) {\n        game.log.p(\n          \"First, you will need to find something to project with the projector.\"\n        );\n        return;\n      }\n      if (!game.inEnvironment(\"screen\") && !game.inInventory(\"screen\")) {\n        game.log.p(\"You are going to need a screen to project onto.\");\n        return;\n      }\n      return game.items._film.play.call(this);\n    },\n    use () {\n      this.play.call(this);\n    },\n    project () {\n      this.play.call(this);\n    },\n  };\n}","_safe":"(game) => {\n  return {\n    name: \"safe\",\n    points: 10,\n    closed: true,\n    openable: true,\n    locked: true,\n    listed: false,\n    takeable: false,\n    solution: \"10281999\",\n    description:\n      \"The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.\",\n    contents: [],\n    correctGuess () {\n      game.state.objectMode = false;\n      this.locked = false;\n      this.closed = false;\n      game.log.digi(\"PASSCODE ACCEPTED.\");\n      game.log.p(\n        \"Upon entering the correct passcode, the bolt inside the safe's door slides back, and the door pops open gently.\"\n      );\n      if (this.contents.length > 0) {\n        game.log.p(\n          `Inside the safe is ${game.formatList(\n            this.contents.map((item) => `${item.article} ${item.name}`)\n          )}.`\n        );\n      }\n    },\n    incorrectGuess () {\n      game.state.objectMode = false;\n      game.log.digi(\"PASSCODE INCORRECT\");\n    },\n    open () {\n      if (this.locked) {\n        this.unlock.call(this);\n      } else {\n        Object.getPrototypeOf(this).open.call(this);\n      }\n    },\n    lock () {\n      game.state.objectMode = false;\n      this.closed = true;\n      this.locked = true;\n      game.log.p(\"You lock the wall safe.\");\n    },\n    unlock () {\n      game.state.solveMode = true;\n      game.state.objectMode = false;\n      if (!this.locked) {\n        game.log.p(\"The safe is already unlocked.\");\n      } else {\n        game.log.codeInline([\n          `To enter the 8-digit numerical passcode, you must type an underscore `,\n          `_`,\n          `, followed by the value enclosed in parentheses or backticks.`,\n        ]);\n        game.log.codeInline([`For example: `, `_(01234567)`, ` or `, \"_`01234567`\"]);\n        game.log.digi(\"ENTER PASSCODE:\");\n      }\n    },\n    use () {\n      this.unlock.call(this);\n    },\n  };\n}","_screen":"{\"name\":\"screen\",\"takeable\":true,\"description\":\"It is the type of portable movie screen that rolls up into itself like an old window shade.\"}","_scroll":"(game) => {\n  return {\n    name: \"scroll\",\n    flammable: true,\n    points: 10,\n    description:\n      'There is some small text, printed on a thin leather strap that was used to bind the rolled up scroll. It says, \"rezrov: Open even locked or enchanted objects\". As you unfurl the scroll, there appears to be some writing on the inside surface of the parchment, but each line of text seems to disappear as soon as it is revealed.',\n    text: \"rezrov: Open even locked or enchanted objects\",\n    use () {\n      return game.commands._rezrov();\n    },\n    cast () {\n      this.use.call(this);\n    },\n  };\n}","_sink":"(game) => {\n  return {\n    name: \"sink\",\n    listed: false,\n    description:\n      \"It is an old porcelain sink with separate taps for hot and cold water. Like everything else here, it is covered in dust and grime.\",\n    use () {\n      game.log.p(\"You try to turn on the taps, but nothing comes out.\");\n    },\n  };\n}","_sofa":"(game) => {\n  return {\n    name: \"sofa\",\n    flammable: true,\n    listed: false,\n    description:\n      \"The well-worn sitting room sofa is upholstered brown cowhide.\",\n    burn () {\n      Object.getPrototypeOf(this).burnDown.call(this);\n    },\n  };\n}","_table":"{\"name\":\"table\",\"takeable\":false,\"listed\":false,\"description\":\"The cherrywood dining table is long enough to accomodate at least twenty guests, by your estimation, although you can see only one chair.\"}","_toilet":"(game) => {\n  return {\n    name: \"toilet\",\n    listed: false,\n    description:\n      \"You are surprised to find that the bowl of the very old porcelain toilet is still full of water.\",\n    text: \"Thomas Crapper & Co.\",\n    flush () {\n      game.state.objectMode = false;\n      game.log.p(\n        \"Having pushed the lever, and watched the water exit the bowl, you can personally verify that the toilet works as expected.\"\n      );\n    },\n  };\n}","_wardrobe":"(game) => {\n  return {\n    name: \"wardrobe\",\n    takeable: false,\n    openable: true,\n    closed: true,\n    listed: false,\n    contents: [],\n    get description() {\n      const descriptionString = `The oak wardrobe is roughly four feet wide and seven feet in height and is currently${\n        this.closed ? \" closed\" : \" open\"\n      }. `;\n      if (this.closed) {\n        return descriptionString;\n      }\n      const contentsString = `There is ${\n        this.contents.length < 1\n          ? \"nothing\"\n          : game.formatList(\n              this.contents.map((item) => `${item.article} ${item.name}`)\n            )\n      } inside.`;\n      return descriptionString + contentsString;\n    },\n  };\n}"};
 
 const eval2 = eval;
 function setPrototypes(items, defaultProto) {
@@ -2107,10 +1921,11 @@ const mapKey = function (game) {
             get description() {
                 if (game.state.turn < 3) {
                     game.captured();
-                    return "";
+                    return game.variableWidthDivider();
                 }
                 game.state.score += 50;
-                return game.winner("\nYou have escaped!\n");
+                game.winner("\nYou have escaped!\n");
+                return game.variableWidthDivider();
             },
         },
         a: {
@@ -2320,7 +2135,6 @@ const descriptions = {
         game.log.custom("by Dennis Hodges\ncopyright 2019-2023", "font-size:100%;color:lightgray;padding:0 1em;");
         game.log.intro(intro_1);
         game.log.codeInline(descriptions.introOptions(game));
-        return `___________________________________________________________`;
     },
     introOptions: (game) => {
         const existingGame = [
@@ -2332,29 +2146,16 @@ const descriptions = {
             "start",
             ". ]"
         ];
-        const commonOptions = [
+        const initialOptions = [
             "[ Please type ",
             "help ",
             "for instructions, ",
-            // "commands ",
-            // "for a list of available commands, ",
             "restore ",
             "to load a saved game, or ",
-        ];
-        const options = [
-            ...commonOptions,
-            "resume ",
-            "to resume the game. ]"
-        ];
-        const initialOptions = [
-            ...commonOptions,
             "start ",
-            "to start the game. ]"
+            "to begin a new game. ]"
         ];
-        if (game.state.turn === null) {
-            return game.unfinishedGame() ? existingGame : initialOptions;
-        }
-        return options;
+        return game.unfinishedGame() ? existingGame : initialOptions;
     },
     captured: ["As you step out onto the front porch, you struggle to see in the bright midday sun, your eyes having adjusted to the dimly lit interior of the house. You hear a surprised voice say, \"Hey! How did you get out here?!\" You spin around to see the source of the voice, but something blunt and heavy has other plans for you and your still aching skull. You descend back into the darkness of sleep.", "Groggily, you lift yourself from the floor, your hands probing the fresh bump on the back of your head."],
     winner: (game, additionalText) => {
@@ -2423,7 +2224,7 @@ var timers = [
 ];
 
 const { getStorage, removeStorage, setStorage } = storage;
-// commands that are reserved words in JavaScript but we will overwrite anyway
+// commands that are reserved words in JavaScript but we will overwrite anyway, (;
 const RESERVED_WORDS_TO_OVERWRITE = [
     "open",
     "close",
@@ -2448,7 +2249,9 @@ const EXEMPT_COMMANDS = [
     "restore",
     "resume",
     "verbose",
+    "quit",
     "_save_slot",
+    "again",
     "yes",
     "_0",
     "_1",
@@ -2482,6 +2285,7 @@ class Game {
             gameOver: false,
             pendingAction: null,
             turn: 0,
+            score: 0,
             dogName: null,
             inventory: [],
             startPosition: {
@@ -2548,11 +2352,15 @@ class Game {
                         this.describeSurroundings();
                     }
                 }
+                // to avoid printing 'undefined' when a command returns nothing
+                return this.variableWidthDivider();
             }
             catch (error) {
                 // recognized command word used incorrectly
-                // this.log.error(error);
+                this.log.error(error);
                 this.log.p("That's not going to work. Please try something else.");
+                // to avoid printing 'undefined' when a command returns nothing
+                return this.variableWidthDivider();
             }
         }
     }
@@ -2674,13 +2482,13 @@ class Game {
         return formatList(this.possibleMoves(this.state.position.z, this.state.position.y, this.state.position.x), true);
     }
     variableWidthDivider(width = window.innerWidth) {
-        return "_".repeat(width / 9);
+        return ` `.repeat(width / 8);
     }
     // Returns a string containing the name of the current room, and the current turn number
     currentHeader(columnWidth = window.innerWidth) {
         const roomName = this.state.currentMapCell.name;
         const turn = `Turn : ${this.state.turn}`;
-        const gapSize = (columnWidth / 12) - roomName.length - turn.length;
+        const gapSize = columnWidth / 12 - roomName.length - turn.length;
         const gap = " ".repeat(gapSize);
         return `\n${roomName}${gap}${turn}\n`;
     }
@@ -2694,7 +2502,6 @@ class Game {
         const moveOptions = `You can go ${this.movementOptions()}.`;
         this.log.header(this.currentHeader());
         this.log.p(description + "\n" + moveOptions + "\n" + itemStr + "\n" + nestedItemStr);
-        return null;
     }
     // Returns the history of the unfinished game, if it exists, as an array of strings (each string is a command)
     unfinishedGame() {
@@ -2714,7 +2521,8 @@ class Game {
     // saveGame() saves the current game state to local storage
     saveGame(slot) {
         const slotName = `save.${slot}`;
-        if (getStorage(slotName) && !this.state.confirmMode) { // if the slot is already in use, ask for confirmation
+        if (getStorage(slotName) && !this.state.confirmMode) {
+            // if the slot is already in use, ask for confirmation
             this.log.invalid("That save slot is already in use.");
             this.log.codeInline([
                 `type `,
@@ -2724,7 +2532,8 @@ class Game {
             this.state.confirmMode = true;
             this.confirmationCallback = () => this.saveGame(slot);
         }
-        else { // otherwise, save the game
+        else {
+            // otherwise, save the game
             this.state.saveMode = false;
             this.state.confirmMode = false;
             try {
@@ -2784,7 +2593,15 @@ class Game {
         this.displayText(this.descriptions.gameOver);
     }
     // displayItem() displays a gallery item in the browser window
-    displayItem(galleryItem = { title: "untitled", artist: "unknown", info: null, source: "", dimensions: null, width: null, height: null }) {
+    displayItem(galleryItem = {
+        title: "untitled",
+        artist: "unknown",
+        info: null,
+        source: "",
+        dimensions: null,
+        width: null,
+        height: null,
+    }) {
         const contentDiv = document.getElementById("console-game-content");
         if (contentDiv) {
             contentDiv.innerHTML = "";
@@ -2815,17 +2632,28 @@ class Game {
         }
         // window.scrollTo(0, 10000);
     }
+    again() {
+        const lastCommand = this.state.history[this.state.history.length - 1];
+        const itemNames = Object.keys(this.items).map((key) => key.slice(1));
+        if (itemNames.includes(lastCommand)) {
+            const pendingActionFn = this.commands[this.state.pendingAction];
+            // const [pendingActionFn] = this.commands.filter(
+            //   (entry) => entry[1].split(",")[0] === this.state.pendingAction
+            // )[0];
+            pendingActionFn.call(this, this.state.pendingAction);
+        }
+        const lastCommandFn = this.commands[lastCommand];
+        lastCommandFn.call(this, lastCommand);
+    }
+    ;
     // start() initializes a new game, or re-describes the surroundings if the game is already in progress
-    start() {
+    async start() {
         const { turn, gameOver } = this.state;
         if (turn < 1 || gameOver) {
-            return this.initializeNewGame().then(() => {
-                this.displayText(this.descriptions.preface);
-                console.log("*", this.describeSurroundings());
-                return this.describeSurroundings();
-            });
+            await this.initializeNewGame();
+            this.displayText(this.descriptions.preface);
         }
-        return this.describeSurroundings();
+        this.describeSurroundings();
     }
     resetGame() {
         this.state = deepClone(this.initialState);
@@ -2854,7 +2682,7 @@ class Game {
                     // Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
                     Object.defineProperty(globalThis, alias.trim(), {
                         get() {
-                            interpretCommand();
+                            return interpretCommand();
                         },
                     });
                 }
@@ -2874,11 +2702,13 @@ class Game {
     addToInventory(itemArray) {
         // add one of more items to player inventory
         itemArray.forEach((item) => {
-            if (item instanceof String) {
+            if (typeof item === "string") {
                 // accepts a string argument for a single item
-                return this.state.inventory.push(this.items[`_${item}`]);
+                this.state.inventory.push(this.items[`_${item}`]);
             }
-            return this.state.inventory.push(item); // accepts an array for multiple items
+            else {
+                this.state.inventory.push(item); // accepts an array for multiple items
+            }
         });
     }
     removeFromInventory(item) {
@@ -2913,7 +2743,7 @@ class Game {
         // fill inventory with starting items
         this.addToInventory(["no_tea", "me"]);
         // set timers
-        timers.forEach(timer => {
+        timers.forEach((timer) => {
             this.registerTimer(timer);
         });
     }
@@ -2926,7 +2756,7 @@ class Game {
             // replay each command in order
             Function(`${command}`)(); // execute the command
         });
-        return this.log.groupEnd("Game loaded."); // text displayed in place of collapsed group
+        this.log.groupEnd("Game loaded."); // text displayed in place of collapsed group
     }
     // bindInitialCommands() binds the commands essential to start the game to the global object, so that they can be invoked by the player in the console without needing to type the invocation operator "()" after the name.
     bindInitialCommands() {
@@ -2956,17 +2786,20 @@ class Game {
     }
     solveCode(value) {
         // solve code
+        value = String(value);
         this.state.solveMode = false;
         const puzzles = this.state.combinedEnv.filter((item) => item.solution);
-        if (puzzles.length < 1) {
-            return;
+        console.log("puzzles: ", puzzles);
+        console.log("value: ", value);
+        if (puzzles.length) {
+            const solved = puzzles.filter((puzzle) => puzzle.solution === value);
+            if (solved.length === 0) {
+                puzzles.forEach((unsolved) => unsolved.incorrectGuess && unsolved.incorrectGuess());
+            }
+            else {
+                solved.forEach((pzl) => pzl.correctGuess && pzl.correctGuess());
+            }
         }
-        const solved = puzzles.filter((puzzle) => puzzle.solution === value);
-        if (solved.length === 0) {
-            puzzles.forEach((unsolved) => unsolved.incorrectGuess && unsolved.incorrectGuess());
-            return;
-        }
-        solved.forEach((pzl) => pzl.correctGuess && pzl.correctGuess());
     }
     // setPreference() is used to set a preference (font, size, color) that will be applied when the game is reloaded
     setPreference(value) {
@@ -2978,21 +2811,27 @@ class Game {
     }
     // setValue() is used to set a value in the game state, either by solving a puzzle, or by setting a preference
     setValue(value) {
-        return this.state.solveMode
-            ? this.solveCode(value)
-            : this.state.prefMode
-                ? this.setPreference(value)
-                : this.log.invalid("setValue _() called out of context.");
+        if (this.state.solveMode) {
+            this.solveCode(value);
+        }
+        else if (this.state.prefMode) {
+            this.setPreference(value);
+        }
+        else {
+            this.log.invalid("setValue _() called out of context.");
+        }
+        return this.variableWidthDivider();
     }
     // toggleVerbosity() is used to toggle the verbosity of the game's output. If verbose mode is on, then describeSurroundings() will be called every on every turn, not just when the player moves.
     toggleVerbosity() {
         if (this.state.verbose) {
             this.state.verbose = false;
             this.log.p("Verbose mode off.");
-            return;
         }
-        this.state.verbose = true;
-        this.log.p("Maximum verbosity.");
+        else {
+            this.state.verbose = true;
+            this.log.p("Maximum verbosity.");
+        }
     }
 }
 
@@ -3002,7 +2841,7 @@ window.onload = () => {
     // Create game object.
     const game = new Game();
     const prefMode = localStorage.getItem("ConsoleGame.prefMode");
-    if (prefMode) {
+    if (prefMode) { // if prefMode is set, the user has just changed a preference, and reloaded the page so it would take effect. Resume the game from its previous state.
         localStorage.removeItem("ConsoleGame.prefMode");
         game.commands.resume();
     }

@@ -3,6 +3,7 @@ export default (game) => {
     name: "lantern",
     flammable: false,
     activated: false,
+    points: 5,
     proto: "matchbook",
     get description() {
       return `The old brass lantern is the quaint sort that burns hydrocarbons to produce light. It is currently ${

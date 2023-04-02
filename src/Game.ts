@@ -12,7 +12,7 @@ import timers from "./timers";
 
 const { getStorage, removeStorage, setStorage } = storage;
 
-// commands that are reserved words in JavaScript but we will overwrite anyway
+// commands that are reserved words in JavaScript but we will overwrite anyway, (;
 const RESERVED_WORDS_TO_OVERWRITE = [
   "open",
   "close",
@@ -38,7 +38,9 @@ const EXEMPT_COMMANDS = [
   "restore",
   "resume",
   "verbose",
+  "quit",
   "_save_slot",
+  "again",
   "yes",
   "_0",
   "_1",
@@ -74,6 +76,7 @@ export default class Game {
     gameOver: false,
     pendingAction: null,
     turn: 0,
+    score: 0,
     dogName: null,
     inventory: [],
     startPosition: {
@@ -149,10 +152,14 @@ export default class Game {
             this.describeSurroundings();
           }
         }
+        // to avoid printing 'undefined' when a command returns nothing
+        return this.variableWidthDivider();
       } catch (error) {
         // recognized command word used incorrectly
-        // this.log.error(error);
+        this.log.error(error);
         this.log.p("That's not going to work. Please try something else.");
+        // to avoid printing 'undefined' when a command returns nothing
+        return this.variableWidthDivider();
       }
     }
   }
@@ -319,15 +326,15 @@ export default class Game {
     );
   }
 
-  variableWidthDivider (width = window.innerWidth) {
-    return "_".repeat(width / 9);
+  variableWidthDivider(width = window.innerWidth) {
+    return ` `.repeat(width / 8);
   }
 
   // Returns a string containing the name of the current room, and the current turn number
   currentHeader(columnWidth = window.innerWidth) {
     const roomName = this.state.currentMapCell.name;
     const turn = `Turn : ${this.state.turn}`;
-    const gapSize = (columnWidth / 12) - roomName.length - turn.length;
+    const gapSize = columnWidth / 12 - roomName.length - turn.length;
     const gap = " ".repeat(gapSize);
     return `\n${roomName}${gap}${turn}\n`;
   }
@@ -344,8 +351,6 @@ export default class Game {
     this.log.p(
       description + "\n" + moveOptions + "\n" + itemStr + "\n" + nestedItemStr
     );
-    return null;
-    return this.variableWidthDivider();
   }
 
   // Returns the history of the unfinished game, if it exists, as an array of strings (each string is a command)
@@ -368,7 +373,8 @@ export default class Game {
   // saveGame() saves the current game state to local storage
   saveGame(slot: string) {
     const slotName = `save.${slot}`;
-    if (getStorage(slotName) && !this.state.confirmMode) { // if the slot is already in use, ask for confirmation
+    if (getStorage(slotName) && !this.state.confirmMode) {
+      // if the slot is already in use, ask for confirmation
       this.log.invalid("That save slot is already in use.");
       this.log.codeInline([
         `type `,
@@ -377,7 +383,8 @@ export default class Game {
       ]);
       this.state.confirmMode = true;
       this.confirmationCallback = () => this.saveGame(slot);
-    } else { // otherwise, save the game
+    } else {
+      // otherwise, save the game
       this.state.saveMode = false;
       this.state.confirmMode = false;
       try {
@@ -442,17 +449,37 @@ export default class Game {
   }
 
   // displayItem() displays a gallery item in the browser window
-  displayItem (galleryItem = {title: "untitled", artist: "unknown", info: null, source: "", dimensions: null, width: null, height: null}) {
-		const contentDiv = document.getElementById("console-game-content");
+  displayItem(
+    galleryItem = {
+      title: "untitled",
+      artist: "unknown",
+      info: null,
+      source: "",
+      dimensions: null,
+      width: null,
+      height: null,
+    }
+  ) {
+    const contentDiv = document.getElementById("console-game-content");
     if (contentDiv) {
       contentDiv.innerHTML = "";
-      contentDiv.setAttribute("style", "width:100vw;background-color:inherit;color:inherit;position:relative;display:flex;flex-direction:column;justify-content:center;align-content:center;")
-      const iFrame = document.createElement("iframe")
+      contentDiv.setAttribute(
+        "style",
+        "width:100vw;background-color:inherit;color:inherit;position:relative;display:flex;flex-direction:column;justify-content:center;align-content:center;"
+      );
+      const iFrame = document.createElement("iframe");
       iFrame.src = galleryItem.source;
       // iFrame.playsinline = true;
       // iFrame.autoplay = true;
       // iFrame.muted = true;
-      iFrame.setAttribute("style", `width:${galleryItem.width ? galleryItem.width : "min(38vw,720px)"};height:${galleryItem.height ? galleryItem.height : "min(25vw,480px)"};margin:auto`);
+      iFrame.setAttribute(
+        "style",
+        `width:${
+          galleryItem.width ? galleryItem.width : "min(38vw,720px)"
+        };height:${
+          galleryItem.height ? galleryItem.height : "min(25vw,480px)"
+        };margin:auto`
+      );
       const p = document.createElement("p");
       const title = document.createElement("h2");
       title.setAttribute("style", "color:inherit;");
@@ -467,24 +494,38 @@ export default class Game {
       if (galleryItem.info) {
         const info = document.createElement("p");
         info.innerHTML = galleryItem.info;
-        info.setAttribute("style", "color:inherit;font-style:italic;font-size:1em;padding-bottom:2em;");
+        info.setAttribute(
+          "style",
+          "color:inherit;font-style:italic;font-size:1em;padding-bottom:2em;"
+        );
         contentDiv.appendChild(info);
       }
     }
-		// window.scrollTo(0, 10000);
-	}
+    // window.scrollTo(0, 10000);
+  }
+
+  again () {
+    const lastCommand = this.state.history[this.state.history.length - 1];
+    const itemNames = Object.keys(this.items).map((key) => key.slice(1));
+    if (itemNames.includes(lastCommand)) {
+			const pendingActionFn = this.commands[this.state.pendingAction];
+      // const [pendingActionFn] = this.commands.filter(
+      //   (entry) => entry[1].split(",")[0] === this.state.pendingAction
+      // )[0];
+      pendingActionFn.call(this, this.state.pendingAction);
+    }
+    const lastCommandFn = this.commands[lastCommand];
+    lastCommandFn.call(this, lastCommand);
+  };
 
   // start() initializes a new game, or re-describes the surroundings if the game is already in progress
-  start () {
+  async start() {
     const { turn, gameOver } = this.state;
     if (turn < 1 || gameOver) {
-      return this.initializeNewGame().then(() => {
-        this.displayText(this.descriptions.preface);
-        console.log("*", this.describeSurroundings());
-        return this.describeSurroundings();
-      });
+      await this.initializeNewGame();
+      this.displayText(this.descriptions.preface);
     }
-    return this.describeSurroundings();
+    this.describeSurroundings();
   }
 
   resetGame() {
@@ -521,7 +562,7 @@ export default class Game {
           // Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
           Object.defineProperty(globalThis, alias.trim(), {
             get() {
-              interpretCommand();
+              return interpretCommand();
             },
           });
         }
@@ -542,11 +583,12 @@ export default class Game {
   addToInventory(itemArray: (ItemType | string)[]) {
     // add one of more items to player inventory
     itemArray.forEach((item) => {
-      if (item instanceof String) {
+      if (typeof item === "string") {
         // accepts a string argument for a single item
-        return this.state.inventory.push(this.items[`_${item}`]);
+        this.state.inventory.push(this.items[`_${item}`]);
+      } else {
+        this.state.inventory.push(item); // accepts an array for multiple items
       }
-      return this.state.inventory.push(item); // accepts an array for multiple items
     });
   }
 
@@ -587,9 +629,9 @@ export default class Game {
     // fill inventory with starting items
     this.addToInventory(["no_tea", "me"]);
     // set timers
-    timers.forEach(timer => {
+    timers.forEach((timer) => {
       this.registerTimer(timer);
-    })
+    });
   }
 
   // replayHistory() takes an array of commands and replays them in order, restoring the game state to the point at which the array was generated
@@ -602,7 +644,7 @@ export default class Game {
       Function(`${command}`)(); // execute the command
     });
 
-    return this.log.groupEnd("Game loaded."); // text displayed in place of collapsed group
+    this.log.groupEnd("Game loaded."); // text displayed in place of collapsed group
   }
 
   // bindInitialCommands() binds the commands essential to start the game to the global object, so that they can be invoked by the player in the console without needing to type the invocation operator "()" after the name.
@@ -634,42 +676,51 @@ export default class Game {
 
   solveCode(value: any) {
     // solve code
+    value = String(value);
     this.state.solveMode = false;
     const puzzles = this.state.combinedEnv.filter(
       (item: ItemType) => item.solution
     );
-    if (puzzles.length < 1) {
-      return;
-    }
-    const solved = puzzles.filter(
-      (puzzle: ItemType) => puzzle.solution === value
-    );
-    if (solved.length === 0) {
-      puzzles.forEach(
-        (unsolved: ItemType) =>
-          unsolved.incorrectGuess && unsolved.incorrectGuess()
+    console.log("puzzles: ", puzzles);
+    console.log("value: ", value)
+    if (puzzles.length) {
+      const solved = puzzles.filter(
+        (puzzle: ItemType) => puzzle.solution === value
       );
-      return;
+      if (solved.length === 0) {
+        puzzles.forEach(
+          (unsolved: ItemType) =>
+            unsolved.incorrectGuess && unsolved.incorrectGuess()
+        );
+      } else {
+        solved.forEach(
+          (pzl: ItemType) => pzl.correctGuess && pzl.correctGuess()
+        );
+      }
     }
-    solved.forEach((pzl: ItemType) => pzl.correctGuess && pzl.correctGuess());
   }
 
   // setPreference() is used to set a preference (font, size, color) that will be applied when the game is reloaded
   setPreference(value: any) {
     // set preference
-    this.log.info(`Value for ${this.state.pendingAction} will be set to ${value}`);
+    this.log.info(
+      `Value for ${this.state.pendingAction} will be set to ${value}`
+    );
     setStorage(`prefs.${this.state.pendingAction}`, value);
-    setStorage("prefMode", "true");  
+    setStorage("prefMode", "true");
     this.log.info("Reload the page to apply the new preference.");
   }
 
   // setValue() is used to set a value in the game state, either by solving a puzzle, or by setting a preference
   setValue(value: any) {
-    return this.state.solveMode
-      ? this.solveCode(value)
-      : this.state.prefMode
-      ? this.setPreference(value)
-      : this.log.invalid("setValue _() called out of context.");
+    if (this.state.solveMode) {
+      this.solveCode(value);
+    } else if (this.state.prefMode) {
+      this.setPreference(value);
+    } else {
+      this.log.invalid("setValue _() called out of context.");
+    }
+    return this.variableWidthDivider();
   }
 
   // toggleVerbosity() is used to toggle the verbosity of the game's output. If verbose mode is on, then describeSurroundings() will be called every on every turn, not just when the player moves.
@@ -677,10 +728,10 @@ export default class Game {
     if (this.state.verbose) {
       this.state.verbose = false;
       this.log.p("Verbose mode off.");
-      return;
+    } else {
+      this.state.verbose = true;
+      this.log.p("Maximum verbosity.");
     }
-    this.state.verbose = true;
-    this.log.p("Maximum verbosity.");
   }
 }
 

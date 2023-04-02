@@ -1,6 +1,7 @@
 export default (game) => {
   return {
     name: "key",
+    points: 10,
     description:
       "The shiny key is made of untarnished brass and looks new, like it could have been cut yesterday.",
     use () {

@@ -3,7 +3,7 @@ import { GameType } from "../Game";
 export default function initItemProto (game: GameType) {
   return {
     name: "Item",
-    used: false,
+    used: false, // whether the item has been used in the current game
     weight: 1,
     get description () {
       return `There is nothing particularly interesting about the ${this.name}.`

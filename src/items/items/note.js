@@ -8,7 +8,6 @@ export default (game) => {
       "The note is composed of eclectically sourced, cut-out letters, in the style of a movie ransom note. You found it lying next to you on the floor when you regained consciousness.",
     read () {
       game.state.objectMode = false;
-      console.log("this:", this)
       if (!game.inInventory(this.name)) {
         return game.log.p(`You will need to pick up the ${this.name} first.`);
       }

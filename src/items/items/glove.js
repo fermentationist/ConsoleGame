@@ -2,6 +2,7 @@ export default (game) => {
   return {
     name: "glove",
     closed: true,
+    points: 1,
     description: "It is a well-worn gray leather work glove. There is nothing otherwise remarkable about it.",
     contents: [],
     examine () {
