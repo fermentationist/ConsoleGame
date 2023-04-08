@@ -1,5 +1,5 @@
 // IIFE returns three-dimensional array of maps
-const maps = (function (){
+export default (function (){
 
 	// This function uses .split() to convert an array of simplified maps from one to two-dimensional arrays, and then return them in the order given as a three-dimensional array.
 	const processMaps = (arrayOfUnexpandedMapArrays: string[][]) => {
@@ -127,4 +127,3 @@ const maps = (function (){
 
 	return processMaps([boundary, basement, floorSeparator1, groundFloor, floorSeparator2, secondFloor, boundary]);
 })();
-export default maps;

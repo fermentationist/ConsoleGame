@@ -196,6 +196,12 @@ export default function initItemProto(game: GameType) {
         );
       } else {
         if (this.locked || this.closed) {
+          game.log.p(
+            'Once the rezrov spell is cast, the magic scroll disappears with a sudden flash, and a loud "WHOMP!"'
+          );
+          game.log.p(
+            `When the smoke has cleared, the ${this.name} has been magically unlocked and opened!`
+          );
           if (this.locked) {
             this.locked = false;
             if (this.lockedTarget) {
@@ -210,12 +216,6 @@ export default function initItemProto(game: GameType) {
             }
             game.log.p(`The ${this.name} is now open.`);
           }
-          game.log.p(
-            'Once the rezrov spell is cast, the magic scroll disappears with a sudden flash, and a loud "WHOMP!"'
-          );
-          game.log.p(
-            `When the smoke has cleared, the ${this.name} has been magically unlocked and opened!`
-          );
           if (game.inInventory("scroll")) {
             game.removeFromInventory(game.items._scroll);
           } else if (game.inEnvironment("scroll")) {
@@ -228,8 +228,7 @@ export default function initItemProto(game: GameType) {
     },
     take: function () {
       game.state.objectMode = false;
-      if (this.takeable) {
-        //&& game.inEnvironment(this.name) ) {
+      if (this.takeable) {//&& game.inEnvironment(this.name) ) {
         game.addToInventory([this]);
         game.state.score += this.points;
         game.state.currentMapCell.removeFromEnv(this);
