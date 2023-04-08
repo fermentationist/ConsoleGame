@@ -1,14 +1,14 @@
 import storage from "./utils/storage";
 import log from "./utils/customConsole/index";
 import { randomDogName } from "./utils/dogNames";
-import { cases } from "./utils/helpers";
 import initCommandModule, { CommandAlias } from "./commands";
 import initItemsModule, { ItemType } from "./items/index";
 import initMapKeyModule, { EnvType } from "./maps/mapKey";
 import maps from "./maps/maps";
 import descriptions from "./descriptions";
-import { deepClone, formatList } from "./utils/helpers";
+import { deepClone, formatList, cases, aliasString } from "./utils/helpers";
 import timers from "./timers";
+import thesaurus from "./utils/thesaurus";
 
 const { getStorage, removeStorage, setStorage } = storage;
 
@@ -42,6 +42,7 @@ const EXEMPT_COMMANDS = [
   "_save_slot",
   "again",
   "yes",
+  "score",
   "_0",
   "_1",
   "_2",
@@ -52,12 +53,13 @@ const EXEMPT_COMMANDS = [
   "_7",
   "_8",
   "_9",
+  "poof",
 ];
 
 let gameContext: any;
 
 export default class Game {
-  state;
+  state = {} as Record<string, any>;
   maps = [] as string[][][];
   mapKey = {} as Record<string, any>;
   items = {} as any;
@@ -110,11 +112,7 @@ export default class Game {
     const window: any = globalThis;
     // gameContext is used to make `this` available from inside `this.state` getters
     gameContext = this;
-    this.state = deepClone(this.initialState);
-    this.commandList = initCommandModule(this);
-    this.setCommandsFromCommandList(this.commandList);
-    this.descriptions = descriptions;
-    // make the setValue function available to the game
+    // make the setValue function available to the game. It should not be bound to a command name, like the other commands, because it needs to be invoked with arguments.
     window._ = this.setValue.bind(this);
     window.debugLog = [];
     // enable "start" and other essential commands
@@ -122,7 +120,7 @@ export default class Game {
     this.log.tiny("Game initialized.");
   }
 
-  // This function is bound to each commands, and is called when the command is executed
+  // This function is bound to each command, and is called when the command is executed
   turnDaemon(
     commandName: string,
     interpreterFunction: (commandName: string) => void
@@ -156,7 +154,7 @@ export default class Game {
         return this.variableWidthDivider();
       } catch (error) {
         // recognized command word used incorrectly
-        this.log.error(error);
+        // console.trace(error);
         this.log.p("That's not going to work. Please try something else.");
         // to avoid printing 'undefined' when a command returns nothing
         return this.variableWidthDivider();
@@ -371,9 +369,9 @@ export default class Game {
   }
 
   // saveGame() saves the current game state to local storage
-  saveGame(slot: string) {
+  saveGame(slot: string, confirmOverwrite = false) {
     const slotName = `save.${slot}`;
-    if (getStorage(slotName) && !this.state.confirmMode) {
+    if (getStorage(slotName) && !confirmOverwrite) {
       // if the slot is already in use, ask for confirmation
       this.log.invalid("That save slot is already in use.");
       this.log.codeInline([
@@ -382,7 +380,7 @@ export default class Game {
         `to overwrite slot ${slot} with current game data.`,
       ]);
       this.state.confirmMode = true;
-      this.confirmationCallback = () => this.saveGame(slot);
+      this.confirmationCallback = () => this.saveGame(slot, true);
     } else {
       // otherwise, save the game
       this.state.saveMode = false;
@@ -399,10 +397,10 @@ export default class Game {
   }
 
   // restoreGame() restores a saved game from local storage, given a slot number, and replays the game history
-  async restoreGame(slotName: string) {
+  restoreGame(slotName: string) {
     this.state.restoreMode = false;
     const saveData = getStorage(`save.${slotName}`);
-    await this.initializeNewGame();
+    this.initializeNewGame();
     this.replayHistory(saveData);
     this.describeSurroundings();
   }
@@ -434,18 +432,13 @@ export default class Game {
       this.displayText(text);
     }
     this.displayText(descriptions.winner, text);
-    this.commands.score();
-    removeStorage("history");
-    this.state.gameOver = true;
-    this.displayText(descriptions.gameOver);
+    this.quit();
   }
 
   // dead() is called when the player dies
   dead(text?: string) {
     this.displayText(descriptions.dead, text);
-    removeStorage("history");
-    this.state.gameOver = true;
-    this.displayText(this.descriptions.gameOver);
+    this.quit();
   }
 
   // displayItem() displays a gallery item in the browser window
@@ -504,11 +497,11 @@ export default class Game {
     // window.scrollTo(0, 10000);
   }
 
-  again () {
+  again() {
     const lastCommand = this.state.history[this.state.history.length - 1];
     const itemNames = Object.keys(this.items).map((key) => key.slice(1));
     if (itemNames.includes(lastCommand)) {
-			const pendingActionFn = this.commands[this.state.pendingAction];
+      const pendingActionFn = this.commands[this.state.pendingAction];
       // const [pendingActionFn] = this.commands.filter(
       //   (entry) => entry[1].split(",")[0] === this.state.pendingAction
       // )[0];
@@ -516,13 +509,17 @@ export default class Game {
     }
     const lastCommandFn = this.commands[lastCommand];
     lastCommandFn.call(this, lastCommand);
-  };
+  }
+
+  help() {
+    this.displayText(this.descriptions.help);
+  }
 
   // start() initializes a new game, or re-describes the surroundings if the game is already in progress
-  async start() {
+  start() {
     const { turn, gameOver } = this.state;
-    if (turn < 1 || gameOver) {
-      await this.initializeNewGame();
+    if (!turn || gameOver) {
+      this.initializeNewGame();
       this.displayText(this.descriptions.preface);
     }
     this.describeSurroundings();
@@ -534,15 +531,104 @@ export default class Game {
     removeStorage("history");
   }
 
+  resume() {
+    const unfinishedGame = this.unfinishedGame();
+    this.state.prefMode = false;
+    if (unfinishedGame?.length) {
+      this.resetGame();
+      this.initializeNewGame();
+      this.replayHistory(unfinishedGame);
+      this.describeSurroundings();
+    } else if (this.state.turn) {
+      this.describeSurroundings();
+    } else {
+      this.commands.start();
+    }
+  }
+
+  restore(command: string) {
+    const slotList = this.getSavedGames();
+    if (slotList.length > 0) {
+      this.displayText(this.descriptions.restore, slotList);
+      this.state.restoreMode = true;
+      this.state.saveMode = false;
+      this.state.pendingAction = command;
+    } else {
+      return this.log.invalid("No saved games found.");
+    }
+  }
+
+  quit() {
+    this.commands.score();
+    removeStorage("history");
+    this.state.gameOver = true;
+    this.displayText(this.descriptions.gameOver);
+  }
+
+  save(command: string) {
+    this.state.saveMode = true;
+    this.state.restoreMode = false;
+    this.state.pendingAction = command;
+    this.displayText(this.descriptions.save);
+  }
+
+  saveSlot(slotNumber: string) {
+    if (this.state.saveMode) {
+      try {
+        return this.saveGame(slotNumber);
+      } catch (err) {
+        this.log.invalid(`Save to slot ${slotNumber} failed.`);
+        this.log.error(err);
+      }
+    } else if (this.state.restoreMode) {
+      try {
+        this.restoreGame(slotNumber);
+        this.state.restoreMode = false;
+      } catch (err) {
+        this.log.invalid(`Restore from slot ${slotNumber} failed.`);
+        return this.log.error(err);
+      }
+    } else {
+      this.log.invalid("Operation failed.");
+    }
+  }
+
+  pref(whichPref: string) {
+    this.state.prefMode = true;
+    this.state.pendingAction = whichPref;
+    this.log.codeInline([
+      `To set the value of ${whichPref}, you must type an underscore `,
+      `_`,
+      `, followed by the value enclosed in backticks `,
+      `\``,
+      `.`,
+    ]);
+    this.log.codeInline([`For example: `, `_\`value\``]);
+  }
+
+  yes() {
+    if (!this.state.confirmMode) {
+      this.log.p("nope.");
+    } else {
+      this.state.confirmMode = false;
+      if (this.confirmationCallback) {
+        return this.confirmationCallback();
+      }
+    }
+  }
+
   /* 
   *bindCommandToFunction() creates a property on the global object with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the property. 
   This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
   Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/log.html
   */
   bindCommandToFunction(
-    interpreterFunction: (command: string) => void,
+    interpreterFunction: (command: string) => void, // The function to be (eventually) invoked when the command is entered
     commandAliases: string,
-    daemon = this.turnDaemon
+    daemon?: (
+      command: string,
+      interpreterFunction: (command: string) => void
+    ) => void // A function that will be invoked with the command name and the interpreter function as arguments.
   ) {
     const aliasArray = commandAliases.split(",");
     // Use the first alias as the command name
@@ -573,10 +659,10 @@ export default class Game {
   }
 
   // Applies bindCommandToFunction() to an array of all of the commands to be created
-  initCommands(commands: CommandAlias[]) {
+  bindCommands(commands: CommandAlias[]) {
     commands.forEach((commandEntry) => {
       let [interpreterFunction, aliases] = commandEntry;
-      this.bindCommandToFunction(interpreterFunction, aliases);
+      this.bindCommandToFunction(interpreterFunction, aliases, this.turnDaemon);
     });
   }
 
@@ -603,29 +689,26 @@ export default class Game {
     this.state.inventory = filtered;
   }
 
-  setCommandsFromCommandList(commandList: CommandAlias[]) {
-    // this.commandList = commandList;
-    this.commands = this.commandList.reduce(
-      (commandMap, commandEntry: CommandAlias) => {
-        const [interpreterFunction, aliases] = commandEntry;
-        const [commandName] = aliases.split(",");
-        commandMap[commandName.trim()] = interpreterFunction.bind(this);
-        return commandMap;
-      },
-      {} as Record<string, (command: string) => void>
-    );
+  // setCommands() sets the commands property on the game object to an object with the command name as the key, and the interpreter function as the value. It also sets the commandList property to an array of the command aliases.
+  getCommandsObject(commandList: CommandAlias[]) {
+    return commandList.reduce((commandMap, commandEntry: CommandAlias) => {
+      const [interpreterFunction, aliases] = commandEntry;
+      const [commandName] = aliases.split(",");
+      commandMap[commandName.trim()] = interpreterFunction.bind(this);
+      return commandMap;
+    }, {} as Record<string, (command: string) => void>);
   }
 
   // initializeNewGame() is called when the game is started, or when the player dies and the game is restarted
-  async initializeNewGame() {
+  initializeNewGame() {
     this.resetGame();
     this.maps = maps;
     this.descriptions = descriptions;
-    this.items = deepClone(await initItemsModule(this));
+    this.items = deepClone(initItemsModule(this));
     this.commandList = initCommandModule(this);
-    this.setCommandsFromCommandList(this.commandList);
-    this.initCommands(this.commandList);
-    this.mapKey = deepClone(initMapKeyModule(this));
+    this.commands = this.getCommandsObject(this.commandList);
+    this.bindCommands(this.commandList);
+    this.mapKey = initMapKeyModule(this);
     // fill inventory with starting items
     this.addToInventory(["no_tea", "me"]);
     // set timers
@@ -651,27 +734,28 @@ export default class Game {
   bindInitialCommands() {
     // enable "start" and other essential commands
     const initialCommands: CommandAlias[] = [
-      [this.start, cases("start", "begin")],
-      [this.commands.resume, cases("resume")],
-      [this.commands.help, cases("help") + ",h,H,ayuda"],
-      [this.commands.restore, cases("restore", "load")],
-      [this.commands.quit, cases("quit", "restart")],
-      [this.commands.save, cases("save")],
-      [this.commands._0, "_0"],
-      [this.commands._1, "_1"],
-      [this.commands._2, "_2"],
-      [this.commands._3, "_3"],
-      [this.commands._4, "_4"],
-      [this.commands._5, "_5"],
-      [this.commands._6, "_6"],
-      [this.commands._7, "_7"],
-      [this.commands._8, "_8"],
-      [this.commands._9, "_9"],
-      [this.commands.font, cases("font")],
-      [this.commands.color, cases("color")],
-      [this.commands.size, cases("size")],
+      [this.start, aliasString("start", thesaurus)],
+      [this.resume, cases("resume")],
+      [this.help, aliasString("help", thesaurus)],
+      [this.restore, cases("restore", "load")],
+      [this.quit, cases("quit", "restart")],
+      [this.save, cases("save")],
+      [this.saveSlot, "_0"],
+      [this.saveSlot, "_1"],
+      [this.saveSlot, "_2"],
+      [this.saveSlot, "_3"],
+      [this.saveSlot, "_4"],
+      [this.saveSlot, "_5"],
+      [this.saveSlot, "_6"],
+      [this.saveSlot, "_7"],
+      [this.saveSlot, "_8"],
+      [this.saveSlot, "_9"],
+      [this.pref, cases("font")],
+      [this.pref, cases("color")],
+      [this.pref, cases("size")],
+      [this.yes, cases("yes") + ",y,Y"],
     ];
-    this.initCommands(initialCommands);
+    this.bindCommands(initialCommands);
   }
 
   solveCode(value: any) {
@@ -681,8 +765,6 @@ export default class Game {
     const puzzles = this.state.combinedEnv.filter(
       (item: ItemType) => item.solution
     );
-    console.log("puzzles: ", puzzles);
-    console.log("value: ", value)
     if (puzzles.length) {
       const solved = puzzles.filter(
         (puzzle: ItemType) => puzzle.solution === value
@@ -714,6 +796,8 @@ export default class Game {
   // setValue() is used to set a value in the game state, either by solving a puzzle, or by setting a preference
   setValue(value: any) {
     if (this.state.solveMode) {
+      // setValue is not bound to turnDaemon, so we need to call addToHistory() manually, but only if we're in solveMode
+      this.addToHistory(`_("${value}")`);
       this.solveCode(value);
     } else if (this.state.prefMode) {
       this.setPreference(value);

@@ -34,9 +34,10 @@ export default  {
   load: async (id) => {
     if (id === "rollup-plugin-item-loader:items") {
       const outputObject = {};
-      const filenames = fs.readdirSync("./src/items/items");
-      for (const filename of filenames) {
-        const importedObject = await import(`./src/items/items/${filename}`);
+      const filenames = fs.readdirSync("./lib/items/items");
+      const jsFiles = filenames.filter((filename) => filename.match(/\.js$/));
+      for (const filename of jsFiles) {
+        const importedObject = await import(`./lib/items/items/${filename}`);
         outputObject[`_${filename.replace(/\.(ts|js)/, "")}`] = importedObject.default;
       }
       return `export default ${stringifyObjectWithFunctions(outputObject)}`;

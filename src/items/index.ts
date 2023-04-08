@@ -1,4 +1,4 @@
-import initItemProto, {ItemType as _ItemType} from "./Item";
+import initItemProto, { ItemType as _ItemType } from "./Item";
 import { GameType } from "../Game";
 import itemContents from "./itemContents";
 // @ts-ignore - rollup-plugin-item-loader:items is a virtual module, created by rollup-plugin-item-loader plugin at build time
@@ -8,9 +8,12 @@ const eval2 = eval;
 
 export interface ItemType extends _ItemType {
   // nothing to add, just aliasing the interface for export
-};
+}
 
-function setPrototypes (items: Record<string, ItemType>, defaultProto: ItemType) : void {
+function setPrototypes(
+  items: Record<string, ItemType>,
+  defaultProto: ItemType
+): void {
   // first set the prototype of all items to the default prototype
   for (const itemName in items) {
     const item = items[itemName];
@@ -25,50 +28,66 @@ function setPrototypes (items: Record<string, ItemType>, defaultProto: ItemType)
   }
 }
 
-function addItemContents (items: Record<string, ItemType>, contentsObj: Record<string, string[]>) : void {
-  for (const itemName in items) {
-    if (itemName in contentsObj) {
-      const item = items[itemName];
-      if (!item.contents) {
-        item.contents = [];
-      }
-      const contents = contentsObj[itemName].map(itemName => items[itemName]);
+// add items to the contents array of other items
+function addItemContents(
+  items: Record<string, ItemType>,
+  contentsObj: Record<string, string[]>
+): Record<string, ItemType> {
+  const itemEntries = Object.entries(items);
+  const itemsWithContents = itemEntries.reduce((map, [itemName, item]) => {
+    if (!item.contents) {
+      item.contents = [];
+    }
+    const _itemName = itemName[0] === "_" ? itemName : `_${itemName}`;
+    if (_itemName in contentsObj) {
+      const contents = contentsObj[_itemName].map((itemToInclude) => {
+        const _itemToInclude =
+          itemToInclude[0] === "_" ? itemToInclude : `_${itemToInclude}`;
+        return items[_itemToInclude];
+      });
       (item.contents as ItemType[]).push(...contents);
     }
-  }
+    map[itemName] = item;
+    return map;
+  }, {} as Record<string, ItemType>);
+  return itemsWithContents;
 }
 
-const initItems = async function (game: GameType) : Promise<Record<string, ItemType>> {
-  const hydrateItems = function (items: Record<string, ItemType>) : void {
-    for (const itemName in items) {
-      const item = items[itemName] as ItemType | ((game: GameType) => ItemType); 
-      let output = item;
+const initItems = function (game: GameType): Record<string, ItemType> {
+  // items is a virtual module, created by rollup-plugin-item-loader plugin at build time. It is an object with keys that are the names of the items, and values that are stringified versions of the item objects and functions. hydrateItems() will parse the strings and functions, and return an object with the hydrated items.
+  const hydrateItems = function (
+    items: Record<string, any>
+  ): Record<string, any> {
+    const itemEntries = Object.entries(items);
+    const outputItems = itemEntries.reduce((map, [itemName, item]) => {
+      map[itemName] = item;
       try {
         if (typeof item === "string") {
-          output = eval2(item);
+          map[itemName] = eval2(item);
         }
-        if (typeof output === "function") {
-          output = output(game);
+        if (typeof map[itemName] === "function") {
+          map[itemName] = map[itemName](game);
         }
-        items[itemName] = output;
       } catch (err) {
         try {
           if (typeof item === "string") {
-            output = JSON.parse(item);
+            map[itemName] = JSON.parse(item);
           }
         } catch (err) {
-          output = item;
+          map[itemName] = item;
         }
-      } finally {
-        (items as any)[itemName] = output;
       }
-    }
+      return map;
+    }, {} as Record<string, any>);
+    return outputItems;
   };
-  hydrateItems(items);
+
+  const hydratedItems = hydrateItems(items);
+  game.items = hydratedItems;
   const ItemProto = initItemProto(game);
-  setPrototypes(items, ItemProto);
-  addItemContents(items, itemContents);
-  return items;
+  setPrototypes(hydratedItems, ItemProto);
+  const itemsWithContents = addItemContents(hydratedItems, itemContents);
+  return itemsWithContents;
 };
 
 export default initItems;

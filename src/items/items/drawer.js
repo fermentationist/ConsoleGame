@@ -1,5 +1,6 @@
 export default (game) => {
   const drawer = {
+    randomNumber: Math.floor(Math.random() * 10000),
     name: "drawer",
     listed: false,
     openable: true,
@@ -18,7 +19,7 @@ export default (game) => {
                 )
           } inside.`;
     },
-    open () {
+    open() {
       if (this.closed) {
         Object.getPrototypeOf(this).open.call(this);
       }
@@ -26,7 +27,7 @@ export default (game) => {
         game.items[this.containedIn].closed = false;
       }
     },
-    close () {
+    close() {
       if (!this.closed) {
         Object.getPrototypeOf(this).close.call(this);
       }

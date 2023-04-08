@@ -42,11 +42,12 @@ export default (game) => {
     contemplate () {
       if (this.methodCallcount > 2) {
         game.state.score += 75;
-        return game.winner(
+        game.winner(
           "Having thoroughly contemplated the existential ramifications of no tea, you suddenly find that your being transcends all time and space."
         );
+      } else {
+        return this.no_teaMethod("Let's not resort to that just yet!");
       }
-      return this.no_teaMethod("Let's not resort to that just yet!");
     },
   };
 };

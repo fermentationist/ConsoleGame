@@ -1,7 +1,7 @@
 import { pStyle } from "./utils/prefs";
 import thesaurus from "./utils/thesaurus";
 import maps from "./maps/maps";
-import { cases, formatList } from "./utils/helpers";
+import { cases, formatList, aliasString } from "./utils/helpers";
 import { GameType } from "./Game";
 import { ItemType } from "./items/Item";
 
@@ -165,100 +165,8 @@ const Commands = function (game: GameType): CommandAlias[] {
     item[action]();
   };
 
-  const _start = () => {
-    game.start();
-  };
-
-  const _resume = async () => {
-    const unfinishedGame = game.unfinishedGame();
-    game.state.prefMode = false;
-    if (unfinishedGame?.length) {
-      await game.initializeNewGame();
-      console.log("calling replayHistory");
-      game.replayHistory(unfinishedGame);
-      game.describeSurroundings();
-    } else if (game.state.turn) {
-      game.describeSurroundings();
-    } else {
-      game.commands.start();
-    }
-  };
-
-  const _help = () => {
-    game.displayText(game.descriptions.help);
-  };
-
-  const _restore = (command: string) => {
-    const slotList = game.getSavedGames();
-    if (slotList.length > 0) {
-      game.displayText(game.descriptions.restore, slotList);
-      game.state.restoreMode = true;
-      game.state.saveMode = false;
-      game.state.pendingAction = command;
-    } else {
-      return game.log.invalid("No saved games found.");
-    }
-  };
-
-  const _save = (command: string) => {
-    game.state.saveMode = true;
-    game.state.restoreMode = false;
-    game.state.pendingAction = command;
-    game.displayText(game.descriptions.save);
-  };
-
-  const _save_slot = (slotNumber: string) => {
-    if (game.state.saveMode) {
-      try {
-        return game.saveGame(slotNumber);
-      } catch (err) {
-        game.log.invalid(`Save to slot ${slotNumber} failed.`);
-        game.log.error(err);
-      }
-    } else if (game.state.restoreMode) {
-      try {
-        game.restoreGame(slotNumber);
-        game.state.restoreMode = false;
-      } catch (err) {
-        game.log.invalid(`Restore from slot ${slotNumber} failed.`);
-        return game.log.error(err);
-      }
-    } else {
-      game.log.invalid("Operation failed.");
-    }
-  };
-
-  const _quit = () => {
-    game.initializeNewGame();
-    game.start();
-  };
-
-  const _pref = (whichPref: string) => {
-    game.state.prefMode = true;
-    game.state.pendingAction = whichPref;
-    game.log.codeInline([
-      `To set the value of ${whichPref}, you must type an underscore `,
-      `_`,
-      `, followed by the value enclosed in backticks `,
-      `\``,
-      `.`,
-    ]);
-    game.log.codeInline([`For example: `, `_\`value\``]);
-  };
-
   const _yell = () => {
     game.log.scream("Aaaarrgh!!!!");
-  };
-
-  const _yes = () => {
-    if (!game.state.confirmMode) {
-      game.log.p("nope.");
-    } else {
-      game.state.confirmMode = false;
-      if (game.confirmationCallback) {
-        return game.confirmationCallback();
-      }
-    }
   };
 
   const _verbose = () => {
@@ -272,7 +180,6 @@ const Commands = function (game: GameType): CommandAlias[] {
   };
 
   const _score = () => {
-    console.log("game.state", game.state);
     game.log.p(
       `Your score is ${game.state.score} in ${game.state.turn} turns.`
     );
@@ -289,7 +196,7 @@ const Commands = function (game: GameType): CommandAlias[] {
     }, {} as Record<string, string>);
     game.log.table(commandTable);
   };
-
+	
   const _again = () => {
     game.again();
   };
@@ -297,34 +204,7 @@ const Commands = function (game: GameType): CommandAlias[] {
   const _poof = () => {
     const body = document.querySelector("body");
     body?.parentNode?.removeChild(body);
-    return game.log.papyracy(">poof<");
-  };
-
-  // const _papyracy = () => {
-  // 	// game.state.pendingAction = "font"
-  // 	game.state.prefMode = true;
-  // 	// game.setPreference("papyrus");
-  // 	localStorage.setItem("ConsoleGame.prefs.font", "papyrus");
-  // 	localStorage.setItem("ConsoleGame.prefMode", "true");
-  // 	// game.state.prefMode = false;
-  // 	location.reload();
-  // }
-
-  const aliasString = (
-    word: string,
-    thesaurus?: Record<string, string[]>,
-    optionalString = ""
-  ) => {
-    // thesaurus will be added to params
-    let variations: string[] = [];
-    if (thesaurus) {
-      const synonyms = thesaurus?.[word] || [];
-      variations = synonyms.map((synonym: string) => cases(synonym));
-    }
-    const output = `${cases(word)}${
-      variations.length ? "," + variations.join() : ""
-    }${optionalString ? "," + optionalString : ""}`;
-    return output;
+    game.log.papyracy(">poof<");
   };
 
   // Commands and their aliases
@@ -358,7 +238,6 @@ const Commands = function (game: GameType): CommandAlias[] {
     [_act_upon, aliasString("examine", thesaurus) + ",x,X"],
     [_act_upon, aliasString("extinguish", thesaurus)],
     [_act_upon, aliasString("flush", thesaurus)],
-    // [_act_upon, aliasString("hide", thesaurus)],
     [_act_upon, aliasString("light", thesaurus)],
     [_act_upon, aliasString("lock", thesaurus)],
     [_act_upon, aliasString("move", thesaurus)],
@@ -379,35 +258,9 @@ const Commands = function (game: GameType): CommandAlias[] {
 
     // Misc
     [_commands, cases("commands") + ",c,C"],
-    [_help, cases("help") + ",h,H"],
     [_inventoryTable, cases("inventoryTable", "invTable", "invt")],
     [_verbose, cases("verbose")],
-    [_yes, cases("yes") + ",y,Y"],
     [_score, cases("score")],
-    [_pref, cases("font")],
-    [_pref, cases("color")],
-    [_pref, cases("size")],
-    // [_items, cases("dog", game.state.dogName)],
-
-    // Start/QUIT
-    [_start, cases("start", "begin", "commence")],
-    [_resume, cases("resume", "proceed")],
-    [_restore, cases("restore", "load")],
-    [_quit, cases("quit", "restart")],
-    [_quit, cases("restart")],
-
-    // Save/Restore
-    [_save, cases("save")],
-    [_save_slot, "_0"],
-    [_save_slot, "_1"],
-    [_save_slot, "_2"],
-    [_save_slot, "_3"],
-    [_save_slot, "_4"],
-    [_save_slot, "_5"],
-    [_save_slot, "_6"],
-    [_save_slot, "_7"],
-    [_save_slot, "_8"],
-    [_save_slot, "_9"],
 
     // Other
     [_poof, cases("poof")],

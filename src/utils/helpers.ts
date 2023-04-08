@@ -15,11 +15,34 @@ export const cases = (...wordArgs: string[]) => {// utility function accepts one
   return casesArray.join(",");// output is a single string, with variations separated by commas
 }
 
+export const aliasString = (
+  word: string,
+  thesaurus?: Record<string, string[]>,
+  optionalString = ""
+) => {
+  // thesaurus will be added to params
+  let variations: string[] = [];
+  if (thesaurus) {
+    const synonyms = thesaurus?.[word] || [];
+    variations = synonyms.map((synonym: string) => cases(synonym));
+  }
+  const output = `${cases(word)}${
+    variations.length ? "," + variations.join() : ""
+  }${optionalString ? "," + optionalString : ""}`;
+  return output;
+};
+
 // deepClone is a recursive function that will clone an object, including objects with functions. It will fail if the functions are defined as declared functions or class methods. It will also fail if the object contains DOM elements, or RegExp or other objects that cannot be cloned.
-export const deepClone = (obj: any): any => {  
+export const deepClone = (obj: any, unfreeze = true): any => {  
   if (typeof obj === "function") {
     // for whatever reason, eval2(String(obj)) does not work for declared functions or class methods, but it does work for anonymous and arrow functions
-    return eval2(String(obj));
+    const fnString = String(obj);
+    try {
+      return eval2(fnString);
+    } catch (err) {
+      // serialization/deserialization of function failed, returning original function
+      return obj;
+    }
   }
   if (obj === null || typeof obj !== "object") {
     return obj;
@@ -49,15 +72,59 @@ export const deepClone = (obj: any): any => {
   }
   const clone = Object.create(Object.getPrototypeOf(obj));
   Object.getOwnPropertyNames(obj).forEach((key) => {
-    Object.defineProperty(clone, key, Object.getOwnPropertyDescriptor(obj, key) ?? {});
+    const descriptor = Object.getOwnPropertyDescriptor(obj, key) || {};
+    if (unfreeze && descriptor.writable === false) {
+      descriptor.writable = true;
+    }
+    if ("value" in descriptor) {
+      try {
+        descriptor.value = deepClone(descriptor.value);
+      } catch (error) {
+        // do nothing
+        // attempting to clone a getter or setter will throw an error, but we don't need to do anything about it
+      }
+    }
+    Object.defineProperty(clone, key, descriptor);
   });
   Object.getOwnPropertySymbols(obj).forEach((key) => {
-    Object.defineProperty(clone, key, Object.getOwnPropertyDescriptor(obj, key) ?? {});
+    const descriptor = Object.getOwnPropertyDescriptor(obj, key) || {};
+    if (descriptor.value) {
+      try {
+        descriptor.value = deepClone(descriptor.value);
+      } catch (error) {
+        // do nothing
+        // attempting to clone a getter or setter will throw an error, but we don't need to do anything about it
+      }
+    }
+    Object.defineProperty(clone, key, descriptor);
   });
+
+  // Object.keys(obj).forEach((key) => {
+  //   try {
+  //     clone[key] = deepClone(obj[key]);
+  //   } catch (error) {
+  //     console.error("error cloning key: ", key, "error: ", error)
+  //     // do nothing
+  //     // attempting to clone a getter or setter will throw an error, but we don't need to do anything about it
+  //   }
+  // });
   return clone;
 };
 
-
+export function deepFreeze (obj: Record<string, any>) {
+  if (Object.isFrozen(obj) || typeof obj !== "object") {
+    return obj;
+  }
+  if(typeof obj === "function") {
+    throw "cannot freeze a function";
+  }
+  const normalKeys = getAllNormalKeys(obj);
+  for (const key in normalKeys) {
+    deepFreeze(obj[key]);
+  }
+  // Object.values(obj).forEach(deepFreeze);
+  return Object.freeze(obj);
+}
 
 // this recursive function will serialize objects with functions. It will fail if the object contains circular references, or if the functions contain references to variables outside of the object. It will also fail for references to DOM elements, or RegExp or other objects that cannot be serialized.
 export const stringifyObjectWithFunctions = (
@@ -113,3 +180,11 @@ export const formatList = (itemArray: string[]
   }
   return `${itemArray[0]}, ${formatList(itemArray.slice(1), disjunction)}`
 }
+
+export const getAllNormalKeys = (obj: Record<string, any>) => {
+  return Object.keys(obj).filter(key => {
+    const descriptor = Object.getOwnPropertyDescriptor(obj, key) || {};
+    return !descriptor.get && !descriptor.set;
+  });
+}
+
