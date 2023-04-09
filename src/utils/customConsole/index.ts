@@ -37,7 +37,9 @@ const _digi = (message: string) => {
 	_customLog(spacedText, styles);
 }
 
-const _map = (floorMap: string[][]) => console.table(floorMap.map(row => row.join("")));
+const _map = (floorMap: string[][]) => {
+	console.table(floorMap.map(row => row.join("")));
+};
 
 const _scream = (message: string) => {
 	const splitText = [...message];

@@ -6,9 +6,15 @@ import initItemsModule, { ItemType } from "./items/index";
 import initMapKeyModule, { EnvType } from "./maps/mapKey";
 import maps from "./maps/maps";
 import descriptions from "./descriptions";
-import { deepClone, formatList, cases, aliasString } from "./utils/helpers";
-import timers from "./timers";
+import {
+  deepClone,
+  formatList,
+  cases,
+  aliasString,
+  cropFloorMap,
+} from "./utils/helpers";
 import thesaurus from "./utils/thesaurus";
+import TurnDaemon from "./TurnDaemon";
 
 const { getStorage, removeStorage, setStorage } = storage;
 
@@ -23,39 +29,6 @@ const RESERVED_WORDS_TO_OVERWRITE = [
   "scroll",
 ];
 
-// commands that are not saved to history and do not count as a turn
-const EXEMPT_COMMANDS = [
-  "help",
-  "start",
-  "commands",
-  "inventory",
-  "inventorytable",
-  "look",
-  "font",
-  "color",
-  "size",
-  "save",
-  "restore",
-  "resume",
-  "verbose",
-  "quit",
-  "_save_slot",
-  "again",
-  "yes",
-  "score",
-  "_0",
-  "_1",
-  "_2",
-  "_3",
-  "_4",
-  "_5",
-  "_6",
-  "_7",
-  "_8",
-  "_9",
-  "poof",
-];
-
 let gameContext: any;
 
 export default class Game {
@@ -68,9 +41,9 @@ export default class Game {
   timeLimit = 300;
   log = log;
   confirmationCallback = () => {};
-  timers = [] as ((gameContext: this) => void)[];
   lightSources = [] as ItemType[];
   descriptions = {} as Record<string, any>;
+  turnDaemon = null as InstanceType<typeof TurnDaemon> | null;
   initialState = {
     solveMode: false,
     prefMode: false,
@@ -116,67 +89,231 @@ export default class Game {
     window._ = this.setValue.bind(this);
     window.debugLog = [];
     // enable "start" and other essential commands
+    this.descriptions = descriptions;
+    this.turnDaemon = new TurnDaemon(this);
+    console.log("this.turnDaemon", this.turnDaemon);
     this.bindInitialCommands();
     this.log.tiny("Game initialized.");
   }
 
-  // This function is bound to each command, and is called when the command is executed
-  turnDaemon(
-    commandName: string,
-    interpreterFunction: (commandName: string) => void
+  /**
+   * =====================
+   * Initialization methods
+   * =====================
+   */
+
+  // bindInitialCommands() binds the commands essential to start the game to the global object, so that they can be invoked by the player in the console without needing to type the invocation operator "()" after the name.
+  bindInitialCommands() {
+    // enable "start" and other essential commands
+    const initialCommands: CommandAlias[] = [
+      [this.start, aliasString("start", thesaurus)],
+      [this.resume, cases("resume")],
+      [this.help, aliasString("help", thesaurus)],
+      [this.restore, cases("restore", "load")],
+      [this.quit, cases("quit", "restart")],
+      [this.save, cases("save")],
+      [this.saveSlot, "_0"],
+      [this.saveSlot, "_1"],
+      [this.saveSlot, "_2"],
+      [this.saveSlot, "_3"],
+      [this.saveSlot, "_4"],
+      [this.saveSlot, "_5"],
+      [this.saveSlot, "_6"],
+      [this.saveSlot, "_7"],
+      [this.saveSlot, "_8"],
+      [this.saveSlot, "_9"],
+      [this.pref, cases("font")],
+      [this.pref, cases("color")],
+      [this.pref, cases("size")],
+      [this.yes, cases("yes") + ",y,Y"],
+    ];
+    this.bindCommands(initialCommands);
+  }
+
+  // initializeNewGame() is called when the game is started, or when the player dies and the game is restarted
+  initializeNewGame() {
+    this.resetGame();
+    this.maps = maps;
+    this.descriptions = descriptions;
+    this.items = deepClone(initItemsModule(this));
+    this.commandList = initCommandModule(this);
+    this.commands = this.getCommandsObject(this.commandList);
+    this.bindCommands(this.commandList);
+    this.mapKey = initMapKeyModule(this);
+    // fill inventory with starting items
+    this.addToInventory(["no_tea", "me"]);
+  }
+
+  /* 
+  *bindCommandToFunction() creates a property on the global object with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the property. 
+  This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
+  Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/log.html
+  */
+  bindCommandToFunction(
+    interpreterFunction: (command: string) => void, // The function to be (eventually) invoked when the command is entered
+    commandAliases: string,
+    daemon?: (
+      command: string,
+      interpreterFunction: (command: string) => void
+    ) => void // A function that will be invoked with the command name and the interpreter function as arguments.
   ) {
-    const window = globalThis as any;
-    if (this.state.gameOver) {
-      this.displayText(this.descriptions.gameOver);
-    } else {
-      if (window.CONSOLE_GAME_DEBUG) {
-        window.debugLog.push({ userInput: commandName });
-      }
-
-      try {
-        // execute command
-        interpreterFunction(commandName);
-
-        if (!EXEMPT_COMMANDS.includes(commandName)) {
-          // don't add to history or increment turn or timers if command is exempt
-          this.addToHistory(commandName);
-          if (!this.state.objectMode && !this.state.abortMode) {
-            // only increment turn and timers if not in objectMode (prevents two-word commands from taking up two turns), and if not in abortMode (prevent a failed movement attempt, i.e. trying to move 'up' when you are only able to move 'east' or 'west', from consuming a turn)
-            this.runTimers();
-            this.state.turn++;
-          }
-          this.state.abortMode = false;
-          if (this.state.verbose) {
-            this.describeSurroundings();
-          }
+    const aliasArray = commandAliases.split(",");
+    // Use the first alias as the command name
+    const [commandName] = aliasArray;
+    // If a daemon function is provided, it will be invoked with the command name and the interpreter function as arguments. Otherwise, the interpreter function will be invoked with the command name as an argument.
+    const interpretCommand = daemon
+      ? daemon.bind(this, commandName, interpreterFunction.bind(this))
+      : interpreterFunction.bind(this, commandName);
+    try {
+      aliasArray.forEach((alias) => {
+        // check to prevent unwanted overwrite of global property, i.e. Map
+        if (
+          !(alias in globalThis) ||
+          RESERVED_WORDS_TO_OVERWRITE.includes(alias)
+        ) {
+          // The following (commented-out) line was causing a bug, so do not revert to it.
+          // Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
+          Object.defineProperty(globalThis, alias.trim(), {
+            get() {
+              return interpretCommand();
+            },
+          });
         }
-        // to avoid printing 'undefined' when a command returns nothing
-        return this.variableWidthDivider();
-      } catch (error) {
-        // recognized command word used incorrectly
-        // console.trace(error);
-        this.log.p("That's not going to work. Please try something else.");
-        // to avoid printing 'undefined' when a command returns nothing
-        return this.variableWidthDivider();
-      }
+      });
+    } catch (err) {
+      // fail silently
     }
   }
+
+  // Applies bindCommandToFunction() to an array of all of the commands to be created
+  bindCommands(commands: CommandAlias[]) {
+    commands.forEach((commandEntry) => {
+      let [interpreterFunction, aliases] = commandEntry;
+      this.bindCommandToFunction(interpreterFunction, aliases, this.turnDaemon?.executeCommand);
+    });
+  }
+
+  // getCommandsObject() takes an array of CommandAliases and returns an object containing the command names as keys and the interpreter functions as values
+  getCommandsObject(commandList: CommandAlias[]) {
+    return commandList.reduce((commandMap, commandEntry: CommandAlias) => {
+      const [interpreterFunction, aliases] = commandEntry;
+      const [commandName] = aliases.split(",");
+      commandMap[commandName.trim()] = interpreterFunction.bind(this);
+      return commandMap;
+    }, {} as Record<string, (command: string) => void>);
+  }
+
+  /**
+   * =====================
+   * Game state methods
+   * =====================
+   */
+
+  // // This function is bound to each command, and is called when the command is executed
+  // turnDaemon(
+  //   commandName: string,
+  //   interpreterFunction: (commandName: string) => void
+  // ) {
+  //   const window = globalThis as any;
+  //   if (this.state.gameOver) {
+  //     this.displayText(this.descriptions.gameOver);
+  //   } else {
+  //     if (window.CONSOLE_GAME_DEBUG) {
+  //       window.debugLog.push({ userInput: commandName });
+  //     }
+
+  //     try {
+  //       // execute command
+  //       interpreterFunction(commandName);
+
+  //       if (!EXEMPT_COMMANDS.includes(commandName)) {
+  //         // don't add to history or increment turn or timers if command is exempt
+  //         this.addToHistory(commandName);
+  //         if (!this.state.objectMode && !this.state.abortMode) {
+  //           // only increment turn and timers if not in objectMode (prevents two-word commands from taking up two turns), and if not in abortMode (prevent a failed movement attempt, i.e. trying to move 'up' when you are only able to move 'east' or 'west', from consuming a turn)
+  //           this.runTimers();
+  //           this.state.turn++;
+  //         }
+  //         this.state.abortMode = false;
+  //         if (this.state.verbose) {
+  //           this.describeSurroundings();
+  //         }
+  //       }
+  //       // to avoid printing 'undefined' when a command returns nothing
+  //       return this.variableWidthDivider();
+  //     } catch (error) {
+  //       // recognized command word used incorrectly
+  //       // console.trace(error);
+  //       this.log.p("That's not going to work. Please try something else.");
+  //       // to avoid printing 'undefined' when a command returns nothing
+  //       return this.variableWidthDivider();
+  //     }
+  //   }
+  // }
 
   addToHistory(commandName: string) {
     this.state.history.push(commandName);
     setStorage("history", this.state.history);
   }
 
-  // executes all timer functions
-  runTimers() {
-    this.timers.forEach((timer) => {
-      timer(this);
+  // // executes all timer functions
+  // runTimers() {
+  //   this.timers.forEach((timer) => {
+  //     timer.function(this);
+  //   });
+  // }
+
+  // // registers a timer function
+  // registerTimer(name: string, timerFunction: (gameContext: GameType) => void) {
+  //   this.timers.push({ name, function: timerFunction });
+  // }
+
+  // // removes a timer function
+  // removeTimer(timerToRemove: ((gameContext: GameType) => void) | string) {
+  //   if (typeof timerToRemove === "string") {
+  //     this.timers = this.timers.filter((timer) => timer.name !== timerToRemove);
+  //   } else {
+  //     this.timers = this.timers.filter(
+  //       (timer) => timer.function !== timerToRemove
+  //     );
+  //   }
+  // }
+
+  addToInventory(itemArray: (ItemType | string)[]) {
+    // add one of more items to player inventory
+    itemArray.forEach((item) => {
+      if (typeof item === "string") {
+        // accepts a string argument for a single item
+        this.state.inventory.push(this.items[`_${item}`]);
+      } else {
+        this.state.inventory.push(item); // accepts an array for multiple items
+      }
     });
   }
 
-  // registers a timer function
-  registerTimer(timer: (gameContext: GameType) => void) {
-    this.timers.push(timer);
+  removeFromInventory(item: ItemType | string) {
+    // remove item from player inventory
+    const filtered = this.state.inventory.filter((invItem: ItemType) => {
+      if (typeof item === "string") {
+        return invItem.name !== item;
+      }
+      return invItem.name !== item.name;
+    });
+    this.state.inventory = filtered;
+  }
+
+
+  // replayHistory() takes an array of commands and replays them in order, restoring the game state to the point at which the array was generated
+  replayHistory(commandList: string[]) {
+    // Used to load saved games
+    this.state.restoreMode = false;
+    this.log.groupCollapsed("Game loading..."); // This conveniently hides all of the console output that is generated when the history is replayed, by nesting it in a group that will be displayed collapsed by default
+    commandList.forEach((command) => {
+      // replay each command in order
+      Function(`${command}`)(); // execute the command
+    });
+
+    this.log.groupEnd("Game loaded."); // text displayed in place of collapsed group
   }
 
   displayText(
@@ -441,6 +578,59 @@ export default class Game {
     this.quit();
   }
 
+  getFloorMap(crop = true) {
+    const currentPosition = this.state.position;
+    const floorMap = this.maps[currentPosition.z].map((row) => {
+      return row.map((cell) => (cell === "*" ? "⬛️" : "🌫") as any);
+    });
+    floorMap[currentPosition.y].splice(currentPosition.x, 1, "⭐️");
+    return crop ? cropFloorMap(floorMap) : floorMap;
+  }
+
+  // displayHTMLMap() displays the map in the browser window
+  displayHTMLMap(map: string[][]) {
+    const contentDiv = document.getElementById("console-game-content");
+    if (contentDiv) {
+      contentDiv.innerHTML = "";
+      contentDiv.setAttribute(
+        "style",
+        "width:100vw;background-color:inherit;color:inherit;position:relative;display:flex;flex-direction:column;justify-content:center;align-content:center;"
+      );
+      const mapDiv = document.createElement("div");
+      mapDiv.setAttribute(
+        "style",
+        "width:100vw;height:100vh;position:absolute;top:0;left:0;overflow:auto;"
+      );
+      const mapTable = document.createElement("table");
+      mapTable.setAttribute(
+        "style",
+        "width:100vw;height:100vh;position:absolute;top:0;left:0;overflow:auto;border:none;"
+      );
+      map.forEach((row) => {
+        const mapRow = document.createElement("tr");
+        mapRow.setAttribute("style", "border:none;");
+        row.forEach((cell) => {
+          const mapCell = document.createElement("td");
+          if (cell === "⭐️") {
+            mapCell.innerHTML = cell;
+          }
+          // mapCell.innerHTML = cell;
+          mapCell.setAttribute(
+            "style",
+            `width:1em;height:1em;font-size:1em;text-align:center;vertical-align:middle;${
+              cell === "⬛️"
+                ? "background-color:black;border:none;"
+                : "background-color:white;"
+            }`
+          );
+          mapRow.appendChild(mapCell);
+        });
+        mapTable.appendChild(mapRow);
+      });
+      mapDiv.appendChild(mapTable);
+      contentDiv.appendChild(mapDiv);
+    }
+  }
   // displayItem() displays a gallery item in the browser window
   displayItem(
     galleryItem = {
@@ -455,6 +645,7 @@ export default class Game {
   ) {
     const contentDiv = document.getElementById("console-game-content");
     if (contentDiv) {
+      this.turnDaemon?.removeTimer("map");
       contentDiv.innerHTML = "";
       contentDiv.setAttribute(
         "style",
@@ -512,7 +703,7 @@ export default class Game {
   }
 
   help() {
-    this.displayText(this.descriptions.help);
+    this.displayText(descriptions.help);
   }
 
   // start() initializes a new game, or re-describes the surroundings if the game is already in progress
@@ -615,147 +806,6 @@ export default class Game {
         return this.confirmationCallback();
       }
     }
-  }
-
-  /* 
-  *bindCommandToFunction() creates a property on the global object with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the property. 
-  This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
-  Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/log.html
-  */
-  bindCommandToFunction(
-    interpreterFunction: (command: string) => void, // The function to be (eventually) invoked when the command is entered
-    commandAliases: string,
-    daemon?: (
-      command: string,
-      interpreterFunction: (command: string) => void
-    ) => void // A function that will be invoked with the command name and the interpreter function as arguments.
-  ) {
-    const aliasArray = commandAliases.split(",");
-    // Use the first alias as the command name
-    const [commandName] = aliasArray;
-    // If a daemon function is provided, it will be invoked with the command name and the interpreter function as arguments. Otherwise, the interpreter function will be invoked with the command name as an argument.
-    const interpretCommand = daemon
-      ? daemon.bind(this, commandName, interpreterFunction.bind(this))
-      : interpreterFunction.bind(this, commandName);
-    try {
-      aliasArray.forEach((alias) => {
-        // check to prevent unwanted overwrite of global property, i.e. Map
-        if (
-          !(alias in globalThis) ||
-          RESERVED_WORDS_TO_OVERWRITE.includes(alias)
-        ) {
-          // The following (commented-out) line was causing a bug, so do not revert to it.
-          // Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
-          Object.defineProperty(globalThis, alias.trim(), {
-            get() {
-              return interpretCommand();
-            },
-          });
-        }
-      });
-    } catch (err) {
-      // fail silently
-    }
-  }
-
-  // Applies bindCommandToFunction() to an array of all of the commands to be created
-  bindCommands(commands: CommandAlias[]) {
-    commands.forEach((commandEntry) => {
-      let [interpreterFunction, aliases] = commandEntry;
-      this.bindCommandToFunction(interpreterFunction, aliases, this.turnDaemon);
-    });
-  }
-
-  addToInventory(itemArray: (ItemType | string)[]) {
-    // add one of more items to player inventory
-    itemArray.forEach((item) => {
-      if (typeof item === "string") {
-        // accepts a string argument for a single item
-        this.state.inventory.push(this.items[`_${item}`]);
-      } else {
-        this.state.inventory.push(item); // accepts an array for multiple items
-      }
-    });
-  }
-
-  removeFromInventory(item: ItemType | string) {
-    // remove item from player inventory
-    const filtered = this.state.inventory.filter((invItem: ItemType) => {
-      if (typeof item === "string") {
-        return invItem.name !== item;
-      }
-      return invItem.name !== item.name;
-    });
-    this.state.inventory = filtered;
-  }
-
-  // setCommands() sets the commands property on the game object to an object with the command name as the key, and the interpreter function as the value. It also sets the commandList property to an array of the command aliases.
-  getCommandsObject(commandList: CommandAlias[]) {
-    return commandList.reduce((commandMap, commandEntry: CommandAlias) => {
-      const [interpreterFunction, aliases] = commandEntry;
-      const [commandName] = aliases.split(",");
-      commandMap[commandName.trim()] = interpreterFunction.bind(this);
-      return commandMap;
-    }, {} as Record<string, (command: string) => void>);
-  }
-
-  // initializeNewGame() is called when the game is started, or when the player dies and the game is restarted
-  initializeNewGame() {
-    this.resetGame();
-    this.maps = maps;
-    this.descriptions = descriptions;
-    this.items = deepClone(initItemsModule(this));
-    this.commandList = initCommandModule(this);
-    this.commands = this.getCommandsObject(this.commandList);
-    this.bindCommands(this.commandList);
-    this.mapKey = initMapKeyModule(this);
-    // fill inventory with starting items
-    this.addToInventory(["no_tea", "me"]);
-    // set timers
-    timers.forEach((timer) => {
-      this.registerTimer(timer);
-    });
-  }
-
-  // replayHistory() takes an array of commands and replays them in order, restoring the game state to the point at which the array was generated
-  replayHistory(commandList: string[]) {
-    // Used to load saved games
-    this.state.restoreMode = false;
-    this.log.groupCollapsed("Game loading..."); // This conveniently hides all of the console output that is generated when the history is replayed, by nesting it in a group that will be displayed collapsed by default
-    commandList.forEach((command) => {
-      // replay each command in order
-      Function(`${command}`)(); // execute the command
-    });
-
-    this.log.groupEnd("Game loaded."); // text displayed in place of collapsed group
-  }
-
-  // bindInitialCommands() binds the commands essential to start the game to the global object, so that they can be invoked by the player in the console without needing to type the invocation operator "()" after the name.
-  bindInitialCommands() {
-    // enable "start" and other essential commands
-    const initialCommands: CommandAlias[] = [
-      [this.start, aliasString("start", thesaurus)],
-      [this.resume, cases("resume")],
-      [this.help, aliasString("help", thesaurus)],
-      [this.restore, cases("restore", "load")],
-      [this.quit, cases("quit", "restart")],
-      [this.save, cases("save")],
-      [this.saveSlot, "_0"],
-      [this.saveSlot, "_1"],
-      [this.saveSlot, "_2"],
-      [this.saveSlot, "_3"],
-      [this.saveSlot, "_4"],
-      [this.saveSlot, "_5"],
-      [this.saveSlot, "_6"],
-      [this.saveSlot, "_7"],
-      [this.saveSlot, "_8"],
-      [this.saveSlot, "_9"],
-      [this.pref, cases("font")],
-      [this.pref, cases("color")],
-      [this.pref, cases("size")],
-      [this.yes, cases("yes") + ",y,Y"],
-    ];
-    this.bindCommands(initialCommands);
   }
 
   solveCode(value: any) {

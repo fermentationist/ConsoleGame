@@ -188,3 +188,20 @@ export const getAllNormalKeys = (obj: Record<string, any>) => {
   });
 }
 
+export const cropFloorMap = (floorMap: string[][]) => {
+  const top = floorMap.findIndex(row => row.some(cell => cell !== "⬛️")) - 1;
+  const bottom = floorMap.length - [...floorMap].reverse().findIndex(row => row.some(cell => cell !== "⬛️")) + 1;
+  const lefts = floorMap.map(row => {
+    const index = row.findIndex(cell => cell !== "⬛️");
+    return index === -1 ? row.length : index;
+  });
+  const left = Math.max(Math.min(...lefts) - 1, 0);
+  const rights = floorMap.map(row => {
+    const reverseIndex = [...row].reverse().findIndex(cell => cell !== "⬛️"); 
+    return reverseIndex === -1 ? 0 : row.length - reverseIndex;
+  });
+  const right = Math.min(Math.max(...rights) + 1, floorMap[0].length);
+  const cropped = floorMap.slice(top, bottom).map(row => row.slice(left, right));
+  return cropped;
+}
+
