@@ -60,6 +60,10 @@ export default class TurnDaemon {
   ) {
     const window = globalThis as any;
     if (this.game.state.gameOver) {
+      if (commandName === "start") {
+        this.game.start();
+        return this.game.variableWidthDivider();
+      }
       this.game.displayText(this.game.descriptions.gameOver);
     } else {
       if (window.CONSOLE_GAME_DEBUG) {
@@ -87,7 +91,7 @@ export default class TurnDaemon {
         return this.game.variableWidthDivider();
       } catch (error) {
         // recognized command word used incorrectly
-        // console.trace(error);
+        console.trace(error);
         this.game.log.p("That's not going to work. Please try something else.");
         // to avoid printing 'undefined' when a command returns nothing
         return this.game.variableWidthDivider();
@@ -117,4 +121,14 @@ export default class TurnDaemon {
       );
     }
   }
+
+  // checks if a timer function is registered
+  hasTimer(timerToCheck: ((gameContext: GameType) => void) | string) {
+    if (typeof timerToCheck === "string") {
+      return this.timers.some((timer) => timer.name === timerToCheck);
+    } else {
+      return this.timers.some((timer) => timer.function === timerToCheck);
+    }
+  }
+
 }

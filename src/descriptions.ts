@@ -7,7 +7,7 @@ import { primaryFont } from "./utils/prefs";
   preface: "You slowly open your eyes. Your eyelids aren't halfway open before the throbbing pain in your head asserts itself. The last thing you can remember is taking your dog for a walk. Your current surroundings look entirely unfamiliar.",
 
   intro: (game: GameType) => {
-    const intro_1 = "\nWelcome!\nAs a fan of old Infocom™ interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript game.log. Try it out by typing in the console below. Have fun!\n";
+    const intro_1 = "\nWelcome!\nAs a fan of old Infocom™ interactive fiction games, I thought it would be fun to hide a text adventure in the browser's JavaScript console. Try it out by typing in the console below. Have fun!\n";
 		game.log.title("consoleGame");
 		game.log.custom("by Dennis Hodges\ncopyright 2019-2023", "font-size:100%;color:lightgray;padding:0 1em;");
 		game.log.intro(intro_1);

@@ -195,7 +195,7 @@ const mapKey = function (game: GameType) {
         "drawer",
         "booklet",
       ],
-      hiddenEnv: ["safe"],
+      hiddenEnv: ["safe", "keypad"],
       hiddenDescription:
         "In space where a painting formerly hung there is a small alcove housing a wall safe.",
       get description() {

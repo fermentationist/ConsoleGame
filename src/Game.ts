@@ -15,19 +15,9 @@ import {
 } from "./utils/helpers";
 import thesaurus from "./utils/thesaurus";
 import TurnDaemon from "./TurnDaemon";
+import CommandBinder from "./CommandBinder";
 
 const { getStorage, removeStorage, setStorage } = storage;
-
-// commands that are reserved words in JavaScript but we will overwrite anyway, (;
-const RESERVED_WORDS_TO_OVERWRITE = [
-  "open",
-  "close",
-  "status",
-  "inspect",
-  "table",
-  "screen",
-  "scroll",
-];
 
 let gameContext: any;
 
@@ -44,6 +34,7 @@ export default class Game {
   lightSources = [] as ItemType[];
   descriptions = {} as Record<string, any>;
   turnDaemon = null as InstanceType<typeof TurnDaemon> | null;
+  commandBinder = null as InstanceType<typeof CommandBinder> | null;
   initialState = {
     solveMode: false,
     prefMode: false,
@@ -91,7 +82,7 @@ export default class Game {
     // enable "start" and other essential commands
     this.descriptions = descriptions;
     this.turnDaemon = new TurnDaemon(this);
-    console.log("this.turnDaemon", this.turnDaemon);
+    this.commandBinder = new CommandBinder(this);
     this.bindInitialCommands();
     this.log.tiny("Game initialized.");
   }
@@ -127,7 +118,7 @@ export default class Game {
       [this.pref, cases("size")],
       [this.yes, cases("yes") + ",y,Y"],
     ];
-    this.bindCommands(initialCommands);
+    this.commandBinder?.bindCommands(initialCommands);
   }
 
   // initializeNewGame() is called when the game is started, or when the player dies and the game is restarted
@@ -138,59 +129,17 @@ export default class Game {
     this.items = deepClone(initItemsModule(this));
     this.commandList = initCommandModule(this);
     this.commands = this.getCommandsObject(this.commandList);
-    this.bindCommands(this.commandList);
+    this.commandBinder?.bindCommands(this.commandList);
     this.mapKey = initMapKeyModule(this);
     // fill inventory with starting items
     this.addToInventory(["no_tea", "me"]);
   }
 
-  /* 
-  *bindCommandToFunction() creates a property on the global object with the command name (and one for each related alias), and binds the function to be invoked to a getter method on the property. 
-  This is what allows functions to be invoked by the player in the console without needing to type the invocation operator "()" after the name.
-  Thank you to secretGeek for this clever solution. I found it here: https://github.com/secretGeek/console-adventure. You can play his console adventure here: https://rawgit.com/secretGeek/console-adventure/master/log.html
-  */
-  bindCommandToFunction(
-    interpreterFunction: (command: string) => void, // The function to be (eventually) invoked when the command is entered
-    commandAliases: string,
-    daemon?: (
-      command: string,
-      interpreterFunction: (command: string) => void
-    ) => void // A function that will be invoked with the command name and the interpreter function as arguments.
-  ) {
-    const aliasArray = commandAliases.split(",");
-    // Use the first alias as the command name
-    const [commandName] = aliasArray;
-    // If a daemon function is provided, it will be invoked with the command name and the interpreter function as arguments. Otherwise, the interpreter function will be invoked with the command name as an argument.
-    const interpretCommand = daemon
-      ? daemon.bind(this, commandName, interpreterFunction.bind(this))
-      : interpreterFunction.bind(this, commandName);
-    try {
-      aliasArray.forEach((alias) => {
-        // check to prevent unwanted overwrite of global property, i.e. Map
-        if (
-          !(alias in globalThis) ||
-          RESERVED_WORDS_TO_OVERWRITE.includes(alias)
-        ) {
-          // The following (commented-out) line was causing a bug, so do not revert to it.
-          // Object.defineProperty(globalThis, alias.trim(), {get: interpretCommand});
-          Object.defineProperty(globalThis, alias.trim(), {
-            get() {
-              return interpretCommand();
-            },
-          });
-        }
-      });
-    } catch (err) {
-      // fail silently
-    }
-  }
-
-  // Applies bindCommandToFunction() to an array of all of the commands to be created
-  bindCommands(commands: CommandAlias[]) {
-    commands.forEach((commandEntry) => {
-      let [interpreterFunction, aliases] = commandEntry;
-      this.bindCommandToFunction(interpreterFunction, aliases, this.turnDaemon?.executeCommand);
-    });
+  resetGame() {
+    this.state = deepClone(this.initialState);
+    this.state.dogName = randomDogName();
+    removeStorage("history");
+    this.state.gameOver = false;
   }
 
   // getCommandsObject() takes an array of CommandAliases and returns an object containing the command names as keys and the interpreter functions as values
@@ -209,75 +158,10 @@ export default class Game {
    * =====================
    */
 
-  // // This function is bound to each command, and is called when the command is executed
-  // turnDaemon(
-  //   commandName: string,
-  //   interpreterFunction: (commandName: string) => void
-  // ) {
-  //   const window = globalThis as any;
-  //   if (this.state.gameOver) {
-  //     this.displayText(this.descriptions.gameOver);
-  //   } else {
-  //     if (window.CONSOLE_GAME_DEBUG) {
-  //       window.debugLog.push({ userInput: commandName });
-  //     }
-
-  //     try {
-  //       // execute command
-  //       interpreterFunction(commandName);
-
-  //       if (!EXEMPT_COMMANDS.includes(commandName)) {
-  //         // don't add to history or increment turn or timers if command is exempt
-  //         this.addToHistory(commandName);
-  //         if (!this.state.objectMode && !this.state.abortMode) {
-  //           // only increment turn and timers if not in objectMode (prevents two-word commands from taking up two turns), and if not in abortMode (prevent a failed movement attempt, i.e. trying to move 'up' when you are only able to move 'east' or 'west', from consuming a turn)
-  //           this.runTimers();
-  //           this.state.turn++;
-  //         }
-  //         this.state.abortMode = false;
-  //         if (this.state.verbose) {
-  //           this.describeSurroundings();
-  //         }
-  //       }
-  //       // to avoid printing 'undefined' when a command returns nothing
-  //       return this.variableWidthDivider();
-  //     } catch (error) {
-  //       // recognized command word used incorrectly
-  //       // console.trace(error);
-  //       this.log.p("That's not going to work. Please try something else.");
-  //       // to avoid printing 'undefined' when a command returns nothing
-  //       return this.variableWidthDivider();
-  //     }
-  //   }
-  // }
-
   addToHistory(commandName: string) {
     this.state.history.push(commandName);
     setStorage("history", this.state.history);
   }
-
-  // // executes all timer functions
-  // runTimers() {
-  //   this.timers.forEach((timer) => {
-  //     timer.function(this);
-  //   });
-  // }
-
-  // // registers a timer function
-  // registerTimer(name: string, timerFunction: (gameContext: GameType) => void) {
-  //   this.timers.push({ name, function: timerFunction });
-  // }
-
-  // // removes a timer function
-  // removeTimer(timerToRemove: ((gameContext: GameType) => void) | string) {
-  //   if (typeof timerToRemove === "string") {
-  //     this.timers = this.timers.filter((timer) => timer.name !== timerToRemove);
-  //   } else {
-  //     this.timers = this.timers.filter(
-  //       (timer) => timer.function !== timerToRemove
-  //     );
-  //   }
-  // }
 
   addToInventory(itemArray: (ItemType | string)[]) {
     // add one of more items to player inventory
@@ -302,6 +186,10 @@ export default class Game {
     this.state.inventory = filtered;
   }
 
+  // Returns the history of the unfinished game, if it exists, as an array of strings (each string is a command)
+  unfinishedGame() {
+    return getStorage("history");
+  }
 
   // replayHistory() takes an array of commands and replays them in order, restoring the game state to the point at which the array was generated
   replayHistory(commandList: string[]) {
@@ -314,40 +202,6 @@ export default class Game {
     });
 
     this.log.groupEnd("Game loaded."); // text displayed in place of collapsed group
-  }
-
-  displayText(
-    text:
-      | string
-      | string[]
-      | ((context: GameType, value?: any) => void)
-      | ((context: GameType, value?: any) => string),
-    value?: any
-  ) {
-    if (typeof text === "function") {
-      const result = text(this, value);
-      if (typeof result === "string") {
-        this.displayText(result);
-      }
-    } else if (Array.isArray(text)) {
-      text.forEach((line) => this.displayText(line));
-    } else if (text) {
-      this.log.p(text);
-    }
-  }
-
-  // returns a list of items available in the current environment, as a formatted string
-  itemsInEnvironment() {
-    const env = this.state.currentMapCell.hideSecrets
-      ? this.state.env.visibleEnv
-      : [...this.state.env.visibleEnv, ...this.state.env.hiddenEnv];
-    const listedItems = env.filter((item: ItemType) => item.listed);
-    return (
-      listedItems.length &&
-      formatList(
-        listedItems.map((item: ItemType) => `${item.article} ${item.name}`)
-      )
-    );
   }
 
   fromWhichEnv(itemName: string) {
@@ -369,6 +223,7 @@ export default class Game {
     return theEnv;
   }
 
+  // given the name of an item, returns the object from the environment
   inEnvironment(itemName: string) {
     if (itemName === "all") {
       return this.items._all;
@@ -391,6 +246,69 @@ export default class Game {
       (item: ItemType) => item.name === itemName
     );
     return objectFromInventory;
+  }
+
+  /**
+   * =====================
+   * Game output methods
+   * =====================
+   */
+
+  displayText(
+    text:
+      | string
+      | string[]
+      | ((context: GameType, value?: any) => void)
+      | ((context: GameType, value?: any) => string),
+    value?: any
+  ) {
+    if (typeof text === "function") {
+      const result = text(this, value);
+      if (typeof result === "string") {
+        this.displayText(result);
+      }
+    } else if (Array.isArray(text)) {
+      text.forEach((line) => this.displayText(line));
+    } else if (text) {
+      this.log.p(text);
+    }
+  }
+
+  // Returns a string containing the name of the current room, and the current turn number
+  currentHeader(columnWidth = window.innerWidth) {
+    const roomName = this.state.currentMapCell.name;
+    const turn = `Turn : ${this.state.turn}`;
+    const gapSize = columnWidth / 12 - roomName.length - turn.length;
+    const gap = " ".repeat(gapSize);
+    return `\n${roomName}${gap}${turn}\n`;
+  }
+
+  // describeSurroundings puts together various parts of game description, and outputs it as a single string
+  describeSurroundings() {
+    const description = this.state.currentMapCell.description;
+    const itemStr = this.itemsInEnvironment()
+      ? `You see ${this.itemsInEnvironment()} here.`
+      : "";
+    const nestedItemStr = this.nestedItemString();
+    const moveOptions = `You can go ${this.movementOptions()}.`;
+    this.log.header(this.currentHeader());
+    this.log.p(
+      description + "\n" + moveOptions + "\n" + itemStr + "\n" + nestedItemStr
+    );
+  }
+
+  // returns a list of items available in the current environment, as a formatted string
+  itemsInEnvironment() {
+    const env = this.state.currentMapCell.hideSecrets
+      ? this.state.env.visibleEnv
+      : [...this.state.env.visibleEnv, ...this.state.env.hiddenEnv];
+    const listedItems = env.filter((item: ItemType) => item.listed);
+    return (
+      listedItems.length &&
+      formatList(
+        listedItems.map((item: ItemType) => `${item.article} ${item.name}`)
+      )
+    );
   }
 
   // returns a list of items available in the environment that are nested inside other objects, as a formatted string
@@ -465,34 +383,6 @@ export default class Game {
     return ` `.repeat(width / 8);
   }
 
-  // Returns a string containing the name of the current room, and the current turn number
-  currentHeader(columnWidth = window.innerWidth) {
-    const roomName = this.state.currentMapCell.name;
-    const turn = `Turn : ${this.state.turn}`;
-    const gapSize = columnWidth / 12 - roomName.length - turn.length;
-    const gap = " ".repeat(gapSize);
-    return `\n${roomName}${gap}${turn}\n`;
-  }
-
-  // describeSurroundings puts together various parts of game description, and outputs it as a single string
-  describeSurroundings() {
-    const description = this.state.currentMapCell.description;
-    const itemStr = this.itemsInEnvironment()
-      ? `You see ${this.itemsInEnvironment()} here.`
-      : "";
-    const nestedItemStr = this.nestedItemString();
-    const moveOptions = `You can go ${this.movementOptions()}.`;
-    this.log.header(this.currentHeader());
-    this.log.p(
-      description + "\n" + moveOptions + "\n" + itemStr + "\n" + nestedItemStr
-    );
-  }
-
-  // Returns the history of the unfinished game, if it exists, as an array of strings (each string is a command)
-  unfinishedGame() {
-    return getStorage("history");
-  }
-
   // Returns a list of saved games, as an array of strings (each string is a slot number)
   getSavedGames() {
     const keys = Object.keys(getStorage());
@@ -503,43 +393,6 @@ export default class Game {
       return save.slice(-2);
     });
     return slotList;
-  }
-
-  // saveGame() saves the current game state to local storage
-  saveGame(slot: string, confirmOverwrite = false) {
-    const slotName = `save.${slot}`;
-    if (getStorage(slotName) && !confirmOverwrite) {
-      // if the slot is already in use, ask for confirmation
-      this.log.invalid("That save slot is already in use.");
-      this.log.codeInline([
-        `type `,
-        `yes `,
-        `to overwrite slot ${slot} with current game data.`,
-      ]);
-      this.state.confirmMode = true;
-      this.confirmationCallback = () => this.saveGame(slot, true);
-    } else {
-      // otherwise, save the game
-      this.state.saveMode = false;
-      this.state.confirmMode = false;
-      try {
-        setStorage(slotName, this.state.history);
-        this.log.info(`Game saved to slot ${slot}.`);
-        this.describeSurroundings();
-      } catch (err) {
-        this.log.invalid(`Save to slot ${slot} failed.`);
-        this.log.error(err);
-      }
-    }
-  }
-
-  // restoreGame() restores a saved game from local storage, given a slot number, and replays the game history
-  restoreGame(slotName: string) {
-    this.state.restoreMode = false;
-    const saveData = getStorage(`save.${slotName}`);
-    this.initializeNewGame();
-    this.replayHistory(saveData);
-    this.describeSurroundings();
   }
 
   // intro() is called at the beginning of the game
@@ -716,12 +569,6 @@ export default class Game {
     this.describeSurroundings();
   }
 
-  resetGame() {
-    this.state = deepClone(this.initialState);
-    this.state.dogName = randomDogName();
-    removeStorage("history");
-  }
-
   resume() {
     const unfinishedGame = this.unfinishedGame();
     this.state.prefMode = false;
@@ -808,6 +655,43 @@ export default class Game {
     }
   }
 
+  // saveGame() saves the current game state to local storage
+  saveGame(slot: string, confirmOverwrite = false) {
+    const slotName = `save.${slot}`;
+    if (getStorage(slotName) && !confirmOverwrite) {
+      // if the slot is already in use, ask for confirmation
+      this.log.invalid("That save slot is already in use.");
+      this.log.codeInline([
+        `type `,
+        `yes `,
+        `to overwrite slot ${slot} with current game data.`,
+      ]);
+      this.state.confirmMode = true;
+      this.confirmationCallback = () => this.saveGame(slot, true);
+    } else {
+      // otherwise, save the game
+      this.state.saveMode = false;
+      this.state.confirmMode = false;
+      try {
+        setStorage(slotName, this.state.history);
+        this.log.info(`Game saved to slot ${slot}.`);
+        this.describeSurroundings();
+      } catch (err) {
+        this.log.invalid(`Save to slot ${slot} failed.`);
+        this.log.error(err);
+      }
+    }
+  }
+
+  // restoreGame() restores a saved game from local storage, given a slot number, and replays the game history
+  restoreGame(slotName: string) {
+    this.state.restoreMode = false;
+    const saveData = getStorage(`save.${slotName}`);
+    this.initializeNewGame();
+    this.replayHistory(saveData);
+    this.describeSurroundings();
+  }
+
   solveCode(value: any) {
     // solve code
     value = String(value);
@@ -815,6 +699,7 @@ export default class Game {
     const puzzles = this.state.combinedEnv.filter(
       (item: ItemType) => item.solution
     );
+    console.log("puzzles", puzzles)
     if (puzzles.length) {
       const solved = puzzles.filter(
         (puzzle: ItemType) => puzzle.solution === value

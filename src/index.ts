@@ -11,7 +11,7 @@ window.onload = () => {
     const prefMode = storage.getStorage("prefMode");
     if (prefMode) { // if prefMode is set, the user has just changed a preference, and reloaded the page so it would take effect. Resume the game from its previous state.
         storage.removeStorage("prefMode");    
-        game.commands.resume();
+        game.resume();
     } else {
         return game.intro();
     }

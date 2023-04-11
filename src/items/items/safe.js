@@ -11,6 +11,7 @@ export default (game) => {
     description:
       "The wall safe looks rugged and well-anchored. You doubt that it could be breached by brute force, and it appears to have already successfully weathered a few such attempts. On its face, a numeric keypad resides beneath what looks like a small digital readout.",
     contents: [],
+    containedPart: "_keypad",
     correctGuess () {
       game.state.objectMode = false;
       this.locked = false;
