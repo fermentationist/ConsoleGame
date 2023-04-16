@@ -580,7 +580,7 @@ export default class Game {
     } else if (this.state.turn) {
       this.describeSurroundings();
     } else {
-      this.commands.start();
+      this.start();
     }
   }
 
